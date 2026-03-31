@@ -32,6 +32,16 @@
             padding: 12px 28px; border-radius: 25px;
             font-size: 16px; font-weight: 600; cursor: pointer;
         }
+        .user-bar {
+            background: #e8f0fe; padding: 10px 20px;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 14px; color: #1a73e8; display: none;
+        }
+        .user-bar img { width: 30px; height: 30px; border-radius: 50%; }
+        .logout-btn {
+            margin-left: auto; background: none; border: 1px solid #1a73e8;
+            color: #1a73e8; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px;
+        }
         .ad-banner {
             background: #e8f0fe; border: 1px dashed #1a73e8;
             text-align: center; padding: 12px; color: #888; font-size: 13px;
@@ -54,12 +64,13 @@
             background: white; border-radius: 12px; padding: 20px 16px;
             text-align: center; cursor: pointer;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border: 2px solid transparent;
+            border: 2px solid transparent; transition: all 0.2s;
         }
-        .trade-card:hover { border-color: #1a73e8; }
+        .trade-card:hover { border-color: #1a73e8; transform: translateY(-2px); }
         .trade-icon { font-size: 36px; margin-bottom: 8px; }
         .trade-name { font-weight: 600; font-size: 14px; }
         .trade-count { font-size: 12px; color: #888; margin-top: 4px; }
+        .loading { text-align: center; padding: 40px; color: #888; }
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: white; display: flex; justify-content: space-around;
@@ -68,9 +79,17 @@
         .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #888; font-size: 11px; gap: 4px; }
         .nav-item.active { color: #1a73e8; }
         .nav-icon { font-size: 22px; }
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 10px 20px; border-radius: 20px;
+            font-size: 14px; z-index: 999; display: none;
+        }
     </style>
 </head>
 <body>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
 
 <header>
     <div class="logo">ITI <span>Studies</span></div>
@@ -81,10 +100,17 @@
     </div>
 </header>
 
+<!-- User Bar (shows after login) -->
+<div class="user-bar" id="userBar">
+    <img id="userPhoto" src="" alt="User">
+    <span id="userName">User</span>
+    <button class="logout-btn" onclick="handleLogout()">Logout</button>
+</div>
+
 <div class="hero">
     <h1 id="hero-title">Practice & Crack Your ITI Exam! 🎯</h1>
     <p id="hero-sub">2000+ MCQs | All Trades | Gujarat ITI</p>
-    <button class="login-btn" onclick="handleLogin()">🔐 Login to Save Progress</button>
+    <button class="login-btn" id="loginBtn" onclick="handleLogin()">🔐 Login to Save Progress</button>
 </div>
 
 <div class="ad-banner">📢 Advertisement — Google AdSense will appear here</div>
@@ -106,38 +132,8 @@
     </div>
 
     <div class="section-title" id="trade-title">📚 Select Your Trade</div>
-
-    <div class="trades-grid">
-        <div class="trade-card" onclick="selectTrade('electrician')">
-            <div class="trade-icon">⚡</div>
-            <div class="trade-name">Electrician</div>
-            <div class="trade-count">500+ Questions</div>
-        </div>
-        <div class="trade-card" onclick="selectTrade('fitter')">
-            <div class="trade-icon">🔧</div>
-            <div class="trade-name">Fitter</div>
-            <div class="trade-count">400+ Questions</div>
-        </div>
-        <div class="trade-card" onclick="selectTrade('welder')">
-            <div class="trade-icon">🔥</div>
-            <div class="trade-name">Welder</div>
-            <div class="trade-count">300+ Questions</div>
-        </div>
-        <div class="trade-card" onclick="selectTrade('copa')">
-            <div class="trade-icon">💻</div>
-            <div class="trade-name">COPA</div>
-            <div class="trade-count">350+ Questions</div>
-        </div>
-        <div class="trade-card" onclick="selectTrade('turner')">
-            <div class="trade-icon">⚙️</div>
-            <div class="trade-name">Turner</div>
-            <div class="trade-count">250+ Questions</div>
-        </div>
-        <div class="trade-card" onclick="selectTrade('mechanic')">
-            <div class="trade-icon">🚗</div>
-            <div class="trade-name">Mechanic MV</div>
-            <div class="trade-count">300+ Questions</div>
-        </div>
+    <div class="trades-grid" id="tradesGrid">
+        <div class="loading">⏳ Loading trades...</div>
     </div>
 </main>
 
@@ -160,36 +156,138 @@
     </div>
 </nav>
 
-<script>
-const t = {
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC0tkiVx89eNQJozHAUPBGRqonTB6M6ShE",
+    authDomain: "itistudies-4b277.firebaseapp.com",
+    projectId: "itistudies-4b277",
+    storageBucket: "itistudies-4b277.firebasestorage.app",
+    messagingSenderId: "549937347076",
+    appId: "1:549937347076:web:72231b8f1bde6c2dd15351",
+    measurementId: "G-HKW4C7Q81Z"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+// ── Load Trades from Firestore ──
+async function loadTrades() {
+    const grid = document.getElementById('tradesGrid');
+    try {
+        const snapshot = await getDocs(collection(db, 'trades'));
+        if (snapshot.empty) {
+            // Show default trades if database is empty
+            grid.innerHTML = getDefaultTrades();
+        } else {
+            let html = '';
+            snapshot.forEach(doc => {
+                const t = doc.data();
+                html += `<div class="trade-card" onclick="selectTrade('${doc.id}','${t.name}')">
+                    <div class="trade-icon">${t.icon || '📚'}</div>
+                    <div class="trade-name">${t.name}</div>
+                    <div class="trade-count">${t.questionCount || 0}+ Questions</div>
+                </div>`;
+            });
+            grid.innerHTML = html;
+        }
+    } catch(e) {
+        grid.innerHTML = getDefaultTrades();
+    }
+}
+
+function getDefaultTrades() {
+    const trades = [
+        {id:'electrician', icon:'⚡', name:'Electrician', count:'500'},
+        {id:'fitter', icon:'🔧', name:'Fitter', count:'400'},
+        {id:'welder', icon:'🔥', name:'Welder', count:'300'},
+        {id:'copa', icon:'💻', name:'COPA', count:'350'},
+        {id:'turner', icon:'⚙️', name:'Turner', count:'250'},
+        {id:'mechanic', icon:'🚗', name:'Mechanic MV', count:'300'},
+    ];
+    return trades.map(t => `
+        <div class="trade-card" onclick="selectTrade('${t.id}','${t.name}')">
+            <div class="trade-icon">${t.icon}</div>
+            <div class="trade-name">${t.name}</div>
+            <div class="trade-count">${t.count}+ Questions</div>
+        </div>`).join('');
+}
+
+// ── Auth State ──
+onAuthStateChanged(auth, user => {
+    if (user) {
+        document.getElementById('userBar').style.display = 'flex';
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('userPhoto').src = user.photoURL || '';
+        document.getElementById('userName').textContent = user.displayName || 'User';
+        showToast('Welcome back, ' + (user.displayName || 'User') + '! 👋');
+    } else {
+        document.getElementById('userBar').style.display = 'none';
+        document.getElementById('loginBtn').style.display = 'inline-block';
+    }
+});
+
+// ── Login ──
+window.handleLogin = async function() {
+    try {
+        await signInWithPopup(auth, provider);
+    } catch(e) {
+        showToast('Login failed. Please try again.');
+    }
+};
+
+// ── Logout ──
+window.handleLogout = async function() {
+    await signOut(auth);
+    showToast('Logged out successfully!');
+};
+
+// ── Select Trade ──
+window.selectTrade = function(tradeId, tradeName) {
+    localStorage.setItem('selectedTrade', tradeId);
+    localStorage.setItem('selectedTradeName', tradeName);
+    showToast('Selected: ' + tradeName + ' ✅');
+};
+
+// ── Toast ──
+window.showToast = function(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+};
+
+// ── Language ──
+const translations = {
     en: { heroTitle:"Practice & Crack Your ITI Exam! 🎯", heroSub:"2000+ MCQs | All Trades | Gujarat ITI", trade:"📚 Select Your Trade", s1:"Questions", s2:"Trades", s3:"Access", n1:"Home", n2:"Practice", n3:"Results", n4:"Profile" },
     hi: { heroTitle:"ITI परीक्षा की तैयारी करें! 🎯", heroSub:"2000+ प्रश्न | सभी ट्रेड | गुजरात ITI", trade:"📚 अपना ट्रेड चुनें", s1:"प्रश्न", s2:"ट्रेड", s3:"मुफ्त", n1:"होम", n2:"अभ्यास", n3:"परिणाम", n4:"प्रोफाइल" },
     gu: { heroTitle:"ITI પરીક્ષાની તૈયારી કરો! 🎯", heroSub:"2000+ પ્રશ્નો | બધા ટ્રેડ | ગુજરાત ITI", trade:"📚 તમારો ટ્રેડ પસંદ કરો", s1:"પ્રશ્નો", s2:"ટ્રેડ", s3:"મફત", n1:"હોમ", n2:"અભ્યાસ", n3:"પરિણામ", n4:"પ્રોફાઇલ" }
 };
 
-function setLang(lang, btn) {
-    document.getElementById('hero-title').textContent = t[lang].heroTitle;
-    document.getElementById('hero-sub').textContent = t[lang].heroSub;
-    document.getElementById('trade-title').textContent = t[lang].trade;
-    document.getElementById('s1').textContent = t[lang].s1;
-    document.getElementById('s2').textContent = t[lang].s2;
-    document.getElementById('s3').textContent = t[lang].s3;
-    document.getElementById('n1').textContent = t[lang].n1;
-    document.getElementById('n2').textContent = t[lang].n2;
-    document.getElementById('n3').textContent = t[lang].n3;
-    document.getElementById('n4').textContent = t[lang].n4;
+window.setLang = function(lang, btn) {
+    const t = translations[lang];
+    document.getElementById('hero-title').textContent = t.heroTitle;
+    document.getElementById('hero-sub').textContent = t.heroSub;
+    document.getElementById('trade-title').textContent = t.trade;
+    document.getElementById('s1').textContent = t.s1;
+    document.getElementById('s2').textContent = t.s2;
+    document.getElementById('s3').textContent = t.s3;
+    document.getElementById('n1').textContent = t.n1;
+    document.getElementById('n2').textContent = t.n2;
+    document.getElementById('n3').textContent = t.n3;
+    document.getElementById('n4').textContent = t.n4;
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-}
+};
 
-function handleLogin() {
-    alert('Google Login — coming in next step!');
-}
-
-function selectTrade(trade) {
-    localStorage.setItem('selectedTrade', trade);
-    alert('Trade selected: ' + trade + '\nSubject page coming in next step!');
-}
+// ── Init ──
+loadTrades();
 </script>
 </body>
 </html>
