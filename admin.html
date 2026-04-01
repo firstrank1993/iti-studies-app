@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITI Studies - Admin Panel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; }
+        header {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            color: white; padding: 16px 20px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .logo { font-size: 20px; font-weight: 700; }
+        .logo span { color: #ffd600; }
+        .admin-badge {
+            background: #ffd600; color: #333;
+            padding: 3px 10px; border-radius: 20px;
+            font-size: 12px; font-weight: 700;
+        }
+        main { padding: 20px; max-width: 800px; margin: 0 auto; }
+        .card {
+            background: white; border-radius: 16px; padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 18px; font-weight: 700; color: #1a73e8;
+            margin-bottom: 16px; padding-bottom: 10px;
+            border-bottom: 2px solid #e8f0fe;
+        }
+        .login-form { display: flex; flex-direction: column; gap: 12px; }
+        .input-field {
+            padding: 12px 16px; border: 2px solid #e0e8ff;
+            border-radius: 10px; font-size: 15px; outline: none;
+        }
+        .input-field:focus { border-color: #1a73e8; }
+        .btn {
+            padding: 12px 24px; border: none; border-radius: 10px;
+            font-size: 15px; font-weight: 600; cursor: pointer;
+        }
+        .btn-primary { background: #1a73e8; color: white; }
+        .btn-success { background: #4caf50; color: white; }
+        .btn-danger { background: #f44336; color: white; }
+        .upload-area {
+            border: 2px dashed #1a73e8; border-radius: 12px;
+            padding: 32px; text-align: center; cursor: pointer;
+            background: #f8f9ff; transition: all 0.2s;
+        }
+        .upload-area:hover { background: #e8f0fe; }
+        .upload-icon { font-size: 48px; margin-bottom: 12px; }
+        .upload-text { font-size: 16px; font-weight: 600; color: #1a73e8; }
+        .upload-sub { font-size: 13px; color: #888; margin-top: 6px; }
+        .preview-table {
+            width: 100%; border-collapse: collapse; margin-top: 16px;
+            font-size: 13px;
+        }
+        .preview-table th {
+            background: #1a73e8; color: white;
+            padding: 10px; text-align: left;
+        }
+        .preview-table td {
+            padding: 10px; border-bottom: 1px solid #e0e0e0;
+        }
+        .preview-table tr:hover { background: #f8f9ff; }
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #e8f0fe; border-radius: 12px; padding: 16px;
+            text-align: center;
+        }
+        .stat-num { font-size: 28px; font-weight: 700; color: #1a73e8; }
+        .stat-lbl { font-size: 12px; color: #666; margin-top: 4px; }
+        .progress-bar {
+            height: 8px; background: #e0e0e0; border-radius: 4px;
+            margin: 12px 0;
+        }
+        .progress-fill {
+            height: 100%; background: #4caf50; border-radius: 4px;
+            transition: width 0.3s; width: 0%;
+        }
+        .log-box {
+            background: #1a1a2e; color: #00ff88; padding: 16px;
+            border-radius: 10px; font-family: monospace; font-size: 13px;
+            max-height: 200px; overflow-y: auto; margin-top: 12px;
+        }
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 10px 20px;
+            border-radius: 20px; font-size: 14px; z-index: 999; display: none;
+        }
+        .hidden { display: none; }
+        .format-table {
+            width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px;
+        }
+        .format-table th { background: #e8f0fe; padding: 8px; text-align: left; color: #1a73e8; }
+        .format-table td { padding: 8px; border: 1px solid #e0e0e0; }
+        .download-btn {
+            background: #e8f0fe; color: #1a73e8; border: 2px solid #1a73e8;
+            padding: 10px 20px; border-radius: 10px; cursor: pointer;
+            font-size: 14px; font-weight: 600; margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<header>
+    <div class="logo">ITI <span>Studies</span></div>
+    <div class="admin-badge">  ADMIN</div>
+</header>
+
+<main>
+    <!-- Login Section -->
+    <div class="card" id="loginSection">
+        <div class="card-title">  Admin Login</div>
+        <div class="login-form">
+            <input type="password" class="input-field" id="adminPassword"
+                placeholder="Enter admin password" />
+            <button class="btn btn-primary" onclick="checkLogin()">Login →</button>
+        </div>
+    </div>
+
+    <!-- Admin Panel (hidden until login) -->
+    <div id="adminPanel" class="hidden">
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-num" id="totalQ">0</div>
+                <div class="stat-lbl">Total Questions</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num" id="totalT">0</div>
+                <div class="stat-lbl">Trades</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num" id="totalS">0</div>
+                <div class="stat-lbl">Subjects</div>
+            </div>
+        </div>
+
+        <!-- CSV Format Guide -->
+        <div class="card">
+            <div class="card-title">  CSV Format Guide</div>
+            <p style="font-size:14px;color:#666;margin-bottom:12px;">
+                Your CSV file must have these exact column headers:
+            </p>
+            <table class="format-table">
+                <tr>
+                    <th>Column</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                <tr><td>question</td><td>The MCQ question</td><td>What is Ohm's Law?</td></tr>
+                <tr><td>optionA</td><td>Option A</td><td>V=IR</td></tr>
+                <tr><td>optionB</td><td>Option B</td><td>V=I+R</td></tr>
+                <tr><td>optionC</td><td>Option C</td><td>V=I/R</td></tr>
+                <tr><td>optionD</td><td>Option D</td><td>V=I*I</td></tr>
+                <tr><td>correct</td><td>Correct option (A/B/C/D)</td><td>A</td></tr>
+                <tr><td>explanation</td><td>Answer explanation</td><td>Ohm's law states...</td></tr>
+                <tr><td>trade</td><td>Trade name</td><td>electrician</td></tr>
+                <tr><td>subject</td><td>Subject name</td><td>Basic Electricity</td></tr>
+                <tr><td>chapter</td><td>Chapter name</td><td>Chapter 1</td></tr>
+            </table>
+            <button class="download-btn" onclick="downloadSample()">
+                 Download Sample CSV File
+            </button>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="card">
+            <div class="card-title">  Upload Questions (CSV)</div>
+            <div class="upload-area" onclick="document.getElementById('csvFile').click()">
+                <div class="upload-icon"> </div>
+                <div class="upload-text">Click to Select CSV File</div>
+                <div class="upload-sub">Only .csv files supported</div>
+            </div>
+            <input type="file" id="csvFile" accept=".csv"
+                style="display:none" onchange="previewCSV(event)" />
+
+            <!-- Preview -->
+            <div id="previewSection" class="hidden">
+                <div style="margin-top:20px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <strong id="previewTitle">Preview (first 5 rows)</strong>
+                        <button class="btn btn-success" onclick="uploadToFirebase()">
+                             Upload to Firebase
+                        </button>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="uploadProgress"></div>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="preview-table" id="previewTable"></table>
+                    </div>
+                    <div class="log-box" id="logBox">
+                        > Ready to upload...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout -->
+        <button class="btn btn-danger" onclick="adminLogout()"
+            style="width:100%;margin-bottom:20px;">
+             Logout
+        </button>
+    </div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC0tkiVx89eNQJozHAUPBGRqonTB6M6ShE",
+    authDomain: "itistudies-4b277.firebaseapp.com",
+    projectId: "itistudies-4b277",
+    storageBucket: "itistudies-4b277.firebasestorage.app",
+    messagingSenderId: "549937347076",
+    appId: "1:549937347076:web:72231b8f1bde6c2dd15351",
+    measurementId: "G-HKW4C7Q81Z"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ── Admin Password ──
+const ADMIN_PASSWORD = "iti@admin2025";
+
+window.checkLogin = function() {
+    const pwd = document.getElementById('adminPassword').value;
+    if (pwd === ADMIN_PASSWORD) {
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+        loadStats();
+        showToast('Welcome Admin!  ');
+    } else {
+        showToast('Wrong password!  ');
+        document.getElementById('adminPassword').value = '';
+    }
+};
+
+window.adminLogout = function() {
+    document.getElementById('loginSection').classList.remove('hidden');
+    document.getElementById('adminPanel').classList.add('hidden');
+};
+
+// ── Load Stats ──
+async function loadStats() {
+    try {
+        const qSnap = await getDocs(collection(db, 'questions'));
+        const trades = new Set();
+        const subjects = new Set();
+        qSnap.forEach(doc => {
+            const d = doc.data();
+            if (d.trade) trades.add(d.trade);
+            if (d.subject) subjects.add(d.subject);
+        });
+        document.getElementById('totalQ').textContent = qSnap.size;
+        document.getElementById('totalT').textContent = trades.size;
+        document.getElementById('totalS').textContent = subjects.size;
+    } catch(e) {
+        console.error(e);
+    }
+}
+
+// ── Parse CSV ──
+function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g,''));
+    const rows = [];
+    for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const values = lines[i].split(',').map(v => v.trim().replace(/"/g,''));
+        const row = {};
+        headers.forEach((h, idx) => row[h] = values[idx] || '');
+        rows.push(row);
+    }
+    return rows;
+}
+
+let parsedData = [];
+
+window.previewCSV = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        parsedData = parseCSV(e.target.result);
+        showPreview(parsedData);
+    };
+    reader.readAsText(file);
+};
+
+function showPreview(data) {
+    document.getElementById('previewSection').classList.remove('hidden');
+    document.getElementById('previewTitle').textContent =
+        'Preview — ' + data.length + ' questions found';
+
+    const preview = data.slice(0, 5);
+    const keys = ['question','optionA','optionB','optionC','optionD','correct','trade','chapter'];
+
+    let html = '<tr>' + keys.map(k => `<th>${k}</th>`).join('') + '</tr>';
+    preview.forEach(row => {
+        html += '<tr>' + keys.map(k =>
+            `<td>${(row[k] || '').substring(0, 30)}${(row[k]||'').length > 30 ? '...' : ''}</td>`
+        ).join('') + '</tr>';
+    });
+    document.getElementById('previewTable').innerHTML = html;
+    addLog('  ' + data.length + ' questions ready to upload');
+}
+
+// ── Upload to Firebase ──
+window.uploadToFirebase = async function() {
+    if (!parsedData.length) return;
+
+    const total = parsedData.length;
+    let uploaded = 0;
+    addLog('  Starting upload of ' + total + ' questions...');
+
+    for (const row of parsedData) {
+        try {
+            const correctMap = {A:0, B:1, C:2, D:3};
+            await addDoc(collection(db, 'questions'), {
+                question: row.question || '',
+                options: [row.optionA, row.optionB, row.optionC, row.optionD],
+                correct: correctMap[row.correct?.toUpperCase()] ?? 0,
+                explanation: row.explanation || '',
+                trade: (row.trade || '').toLowerCase(),
+                subject: row.subject || '',
+                chapter: row.chapter || '',
+                createdAt: new Date().toISOString()
+            });
+            uploaded++;
+            const pct = Math.round((uploaded/total)*100);
+            document.getElementById('uploadProgress').style.width = pct + '%';
+            if (uploaded % 10 === 0) addLog('  Uploaded ' + uploaded + '/' + total);
+        } catch(e) {
+            addLog('  Error: ' + e.message);
+        }
+    }
+
+    addLog('  Upload complete! ' + uploaded + ' questions added!');
+    showToast('  ' + uploaded + ' questions uploaded!');
+    loadStats();
+};
+
+// ── Download Sample CSV ──
+window.downloadSample = function() {
+    const csv = `question,optionA,optionB,optionC,optionD,correct,explanation,trade,subject,chapter
+What is the unit of resistance?,Ampere,Volt,Ohm,Watt,C,Ohm is the unit of resistance,electrician,Basic Electricity,Chapter 1
+What does MCB stand for?,Main Circuit Breaker,Miniature Circuit Breaker,Motor Control Board,Manual Circuit Box,B,MCB stands for Miniature Circuit Breaker,electrician,Basic Electricity,Chapter 1
+What is standard AC frequency in India?,50 Hz,60 Hz,100 Hz,25 Hz,A,India uses 50 Hz AC frequency,electrician,Basic Electricity,Chapter 1`;
+
+    const blob = new Blob([csv], {type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'sample_questions.csv';
+    a.click();
+};
+
+function addLog(msg) {
+    const box = document.getElementById('logBox');
+    box.innerHTML += '\n> ' + msg;
+    box.scrollTop = box.scrollHeight;
+}
+
+window.showToast = function(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+};
+</script>
+</body>
+</html>
+
