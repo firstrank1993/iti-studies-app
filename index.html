@@ -261,6 +261,7 @@ window.selectTrade = function(tradeId, tradeName) {
     localStorage.setItem('selectedTrade', tradeId);
     localStorage.setItem('selectedTradeName', tradeName);
     showToast('Selected: ' + tradeName + ' ✅');
+    setTimeout(() => { window.location.href = 'quiz.html'; }, 1000);
 };
 
 // ── Toast ──
