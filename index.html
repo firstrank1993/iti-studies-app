@@ -160,7 +160,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC0tkiVx89eNQJozHAUPBGRqonTB6M6ShE",
@@ -236,7 +236,7 @@ onAuthStateChanged(auth, user => {
 // ── Login ──
 window.handleLogin = async function() {
     try {
-        await signInWithPopup(auth, provider);
+        await signInWithRedirect(auth, provider);
     } catch(e) {
         showToast('Login failed. Please try again.');
     }
