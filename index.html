@@ -34,7 +34,7 @@
         }
         .user-bar {
             background: #e8f0fe; padding: 10px 20px;
-            display: flex; align-items: center; gap: 10px;
+            align-items: center; gap: 10px;
             font-size: 14px; color: #1a73e8; display: none;
         }
         .user-bar img { width: 30px; height: 30px; border-radius: 50%; }
@@ -88,7 +88,6 @@
 </head>
 <body>
 
-<!-- Toast Notification -->
 <div class="toast" id="toast"></div>
 
 <header>
@@ -100,7 +99,6 @@
     </div>
 </header>
 
-<!-- User Bar (shows after login) -->
 <div class="user-bar" id="userBar">
     <img id="userPhoto" src="" alt="User">
     <span id="userName">User</span>
@@ -130,7 +128,6 @@
             <div class="stat-label" id="s3">Access</div>
         </div>
     </div>
-
     <div class="section-title" id="trade-title">📚 Select Your Trade</div>
     <div class="trades-grid" id="tradesGrid">
         <div class="loading">⏳ Loading trades...</div>
@@ -156,10 +153,9 @@
     </div>
 </nav>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -177,13 +173,54 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// ── Load Trades from Firestore ──
+// ── Handle Redirect Result (runs when Google sends user back) ──
+getRedirectResult(auth).then(result => {
+    if (result && result.user) {
+        showToast('Welcome, ' + result.user.displayName + '! 👋');
+    }
+}).catch(error => {
+    if (error.code !== 'auth/no-current-user') {
+        console.error('Redirect error:', error);
+    }
+});
+
+// ── Auth State ──
+onAuthStateChanged(auth, user => {
+    if (user) {
+        document.getElementById('userBar').style.display = 'flex';
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('userPhoto').src = user.photoURL || '';
+        document.getElementById('userName').textContent = user.displayName || 'User';
+    } else {
+        document.getElementById('userBar').style.display = 'none';
+        document.getElementById('loginBtn').style.display = 'inline-block';
+    }
+});
+
+// ── Login ──
+window.handleLogin = async function() {
+    try {
+        showToast('Redirecting to Google... ⏳');
+        setTimeout(async () => {
+            await signInWithRedirect(auth, provider);
+        }, 1000);
+    } catch(e) {
+        showToast('Login error: ' + e.message);
+    }
+};
+
+// ── Logout ──
+window.handleLogout = async function() {
+    await signOut(auth);
+    showToast('Logged out successfully!');
+};
+
+// ── Load Trades ──
 async function loadTrades() {
     const grid = document.getElementById('tradesGrid');
     try {
         const snapshot = await getDocs(collection(db, 'trades'));
         if (snapshot.empty) {
-            // Show default trades if database is empty
             grid.innerHTML = getDefaultTrades();
         } else {
             let html = '';
@@ -218,35 +255,6 @@ function getDefaultTrades() {
             <div class="trade-count">${t.count}+ Questions</div>
         </div>`).join('');
 }
-
-// ── Auth State ──
-onAuthStateChanged(auth, user => {
-    if (user) {
-        document.getElementById('userBar').style.display = 'flex';
-        document.getElementById('loginBtn').style.display = 'none';
-        document.getElementById('userPhoto').src = user.photoURL || '';
-        document.getElementById('userName').textContent = user.displayName || 'User';
-        showToast('Welcome back, ' + (user.displayName || 'User') + '! 👋');
-    } else {
-        document.getElementById('userBar').style.display = 'none';
-        document.getElementById('loginBtn').style.display = 'inline-block';
-    }
-});
-
-// ── Login ──
-window.handleLogin = async function() {
-    try {
-        await signInWithRedirect(auth, provider);
-    } catch(e) {
-        showToast('Login failed. Please try again.');
-    }
-};
-
-// ── Logout ──
-window.handleLogout = async function() {
-    await signOut(auth);
-    showToast('Logged out successfully!');
-};
 
 // ── Select Trade ──
 window.selectTrade = function(tradeId, tradeName) {
@@ -286,7 +294,6 @@ window.setLang = function(lang, btn) {
     btn.classList.add('active');
 };
 
-// ── Init ──
 loadTrades();
 </script>
 </body>
