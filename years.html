@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITI Studies - Select Year</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; }
+        header {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            color: white; padding: 14px 20px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .back-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .header-title { font-size: 18px; font-weight: 600; }
+        .ad-banner { background: #e8f0fe; border: 1px dashed #1a73e8; text-align: center; padding: 10px; color: #888; font-size: 12px; }
+        main { padding: 20px; max-width: 800px; margin: 0 auto; padding-bottom: 90px; }
+        .page-title { font-size: 20px; font-weight: 700; color: #1a73e8; margin-bottom: 6px; }
+        .page-sub { font-size: 14px; color: #888; margin-bottom: 24px; }
+        .years-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+        .year-card {
+            background: white; border-radius: 16px; padding: 32px 20px;
+            text-align: center; cursor: pointer;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            border: 2px solid transparent; transition: all 0.2s;
+        }
+        .year-card:hover { border-color: #1a73e8; transform: translateY(-3px); }
+        .year-icon { font-size: 48px; margin-bottom: 12px; }
+        .year-name { font-size: 18px; font-weight: 700; color: #333; }
+        .year-desc { font-size: 13px; color: #888; margin-top: 6px; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #888; font-size: 11px; gap: 4px; }
+        .nav-item.active { color: #1a73e8; }
+        .nav-icon { font-size: 22px; }
+    </style>
+</head>
+<body>
+<header>
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+    <div class="header-title" id="headerTitle">Select Year</div>
+</header>
+<div class="ad-banner">📢 Advertisement</div>
+<main>
+    <div class="page-title" id="tradeName">Electrician</div>
+    <div class="page-sub">Select your study year</div>
+    <div class="years-grid">
+        <div class="year-card" onclick="selectYear(1)">
+            <div class="year-icon">📗</div>
+            <div class="year-name">1st Year</div>
+            <div class="year-desc">First year subjects & chapters</div>
+        </div>
+        <div class="year-card" onclick="selectYear(2)">
+            <div class="year-icon">📘</div>
+            <div class="year-name">2nd Year</div>
+            <div class="year-desc">Second year subjects & chapters</div>
+        </div>
+    </div>
+</main>
+<nav class="bottom-nav">
+    <div class="nav-item active" onclick="window.location.href='index.html'"><span class="nav-icon">🏠</span><span>Home</span></div>
+    <div class="nav-item" onclick="window.location.href='results.html'"><span class="nav-icon">📊</span><span>Results</span></div>
+    <div class="nav-item" onclick="window.location.href='profile.html'"><span class="nav-icon">👤</span><span>Profile</span></div>
+</nav>
+<script>
+    const trade = localStorage.getItem('selectedTrade') || 'Trade';
+    const tradeName = localStorage.getItem('selectedTradeName') || 'Trade';
+    document.getElementById('tradeName').textContent = tradeName;
+    document.getElementById('headerTitle').textContent = tradeName;
+
+    function selectYear(year) {
+        localStorage.setItem('selectedYear', year);
+        localStorage.setItem('selectedYearName', year + (year == 1 ? 'st' : 'nd') + ' Year');
+        window.location.href = 'subjects.html';
+    }
+</script>
+</body>
+</html>
