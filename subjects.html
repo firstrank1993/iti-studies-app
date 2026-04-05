@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITI Studies - Select Subject</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; }
+        header {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            color: white; padding: 14px 20px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .back-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .header-title { font-size: 18px; font-weight: 600; flex: 1; }
+        .breadcrumb {
+            background: white; padding: 10px 20px;
+            font-size: 12px; color: #888;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .breadcrumb span { color: #1a73e8; font-weight: 600; }
+        .ad-banner { background: #e8f0fe; border: 1px dashed #1a73e8; text-align: center; padding: 10px; color: #888; font-size: 12px; }
+        main { padding: 20px; max-width: 800px; margin: 0 auto; padding-bottom: 90px; }
+        .page-title { font-size: 20px; font-weight: 700; color: #1a73e8; margin-bottom: 6px; }
+        .page-sub { font-size: 14px; color: #888; margin-bottom: 24px; }
+        .subject-list { display: flex; flex-direction: column; gap: 12px; }
+        .subject-card {
+            background: white; border-radius: 14px; padding: 18px 20px;
+            cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 2px solid transparent; transition: all 0.2s;
+            display: flex; align-items: center; gap: 16px;
+        }
+        .subject-card:hover { border-color: #1a73e8; transform: translateX(4px); }
+        .subject-icon { font-size: 32px; width: 48px; text-align: center; }
+        .subject-info { flex: 1; }
+        .subject-name { font-size: 16px; font-weight: 700; }
+        .subject-chapters { font-size: 12px; color: #888; margin-top: 4px; }
+        .subject-arrow { color: #1a73e8; font-size: 22px; }
+        .loading { text-align: center; padding: 40px; color: #888; font-size: 15px; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #888; }
+        .empty-icon { font-size: 64px; margin-bottom: 16px; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #888; font-size: 11px; gap: 4px; }
+        .nav-item.active { color: #1a73e8; }
+        .nav-icon { font-size: 22px; }
+    </style>
+</head>
+<body>
+<header>
+    <button class="back-btn" onclick="window.location.href='years.html'">←</button>
+    <div class="header-title" id="headerTitle">Select Subject</div>
+</header>
+<div class="breadcrumb">
+    <span id="breadTrade">Trade</span> →
+    <span id="breadYear">Year</span> →
+    Subjects
+</div>
+<div class="ad-banner">📢 Advertisement</div>
+<main>
+    <div class="page-title" id="yearName">1st Year Subjects</div>
+    <div class="page-sub">Select a subject to practice</div>
+    <div class="subject-list" id="subjectList">
+        <div class="loading">⏳ Loading subjects...</div>
+    </div>
+</main>
+<nav class="bottom-nav">
+    <div class="nav-item active" onclick="window.location.href='index.html'"><span class="nav-icon">🏠</span><span>Home</span></div>
+    <div class="nav-item" onclick="window.location.href='results.html'"><span class="nav-icon">📊</span><span>Results</span></div>
+    <div class="nav-item" onclick="window.location.href='profile.html'"><span class="nav-icon">👤</span><span>Profile</span></div>
+</nav>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC0tkiVx89eNQJozHAUPBGRqonTB6M6ShE",
+    authDomain: "itistudies-4b277.firebaseapp.com",
+    projectId: "itistudies-4b277",
+    storageBucket: "itistudies-4b277.firebasestorage.app",
+    messagingSenderId: "549937347076",
+    appId: "1:549937347076:web:72231b8f1bde6c2dd15351",
+    measurementId: "G-HKW4C7Q81Z"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const trade = localStorage.getItem('selectedTrade') || '';
+const tradeName = localStorage.getItem('selectedTradeName') || 'Trade';
+const year = localStorage.getItem('selectedYear') || '1';
+const yearName = localStorage.getItem('selectedYearName') || '1st Year';
+
+document.getElementById('headerTitle').textContent = yearName + ' Subjects';
+document.getElementById('yearName').textContent = yearName + ' Subjects';
+document.getElementById('breadTrade').textContent = tradeName;
+document.getElementById('breadYear').textContent = yearName;
+
+const icons = ['📚','🔬','🔧','💡','📐','🖥️','⚡','🏭','📊','🔩'];
+
+async function loadSubjects() {
+    const list = document.getElementById('subjectList');
+    try {
+        const q = query(
+            collection(db, 'questions'),
+            where('trade', '==', trade),
+            where('year', '==', year)
+        );
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📚</div>
+                    <div>No subjects found yet!</div>
+                    <div style="font-size:13px;color:#aaa;margin-top:8px;">Questions will appear after admin uploads them</div>
+                </div>`;
+            return;
+        }
+
+        // Get unique subjects
+        const subjects = {};
+        snap.forEach(doc => {
+            const d = doc.data();
+            if (d.subject) {
+                if (!subjects[d.subject]) subjects[d.subject] = 0;
+                subjects[d.subject]++;
+            }
+        });
+
+        let html = '';
+        let i = 0;
+        Object.entries(subjects).forEach(([subject, count]) => {
+            html += `
+            <div class="subject-card" onclick="selectSubject('${subject}')">
+                <div class="subject-icon">${icons[i % icons.length]}</div>
+                <div class="subject-info">
+                    <div class="subject-name">${subject}</div>
+                    <div class="subject-chapters">${count} questions available</div>
+                </div>
+                <div class="subject-arrow">›</div>
+            </div>`;
+            i++;
+        });
+        list.innerHTML = html;
+
+    } catch(e) {
+        list.innerHTML = `<div class="loading">❌ Error loading subjects. Please try again.</div>`;
+        console.error(e);
+    }
+}
+
+window.selectSubject = function(subject) {
+    localStorage.setItem('selectedSubject', subject);
+    window.location.href = 'chapters.html';
+};
+
+loadSubjects();
+</script>
+</body>
+</html>
