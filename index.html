@@ -165,7 +165,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC0tkiVx89eNQJozHAUPBGRqonTB6M6ShE",
@@ -181,17 +181,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-
-// ── Handle Redirect Result (runs when Google sends user back) ──
-getRedirectResult(auth).then(result => {
-    if (result && result.user) {
-        showToast('Welcome, ' + result.user.displayName + '! 👋');
-    }
-}).catch(error => {
-    if (error.code !== 'auth/no-current-user') {
-        console.error('Redirect error:', error);
-    }
-});
 
 // ── Auth State ──
 onAuthStateChanged(auth, user => {
@@ -209,12 +198,9 @@ onAuthStateChanged(auth, user => {
 // ── Login ──
 window.handleLogin = async function() {
     try {
-        showToast('Redirecting to Google... ⏳');
-        setTimeout(async () => {
-            await signInWithRedirect(auth, provider);
-        }, 1000);
+        await signInWithPopup(auth, provider);
     } catch(e) {
-        showToast('Login error: ' + e.message);
+        showToast('Login error: ' + e.code);
     }
 };
 
