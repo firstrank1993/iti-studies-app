@@ -380,18 +380,6 @@ window.showToast = function(msg) {
     t.style.display = 'block';
     setTimeout(() => t.style.display = 'none', 3000);
 };
-window.checkLogin = function() {
-    const pwd = document.getElementById('adminPassword').value;
-    if (pwd === 'iti@admin2025') {
-        document.getElementById('loginSection').classList.add('hidden');
-        document.getElementById('adminPanel').classList.remove('hidden');
-        loadStats();
-        showToast('Welcome Admin! 👋');
-    } else {
-        showToast('Wrong password! ❌');
-        document.getElementById('adminPassword').value = '';
-    }
-};
 </script>
 </body>
 </html>
