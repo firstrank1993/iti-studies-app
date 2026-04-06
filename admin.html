@@ -119,7 +119,8 @@
         <div class="card-title">  Admin Login</div>
         <div class="login-form">
             <input type="password" class="input-field" id="adminPassword"
-                placeholder="Enter admin password" />
+                placeholder="Enter admin password"
+                onkeypress="if(event.key==='Enter') checkLogin()"/>
             <button class="btn btn-primary" onclick="checkLogin()">Login →</button>
         </div>
     </div>
