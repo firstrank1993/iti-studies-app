@@ -162,7 +162,8 @@
                 <tr><td>optionD</td><td>Option D</td><td>V=I*I</td></tr>
                 <tr><td>correct</td><td>Correct option (A/B/C/D)</td><td>A</td></tr>
                 <tr><td>explanation</td><td>Answer explanation</td><td>Ohm's law states...</td></tr>
-                <tr><td>trade</td><td>Trade name</td><td>electrician</td></tr>
+                <tr><td>trade</td><td>Trade name (lowercase)</td><td>electrician</td></tr>
+                <tr><td>year</td><td>Year (1 or 2)</td><td>1</td></tr>
                 <tr><td>subject</td><td>Subject name</td><td>Basic Electricity</td></tr>
                 <tr><td>chapter</td><td>Chapter name</td><td>Chapter 1</td></tr>
             </table>
@@ -329,14 +330,15 @@ window.uploadToFirebase = async function() {
             const correctMap = {A:0, B:1, C:2, D:3};
             await addDoc(collection(db, 'questions'), {
                 question: row.question || '',
-                options: [row.optionA, row.optionB, row.optionC, row.optionD],
-                correct: correctMap[row.correct?.toUpperCase()] ?? 0,
-                explanation: row.explanation || '',
-                trade: (row.trade || '').toLowerCase(),
-                subject: row.subject || '',
-                chapter: row.chapter || '',
-                createdAt: new Date().toISOString()
-            });
+                    options: [row.optionA, row.optionB, row.optionC, row.optionD],
+                    correct: correctMap[row.correct?.toUpperCase()] ?? 0,
+                    explanation: row.explanation || '',
+                    trade: (row.trade || '').toLowerCase().trim(),
+                    year: (row.year || '1').toString().trim(),
+                    subject: (row.subject || '').trim(),
+                    chapter: (row.chapter || '').trim(),
+                    createdAt: new Date().toISOString()
+                 });
             uploaded++;
             const pct = Math.round((uploaded/total)*100);
             document.getElementById('uploadProgress').style.width = pct + '%';
@@ -353,10 +355,10 @@ window.uploadToFirebase = async function() {
 
 // ── Download Sample CSV ──
 window.downloadSample = function() {
-    const csv = `question,optionA,optionB,optionC,optionD,correct,explanation,trade,subject,chapter
-What is the unit of resistance?,Ampere,Volt,Ohm,Watt,C,Ohm is the unit of resistance,electrician,Basic Electricity,Chapter 1
-What does MCB stand for?,Main Circuit Breaker,Miniature Circuit Breaker,Motor Control Board,Manual Circuit Box,B,MCB stands for Miniature Circuit Breaker,electrician,Basic Electricity,Chapter 1
-What is standard AC frequency in India?,50 Hz,60 Hz,100 Hz,25 Hz,A,India uses 50 Hz AC frequency,electrician,Basic Electricity,Chapter 1`;
+    const csv = `question,optionA,optionB,optionC,optionD,correct,explanation,trade,year,subject,chapter
+What is the unit of resistance?,Ampere,Volt,Ohm,Watt,C,Ohm is the unit of resistance,electrician,1,Basic Electricity,Chapter 1
+What does MCB stand for?,Main Circuit Breaker,Miniature Circuit Breaker,Motor Control Board,Manual Circuit Box,B,MCB stands for Miniature Circuit Breaker,electrician,1,Basic Electricity,Chapter 1
+What is standard AC frequency in India?,50 Hz,60 Hz,100 Hz,25 Hz,A,India uses 50 Hz AC frequency,electrician,1,Basic Electricity,Chapter 1
 
     const blob = new Blob([csv], {type:'text/csv'});
     const url = URL.createObjectURL(blob);
