@@ -258,6 +258,7 @@ document.getElementById('uploadBtn').addEventListener('click', async function() 
                 year: (row.year || '1').toString().trim(),
                 subject: (row.subject || '').trim(),
                 chapter: (row.chapter || '').trim(),
+                image: (row.image || '').trim(),
                 createdAt: new Date().toISOString()
             });
             uploaded++;
