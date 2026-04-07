@@ -285,6 +285,38 @@ document.getElementById('downloadBtn').addEventListener('click', function() {
     a.download = 'sample_questions.csv';
     a.click();
 });
+    // Image converter
+document.getElementById('imgDropArea').addEventListener('click', function() {
+    document.getElementById('imgFile').click();
+});
+
+document.getElementById('imgFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 200000) {
+        showToast('⚠️ Image too large! Please use image under 200KB');
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        const base64 = ev.target.result;
+        document.getElementById('imgPreview').src = base64;
+        document.getElementById('base64Output').textContent = base64;
+        document.getElementById('imgResult').style.display = 'block';
+        showToast('✅ Image converted! Copy the text below.');
+    };
+    reader.readAsDataURL(file);
+});
+
+document.getElementById('copyBase64Btn').addEventListener('click', function() {
+    const text = document.getElementById('base64Output').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        showToast('✅ Copied! Paste in your Excel image column.');
+    }).catch(() => {
+        document.getElementById('base64Output').select();
+        showToast('✅ Text selected — press Ctrl+C to copy!');
+    });
+});
 </script>
 </body>
 </html>
