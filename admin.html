@@ -273,10 +273,10 @@ document.getElementById('uploadBtn').addEventListener('click', async function() 
 });
 
 document.getElementById('downloadBtn').addEventListener('click', function() {
-    const csv = "question,optionA,optionB,optionC,optionD,correct,explanation,trade,year,subject,chapter\n" +
-        "What is the unit of resistance?,Ampere,Volt,Ohm,Watt,C,Ohm is the unit of resistance,electrician,1,Basic Electricity,Chapter 1\n" +
-        "What does MCB stand for?,Main Circuit Breaker,Miniature Circuit Breaker,Motor Control Board,Manual Circuit Box,B,MCB stands for Miniature Circuit Breaker,electrician,1,Basic Electricity,Chapter 1\n" +
-        "What is standard AC frequency in India?,50 Hz,60 Hz,100 Hz,25 Hz,A,India uses 50 Hz AC frequency,electrician,1,Basic Electricity,Chapter 1";
+    const csv = "question,optionA,optionB,optionC,optionD,correct,explanation,trade,year,subject,chapter,image\n" +
+        "What is the unit of resistance?,Ampere,Volt,Ohm,Watt,C,Ohm is the unit of resistance,electrician,1,Basic Electricity,Chapter 1,\n" +
+        "What does MCB stand for?,Main Circuit Breaker,Miniature Circuit Breaker,Motor Control Board,Manual Circuit Box,B,MCB stands for Miniature Circuit Breaker,electrician,1,Basic Electricity,Chapter 1,\n" +
+        "What is standard AC frequency in India?,50 Hz,60 Hz,100 Hz,25 Hz,A,India uses 50 Hz AC frequency,electrician,1,Basic Electricity,Chapter 1,";
     const blob = new Blob([csv], {type:'text/csv'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
