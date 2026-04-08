@@ -7,70 +7,83 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; }
-        header {
-            background: linear-gradient(135deg, #1a73e8, #0d47a1);
-            color: white; padding: 16px 20px;
-        }
-        .logo { font-size: 22px; font-weight: 700; }
+        header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+        .back-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .logo { font-size: 20px; font-weight: 700; }
         .logo span { color: #ffd600; }
-        main { max-width: 800px; margin: 30px auto; padding: 0 20px 60px; }
-        .card {
-            background: white; border-radius: 16px; padding: 32px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-        }
-        h1 { color: #1a73e8; font-size: 26px; margin-bottom: 8px; }
-        .updated { color: #888; font-size: 13px; margin-bottom: 24px; }
-        h2 { color: #1a73e8; font-size: 18px; margin: 24px 0 10px; }
-        p { font-size: 15px; line-height: 1.7; color: #555; margin-bottom: 12px; }
+        main { max-width: 800px; margin: 0 auto; padding: 24px 20px 80px; }
+        .page-header { background: white; border-radius: 16px; padding: 28px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; }
+        .page-icon { font-size: 48px; margin-bottom: 12px; }
+        .page-title { font-size: 24px; font-weight: 700; color: #1a73e8; }
+        .page-date { font-size: 13px; color: #888; margin-top: 6px; }
+        .card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 16px; }
+        .section-title { font-size: 17px; font-weight: 700; color: #1a73e8; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        p { font-size: 14px; line-height: 1.8; color: #555; margin-bottom: 10px; }
         a { color: #1a73e8; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #888; font-size: 11px; gap: 4px; }
+        .nav-item.active { color: #1a73e8; }
+        .nav-icon { font-size: 22px; }
     </style>
 </head>
 <body>
 <header>
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
     <div class="logo">ITI <span>Studies</span></div>
 </header>
 <main>
+    <div class="page-header">
+        <div class="page-icon">🔒</div>
+        <div class="page-title">Privacy Policy</div>
+        <div class="page-date">Last updated: April 2026</div>
+    </div>
+
     <div class="card">
-        <h1>Privacy Policy</h1>
-        <div class="updated">Last updated: April 2026</div>
+        <div class="section-title">👋 Welcome</div>
+        <p>Welcome to ITI Studies — a free MCQ practice platform for ITI students across Gujarat, India. We are committed to protecting your privacy and being transparent about how we use your data.</p>
+    </div>
 
-        <p>Welcome to ITI Studies. This Privacy Policy explains how we collect,
-        use, and protect your information when you use our MCQ practice application.</p>
+    <div class="card">
+        <div class="section-title">📋 Information We Collect</div>
+        <p>When you use ITI Studies, we may collect your name and email address if you choose to login with Google, your quiz scores and progress data to track your improvement, and general usage information to improve our service.</p>
+        <p>We do NOT collect sensitive personal information, financial data, or any information beyond what is needed to provide our service.</p>
+    </div>
 
-        <h2>1. Information We Collect</h2>
-        <p>When you use ITI Studies, we may collect: your name and email address
-        if you choose to login with Google, your quiz scores and progress data,
-        and general usage information to improve our service.</p>
+    <div class="card">
+        <div class="section-title">🎯 How We Use Your Information</div>
+        <p>We use your information to save your quiz progress across devices, show your performance history and results, improve our question bank and app features, and provide a personalized learning experience.</p>
+    </div>
 
-        <h2>2. How We Use Your Information</h2>
-        <p>We use your information to save your quiz progress across devices,
-        improve our question bank and app features, and provide a personalized
-        learning experience.</p>
+    <div class="card">
+        <div class="section-title">📢 Google AdSense & Cookies</div>
+        <p>ITI Studies uses Google AdSense to display advertisements. Google AdSense may use cookies to show relevant ads based on your interests. You can opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads">Google Ad Settings</a>.</p>
+    </div>
 
-        <h2>3. Google AdSense & Cookies</h2>
-        <p>ITI Studies uses Google AdSense to display advertisements. Google
-        AdSense may use cookies to show relevant ads based on your interests.
-        You can opt out of personalized advertising by visiting
-        <a href="https://www.google.com/settings/ads">Google Ad Settings</a>.</p>
+    <div class="card">
+        <div class="section-title">🔐 Third Party Services</div>
+        <p>We use Firebase by Google for authentication and data storage. Your data is stored securely on Google's servers as per their privacy standards. Please refer to Google's Privacy Policy for complete details.</p>
+    </div>
 
-        <h2>4. Third Party Services</h2>
-        <p>We use Firebase (by Google) for authentication and data storage.
-        Your data is stored securely on Google's servers as per their
-        privacy standards. Please refer to Google's Privacy Policy for details.</p>
+    <div class="card">
+        <div class="section-title">👶 Children's Privacy</div>
+        <p>ITI Studies is designed for students aged 14 and above. We do not knowingly collect personal information from children under 13 without parental consent.</p>
+    </div>
 
-        <h2>5. Data Security</h2>
-        <p>We take reasonable measures to protect your personal information.
-        However, no method of internet transmission is 100% secure.</p>
+    <div class="card">
+        <div class="section-title">🛡️ Data Security</div>
+        <p>We take reasonable measures to protect your personal information from unauthorized access, alteration, or disclosure. However, no method of internet transmission is 100% secure.</p>
+    </div>
 
-        <h2>6. Children's Privacy</h2>
-        <p>ITI Studies is designed for students aged 14 and above. We do not
-        knowingly collect personal information from children under 13.</p>
-
-        <h2>7. Contact Us</h2>
-        <p>If you have questions about this Privacy Policy, please contact us at:
-        <a href="mailto:firstrank1993@gmail.com">firstrank1993@gmail.com</a></p>
+    <div class="card">
+        <div class="section-title">📞 Contact Us</div>
+        <p>If you have any questions about this Privacy Policy, please contact us at: <a href="mailto:firstrank1993@gmail.com">firstrank1993@gmail.com</a></p>
+        <p>You can also visit our <a href="contact.html">Contact Us</a> page.</p>
     </div>
 </main>
+<nav class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='index.html'"><span class="nav-icon">🏠</span><span>Home</span></div>
+    <div class="nav-item" onclick="window.location.href='results.html'"><span class="nav-icon">📊</span><span>Results</span></div>
+    <div class="nav-item" onclick="window.location.href='profile.html'"><span class="nav-icon">👤</span><span>Profile</span></div>
+</nav>
 </body>
 </html>
-
