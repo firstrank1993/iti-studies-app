@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - ITI Studies</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; }
+        header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+        .back-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .logo { font-size: 20px; font-weight: 700; }
+        .logo span { color: #ffd600; }
+        main { max-width: 800px; margin: 0 auto; padding: 24px 20px 80px; }
+        .hero-card {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            border-radius: 20px; padding: 40px 24px;
+            text-align: center; color: white; margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(26,115,232,0.3);
+        }
+        .hero-icon { font-size: 64px; margin-bottom: 16px; }
+        .hero-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .hero-title span { color: #ffd600; }
+        .hero-sub { font-size: 15px; opacity: 0.9; line-height: 1.6; }
+        .card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 16px; }
+        .section-title { font-size: 18px; font-weight: 700; color: #1a73e8; margin-bottom: 16px; }
+        p { font-size: 14px; line-height: 1.8; color: #555; margin-bottom: 10px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: white; border-radius: 14px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .stat-num { font-size: 28px; font-weight: 700; color: #1a73e8; }
+        .stat-lbl { font-size: 12px; color: #888; margin-top: 4px; }
+        .feature-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+        .feature-icon { font-size: 32px; flex-shrink: 0; }
+        .feature-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+        .feature-desc { font-size: 13px; color: #666; line-height: 1.6; }
+        .trade-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+        .trade-item { background: #e8f0fe; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-weight: 600; color: #1a73e8; display: flex; align-items: center; gap: 8px; }
+        .mission-card { background: linear-gradient(135deg, #e8f0fe, #f0f4f8); border-radius: 16px; padding: 24px; border-left: 4px solid #1a73e8; margin-bottom: 16px; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #888; font-size: 11px; gap: 4px; }
+        .nav-item.active { color: #1a73e8; }
+        .nav-icon { font-size: 22px; }
+        .link-btn { display: inline-block; background: #1a73e8; color: white; padding: 10px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; text-decoration: none; margin: 4px; }
+        .link-btn-outline { display: inline-block; background: transparent; color: #1a73e8; border: 2px solid #1a73e8; padding: 10px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; text-decoration: none; margin: 4px; }
+    </style>
+</head>
+<body>
+<header>
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+    <div class="logo">ITI <span>Studies</span></div>
+</header>
+<main>
+    <!-- Hero -->
+    <div class="hero-card">
+        <div class="hero-icon">🎓</div>
+        <div class="hero-title">ITI <span>Studies</span></div>
+        <div class="hero-sub">Gujarat's #1 Free MCQ Practice Platform for ITI Students</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-num">2000+</div>
+            <div class="stat-lbl">Questions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">14</div>
+            <div class="stat-lbl">Trades</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">FREE</div>
+            <div class="stat-lbl">Forever</div>
+        </div>
+    </div>
+
+    <!-- Mission -->
+    <div class="mission-card">
+        <div class="section-title">🎯 Our Mission</div>
+        <p>ITI Studies was created with one simple goal — to help ITI students across Gujarat prepare better for their exams using free, high-quality MCQ practice material available anytime, anywhere on their mobile phones.</p>
+        <p>We believe every student deserves access to good study material, regardless of their financial situation. That's why ITI Studies is and will always be <strong>100% FREE</strong>.</p>
+    </div>
+
+    <!-- Features -->
+    <div class="card">
+        <div class="section-title">✨ What We Offer</div>
+        <div class="feature-item">
+            <div class="feature-icon">📝</div>
+            <div>
+                <div class="feature-title">Chapter-wise MCQ Practice</div>
+                <div class="feature-desc">Practice questions organized by trade, year, subject and chapter for focused preparation.</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">⏱️</div>
+            <div>
+                <div class="feature-title">Multiple Quiz Modes</div>
+                <div class="feature-desc">Practice mode, Exam mode, Mock exam and Quick 10 — choose how you want to study!</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🖼️</div>
+            <div>
+                <div class="feature-title">Image-based Questions</div>
+                <div class="feature-desc">Identify machine parts, tools and diagrams with our visual MCQ questions.</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🌐</div>
+            <div>
+                <div class="feature-title">3 Language Support</div>
+                <div class="feature-desc">Study in English, Hindi or Gujarati — your choice!</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <div>
+                <div class="feature-title">Track Your Progress</div>
+                <div class="feature-desc">Login with Google to save your scores and track improvement over time.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trades -->
+    <div class="card">
+        <div class="section-title">🔧 Trades We Cover</div>
+        <div class="trade-grid">
+            <div class="trade-item">⚡ Electrician</div>
+            <div class="trade-item">🔌 Wireman</div>
+            <div class="trade-item">🔧 Fitter</div>
+            <div class="trade-item">🏭 Machinist</div>
+            <div class="trade-item">⚙️ Turner</div>
+            <div class="trade-item">🔥 Welder</div>
+            <div class="trade-item">🚛 Diesel Mechanic</div>
+            <div class="trade-item">🚗 Mechanic MV</div>
+            <div class="trade-item">💻 COPA</div>
+            <div class="trade-item">📐 Draughtsman Civil</div>
+            <div class="trade-item">❄️ RAC</div>
+            <div class="trade-item">✈️ AOCP</div>
+            <div class="trade-item">👗 Dress Making</div>
+            <div class="trade-item">🧵 Sewing Technology</div>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="card" style="text-align:center;">
+        <div class="section-title" style="justify-content:center;">🚀 Get Started Today!</div>
+        <p>Join thousands of ITI students already using ITI Studies to ace their exams!</p>
+        <div style="margin-top:16px;">
+            <a href="index.html" class="link-btn">Start Practicing Now</a>
+            <a href="contact.html" class="link-btn-outline">Contact Us</a>
+        </div>
+    </div>
+</main>
+<nav class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='index.html'"><span class="nav-icon">🏠</span><span>Home</span></div>
+    <div class="nav-item" onclick="window.location.href='results.html'"><span class="nav-icon">📊</span><span>Results</span></div>
+    <div class="nav-item" onclick="window.location.href='profile.html'"><span class="nav-icon">👤</span><span>Profile</span></div>
+</nav>
+</body>
+</html>
