@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - ITI Studies</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; }
+        header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+        .back-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .logo { font-size: 20px; font-weight: 700; }
+        .logo span { color: #ffd600; }
+        main { max-width: 800px; margin: 0 auto; padding: 24px 20px 80px; }
+        .page-header { background: linear-gradient(135deg, #1a73e8, #0d47a1); border-radius: 20px; padding: 32px 24px; text-align: center; color: white; margin-bottom: 20px; }
+        .page-icon { font-size: 48px; margin-bottom: 12px; }
+        .page-title { font-size: 24px; font-weight: 700; }
+        .page-sub { font-size: 14px; opacity: 0.9; margin-top: 6px; }
+        .card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 16px; }
+        .section-title { font-size: 18px; font-weight: 700; color: #1a73e8; margin-bottom: 16px; }
+        .contact-item { display: flex; align-items: center; gap: 16px; padding: 16px; background: #f8f9ff; border-radius: 12px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+        .contact-item:hover { border-color: #1a73e8; background: #e8f0fe; }
+        .contact-icon { font-size: 32px; width: 48px; text-align: center; }
+        .contact-info { flex: 1; }
+        .contact-title { font-weight: 700; font-size: 15px; }
+        .contact-value { font-size: 13px; color: #1a73e8; margin-top: 3px; }
+        .contact-desc { font-size: 12px; color: #888; margin-top: 2px; }
+        .form-group { margin-bottom: 16px; }
+        .form-label { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 6px; display: block; }
+        .form-input { width: 100%; padding: 12px 16px; border: 2px solid #e0e8ff; border-radius: 10px; font-size: 14px; outline: none; font-family: 'Segoe UI', sans-serif; }
+        .form-input:focus { border-color: #1a73e8; }
+        textarea.form-input { min-height: 120px; resize: vertical; }
+        .submit-btn { width: 100%; background: #1a73e8; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+        .submit-btn:hover { background: #0d47a1; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 999; display: none; }
+        .social-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+        .social-btn { background: #f8f9ff; border: 2px solid #e0e8ff; border-radius: 12px; padding: 14px; text-align: center; cursor: pointer; transition: all 0.2s; text-decoration: none; display: block; }
+        .social-btn:hover { border-color: #1a73e8; background: #e8f0fe; }
+        .social-icon { font-size: 28px; margin-bottom: 6px; }
+        .social-name { font-size: 13px; font-weight: 600; color: #333; }
+        .faq-item { border-bottom: 1px solid #e0e8ff; padding: 14px 0; }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-q { font-weight: 700; font-size: 14px; color: #333; margin-bottom: 6px; }
+        .faq-a { font-size: 13px; color: #666; line-height: 1.6; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #888; font-size: 11px; gap: 4px; }
+        .nav-item.active { color: #1a73e8; }
+        .nav-icon { font-size: 22px; }
+    </style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<header>
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+    <div class="logo">ITI <span>Studies</span></div>
+</header>
+<main>
+    <!-- Header -->
+    <div class="page-header">
+        <div class="page-icon">📞</div>
+        <div class="page-title">Contact Us</div>
+        <div class="page-sub">We'd love to hear from you!</div>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="card">
+        <div class="section-title">📬 Get In Touch</div>
+        <div class="contact-item" onclick="window.location.href='mailto:firstrank1993@gmail.com'">
+            <div class="contact-icon">📧</div>
+            <div class="contact-info">
+                <div class="contact-title">Email Us</div>
+                <div class="contact-value">firstrank1993@gmail.com</div>
+                <div class="contact-desc">We reply within 24 hours</div>
+            </div>
+        </div>
+        <div class="contact-item" onclick="window.location.href='https://wa.me/91XXXXXXXXXX'">
+            <div class="contact-icon">💬</div>
+            <div class="contact-info">
+                <div class="contact-title">WhatsApp</div>
+                <div class="contact-value">+91 XXXXXXXXXX</div>
+                <div class="contact-desc">Mon-Sat, 9AM to 6PM</div>
+            </div>
+        </div>
+        <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div class="contact-info">
+                <div class="contact-title">Location</div>
+                <div class="contact-value">Gujarat, India</div>
+                <div class="contact-desc">Serving ITI students across Gujarat</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Message Form -->
+    <div class="card">
+        <div class="section-title">✉️ Send Us a Message</div>
+        <div class="form-group">
+            <label class="form-label">Your Name</label>
+            <input type="text" class="form-input" id="contactName" placeholder="Enter your name" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" id="contactEmail" placeholder="Enter your email" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">Subject</label>
+            <input type="text" class="form-input" id="contactSubject" placeholder="e.g. Question about Electrician trade" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea class="form-input" id="contactMessage" placeholder="Write your message here..."></textarea>
+        </div>
+        <button class="submit-btn" id="submitBtn">📤 Send Message</button>
+    </div>
+
+    <!-- FAQ -->
+    <div class="card">
+        <div class="section-title">❓ Frequently Asked Questions</div>
+        <div class="faq-item">
+            <div class="faq-q">Is ITI Studies completely free?</div>
+            <div class="faq-a">Yes! ITI Studies is 100% free for all students. We earn through ads to keep the platform running.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">Which trades are available?</div>
+            <div class="faq-a">We currently cover 14 trades including Electrician, Fitter, Welder, COPA, Turner, Wireman and more.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">How do I save my progress?</div>
+            <div class="faq-a">Simply login with your Google account from the home page to save your quiz results and track progress.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">Can I suggest new questions?</div>
+            <div class="faq-a">Yes! Send us your suggested questions via email or WhatsApp and we'll review and add them.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">Is the app available in Gujarati?</div>
+            <div class="faq-a">Yes! The app supports English, Hindi and Gujarati languages. Use the language buttons at the top.</div>
+        </div>
+    </div>
+</main>
+
+<nav class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='index.html'"><span class="nav-icon">🏠</span><span>Home</span></div>
+    <div class="nav-item" onclick="window.location.href='results.html'"><span class="nav-icon">📊</span><span>Results</span></div>
+    <div class="nav-item" onclick="window.location.href='profile.html'"><span class="nav-icon">👤</span><span>Profile</span></div>
+</nav>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC0tkiVx89eNQJozHAUPBGRqonTB6M6ShE",
+    authDomain: "itistudies-4b277.firebaseapp.com",
+    projectId: "itistudies-4b277",
+    storageBucket: "itistudies-4b277.firebasestorage.app",
+    messagingSenderId: "549937347076",
+    appId: "1:549937347076:web:72231b8f1bde6c2dd15351",
+    measurementId: "G-HKW4C7Q81Z"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+}
+
+document.getElementById('submitBtn').addEventListener('click', async function() {
+    const name = document.getElementById('contactName').value.trim();
+    const email = document.getElementById('contactEmail').value.trim();
+    const subject = document.getElementById('contactSubject').value.trim();
+    const message = document.getElementById('contactMessage').value.trim();
+
+    if (!name || !email || !message) {
+        showToast('⚠️ Please fill all required fields!');
+        return;
+    }
+
+    try {
+        await addDoc(collection(db, 'contacts'), {
+            name, email, subject, message,
+            date: new Date().toISOString()
+        });
+        showToast('✅ Message sent successfully!');
+        document.getElementById('contactName').value = '';
+        document.getElementById('contactEmail').value = '';
+        document.getElementById('contactSubject').value = '';
+        document.getElementById('contactMessage').value = '';
+    } catch(e) {
+        showToast('❌ Error sending message. Try email directly.');
+    }
+});
+</script>
+</body>
+</html>
