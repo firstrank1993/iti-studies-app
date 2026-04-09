@@ -40,15 +40,33 @@
 <body>
 <header><div class="logo">ITI <span>Studies</span></div></header>
 <main>
-    <!-- Guest View -->
-    <div id="guestView">
-        <div class="login-card">
-            <div class="login-icon"> </div>
-            <div style="font-size:20px;font-weight:700;margin-bottom:8px;">Login to Your Account</div>
-            <div style="font-size:14px;color:#888;margin-bottom:24px;">Save progress, track results and access all features!</div>
-            <button class="login-btn" onclick="handleLogin()">  Login with Google</button>
+   <!-- Guest View -->
+<div id="guestView">
+    <div class="login-card">
+        <div class="login-icon">👤</div>
+        <div style="font-size:20px;font-weight:700;margin-bottom:8px;">Login to Your Account</div>
+        <div style="font-size:14px;color:#888;margin-bottom:24px;">Save progress, track results and access all features!</div>
+        <button class="login-btn" onclick="handleLogin()">🔐 Login with Google</button>
+    </div>
+    <!-- Info Links for Guests -->
+    <div class="menu-card" style="margin-top:16px;">
+        <div class="menu-item" onclick="window.location.href='about.html'">
+            <div class="menu-icon">ℹ️</div>
+            <div class="menu-text"><div class="menu-title">About Us</div><div class="menu-sub">Learn about ITI Studies</div></div>
+            <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-item" onclick="window.location.href='contact.html'">
+            <div class="menu-icon">📞</div>
+            <div class="menu-text"><div class="menu-title">Contact Us</div><div class="menu-sub">Get in touch with us</div></div>
+            <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-item" onclick="window.location.href='privacy.html'">
+            <div class="menu-icon">🔒</div>
+            <div class="menu-text"><div class="menu-title">Privacy Policy</div><div class="menu-sub">How we use your data</div></div>
+            <div class="menu-arrow">›</div>
         </div>
     </div>
+</div>
     <!-- Logged In View -->
     <div id="userView" style="display:none">
         <div class="profile-card">
