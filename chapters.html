@@ -112,13 +112,18 @@ document.getElementById('breadSubject').textContent = subject;
 async function loadChapters() {
     const list = document.getElementById('chapterList');
     try {
-        const q = query(
-            collection(db, 'questions'),
-            where('trade', '==', trade),
-            where('year', '==', year),
-            where('subject', '==', subject)
-        );
-        const snap = await getDocs(q);
+        const [snap1, snap2] = await Promise.all([
+    getDocs(query(collection(db, 'questions'),
+        where('trade', '==', trade),
+        where('year', '==', year),
+        where('subject', '==', subject))),
+    getDocs(query(collection(db, 'questions'),
+        where('trade', '==', 'common'),
+        where('year', '==', year),
+        where('subject', '==', subject)))
+]);
+const snap = { docs: [...snap1.docs, ...snap2.docs], empty: snap1.empty && snap2.empty };
+snap.forEach = (fn) => snap.docs.forEach(fn);
 
         if (snap.empty) {
             list.innerHTML = `
