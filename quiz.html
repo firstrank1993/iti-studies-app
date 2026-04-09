@@ -174,26 +174,36 @@ async function loadQuestions() {
     const info = document.getElementById('questionCountInfo');
     info.textContent = '⏳ Loading questions...';
     try {
-        let q;
-        if (chapter === 'ALL') {
-            q = query(
-                collection(db, 'questions'),
-                where('trade', '==', trade),
-                where('year', '==', year),
-                where('subject', '==', subject)
-            );
-        } else {
-            q = query(
-                collection(db, 'questions'),
-                where('trade', '==', trade),
-                where('year', '==', year),
-                where('subject', '==', subject),
-                where('chapter', '==', chapter)
-            );
-        }
-        const snap = await getDocs(q);
-        allQuestions = [];
-        snap.forEach(doc => allQuestions.push({id: doc.id, ...doc.data()}));
+       let snap1, snap2;
+if (chapter === 'ALL') {
+    [snap1, snap2] = await Promise.all([
+        getDocs(query(collection(db, 'questions'),
+            where('trade', '==', trade),
+            where('year', '==', year),
+            where('subject', '==', subject))),
+        getDocs(query(collection(db, 'questions'),
+            where('trade', '==', 'common'),
+            where('year', '==', year),
+            where('subject', '==', subject)))
+    ]);
+} else {
+    [snap1, snap2] = await Promise.all([
+        getDocs(query(collection(db, 'questions'),
+            where('trade', '==', trade),
+            where('year', '==', year),
+            where('subject', '==', subject),
+            where('chapter', '==', chapter))),
+        getDocs(query(collection(db, 'questions'),
+            where('trade', '==', 'common'),
+            where('year', '==', year),
+            where('subject', '==', subject),
+            where('chapter', '==', chapter)))
+    ]);
+}
+allQuestions = [];
+[...snap1.docs, ...snap2.docs].forEach(doc => 
+    allQuestions.push({id: doc.id, ...doc.data()})
+);
 
         if (allQuestions.length === 0) {
             info.textContent = '❌ No questions found for this chapter yet. Please check back later!';
