@@ -280,6 +280,7 @@ const translations = {
 };
 
 window.setLang = function(lang, btn) {
+    localStorage.setItem('selectedLang', lang);
     const t = translations[lang];
     document.getElementById('hero-title').textContent = t.heroTitle;
     document.getElementById('hero-sub').textContent = t.heroSub;
@@ -295,6 +296,11 @@ window.setLang = function(lang, btn) {
     btn.classList.add('active');
 };
 
+// Restore saved language on page load
+const savedLang = localStorage.getItem('selectedLang') || 'en';
+const activeLangBtn = document.querySelector('.lang-btn[onclick*="' + savedLang + '"]');
+if (activeLangBtn) setLang(savedLang, activeLangBtn);
+    
 loadTrades();
 </script>
 </body>
