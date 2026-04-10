@@ -7,15 +7,15 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; }
-        header {
-            background: linear-gradient(135deg, #1a73e8, #0d47a1);
-            color: white; padding: 14px 20px;
-            display: flex; align-items: center; gap: 12px;
-        }
+        header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
         .back-btn { background: none; border: none; color: white; font-size: 22px; cursor: pointer; }
         .header-title { font-size: 18px; font-weight: 600; flex: 1; }
         .timer { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 600; }
         .timer.warning { background: #ff5252; }
+        .lang-bar { background: #0d47a1; padding: 6px 20px; display: flex; gap: 8px; align-items: center; }
+        .lang-bar span { color: rgba(255,255,255,0.7); font-size: 12px; }
+        .lang-btn-quiz { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 3px 10px; border-radius: 12px; cursor: pointer; font-size: 12px; }
+        .lang-btn-quiz.active { background: #ffd600; color: #333; font-weight: 600; }
         .progress-bar { height: 6px; background: #e0e0e0; }
         .progress-fill { height: 100%; background: #1a73e8; transition: width 0.3s ease; }
         .quiz-info { display: flex; justify-content: space-between; padding: 10px 20px; background: white; font-size: 13px; color: #666; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
@@ -25,6 +25,7 @@
         .question-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 16px; }
         .question-number { font-size: 12px; color: #1a73e8; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; }
         .question-text { font-size: 17px; font-weight: 600; line-height: 1.5; margin-bottom: 24px; }
+        .translating { font-size: 13px; color: #888; font-style: italic; }
         .options-grid { display: flex; flex-direction: column; gap: 12px; }
         .option-btn { background: #f8f9ff; border: 2px solid #e0e8ff; border-radius: 12px; padding: 14px 18px; text-align: left; cursor: pointer; font-size: 15px; transition: all 0.2s; display: flex; align-items: center; gap: 12px; }
         .option-btn:hover { border-color: #1a73e8; background: #e8f0fe; }
@@ -64,19 +65,26 @@
 <header>
     <button class="back-btn" onclick="goBack()">←</button>
     <div class="header-title" id="headerTitle">Quiz</div>
-    <div style="display:flex;gap:4px;" id="langSwitcher">
-    <button onclick="switchLang('en')" id="btnEn" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:3px 8px;border-radius:12px;cursor:pointer;font-size:12px;">EN</button>
-    <button onclick="switchLang('gu')" id="btnGu" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:3px 8px;border-radius:12px;cursor:pointer;font-size:12px;">ગુ</button>
-</div>
     <div class="timer" id="timer" style="display:none">⏱ 00:00</div>
 </header>
+
+<!-- Language Bar -->
+<div class="lang-bar">
+    <span>Language:</span>
+    <button class="lang-btn-quiz" id="btnEn" onclick="switchLang('en')">EN</button>
+    <button class="lang-btn-quiz" id="btnHi" onclick="switchLang('hi')">हि</button>
+    <button class="lang-btn-quiz" id="btnGu" onclick="switchLang('gu')">ગુ</button>
+</div>
+
 <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
 <div class="quiz-info" id="quizInfo" style="display:none">
     <span class="question-count" id="questionCount">Question 1 of 10</span>
     <span id="scoreInfo">Score: 0</span>
 </div>
+
 <main>
     <div class="ad-banner">📢 Advertisement</div>
+
     <div class="mode-selector" id="modeSelector">
         <div class="mode-title" id="chapterTitle">📖 Select Quiz Mode</div>
         <div class="mode-grid">
@@ -103,12 +111,13 @@
         </div>
         <div class="loading" id="questionCountInfo" style="padding:16px;font-size:14px;color:#1a73e8;"></div>
     </div>
+
     <div class="question-card" id="questionCard" style="display:none">
-       <div class="question-number" id="questionNumber">Question 1</div>
-<div id="questionImage" style="display:none;margin-bottom:16px;">
-    <img id="qImage" style="max-width:100%;border-radius:12px;border:2px solid #e0e8ff;" />
-</div>
-<div class="question-text" id="questionText">Loading...</div>
+        <div class="question-number" id="questionNumber">Question 1</div>
+        <div id="questionImage" style="display:none;margin-bottom:16px;">
+            <img id="qImage" style="max-width:100%;border-radius:12px;border:2px solid #e0e8ff;" />
+        </div>
+        <div class="question-text" id="questionText">Loading...</div>
         <div class="options-grid" id="optionsGrid"></div>
         <div class="explanation" id="explanation"></div>
         <div class="nav-buttons">
@@ -116,6 +125,7 @@
             <button class="nav-btn btn-next" id="nextBtn" onclick="nextQuestion()" style="display:none">Next ➡</button>
         </div>
     </div>
+
     <div class="score-card" id="scoreCard">
         <div class="score-emoji" id="scoreEmoji">🎉</div>
         <div class="score-number" id="scoreNumber">0%</div>
@@ -150,12 +160,12 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 const trade = localStorage.getItem('selectedTrade') || '';
-let currentLang = localStorage.getItem('selectedLang') || 'en';    
 const tradeName = localStorage.getItem('selectedTradeName') || 'Quiz';
 const year = localStorage.getItem('selectedYear') || '1';
 const subject = localStorage.getItem('selectedSubject') || '';
 const chapter = localStorage.getItem('selectedChapter') || '';
 const chapterName = localStorage.getItem('selectedChapterName') || 'Practice';
+let currentLang = localStorage.getItem('selectedLang') || 'en';
 
 document.getElementById('headerTitle').textContent = chapterName;
 document.getElementById('chapterTitle').textContent = '📖 ' + chapterName;
@@ -171,83 +181,105 @@ let timerInterval = null;
 let timeLeft = 0;
 let answered = false;
 let currentUser = null;
+let translationCache = {};
 
 onAuthStateChanged(auth, user => { currentUser = user; });
 
-// Load questions from Firebase
+// ── Translation ──
+async function translateText(text, targetLang) {
+    if (!text || targetLang === 'en') return text;
+    const cacheKey = text + '_' + targetLang;
+    if (translationCache[cacheKey]) return translationCache[cacheKey];
+    try {
+        const langCode = targetLang === 'gu' ? 'gu' : 'hi';
+        const url = 'https://api.mymemory.translated.net/get?q=' +
+            encodeURIComponent(text) + '&langpair=en|' + langCode;
+        const res = await fetch(url);
+        const data = await res.json();
+        const translated = data.responseData.translatedText || text;
+        translationCache[cacheKey] = translated;
+        return translated;
+    } catch(e) {
+        return text;
+    }
+}
+
+// ── Language Switcher ──
+function updateLangButtons() {
+    document.getElementById('btnEn').className = 'lang-btn-quiz' + (currentLang === 'en' ? ' active' : '');
+    document.getElementById('btnHi').className = 'lang-btn-quiz' + (currentLang === 'hi' ? ' active' : '');
+    document.getElementById('btnGu').className = 'lang-btn-quiz' + (currentLang === 'gu' ? ' active' : '');
+}
+
+window.switchLang = function(lang) {
+    currentLang = lang;
+    localStorage.setItem('selectedLang', lang);
+    updateLangButtons();
+    if (document.getElementById('questionCard').style.display !== 'none') {
+        showQuestion();
+    }
+};
+
+updateLangButtons();
+
+// ── Load Questions ──
 async function loadQuestions() {
     const info = document.getElementById('questionCountInfo');
     info.textContent = '⏳ Loading questions...';
     try {
-       let snap1, snap2;
-if (chapter === 'ALL') {
-    [snap1, snap2] = await Promise.all([
-        getDocs(query(collection(db, 'questions'),
-            where('trade', '==', trade),
-            where('year', '==', year),
-            where('subject', '==', subject))),
-        getDocs(query(collection(db, 'questions'),
-            where('trade', '==', 'common'),
-            where('year', '==', year),
-            where('subject', '==', subject)))
-    ]);
-} else {
-    [snap1, snap2] = await Promise.all([
-        getDocs(query(collection(db, 'questions'),
-            where('trade', '==', trade),
-            where('year', '==', year),
-            where('subject', '==', subject),
-            where('chapter', '==', chapter))),
-        getDocs(query(collection(db, 'questions'),
-            where('trade', '==', 'common'),
-            where('year', '==', year),
-            where('subject', '==', subject),
-            where('chapter', '==', chapter)))
-    ]);
-}
-allQuestions = [];
-[...snap1.docs, ...snap2.docs].forEach(doc => 
-    allQuestions.push({id: doc.id, ...doc.data()})
-);
-
-        if (allQuestions.length === 0) {
-            info.textContent = '❌ No questions found for this chapter yet. Please check back later!';
+        let snap1, snap2;
+        if (chapter === 'ALL') {
+            [snap1, snap2] = await Promise.all([
+                getDocs(query(collection(db, 'questions'),
+                    where('trade', '==', trade),
+                    where('year', '==', year),
+                    where('subject', '==', subject))),
+                getDocs(query(collection(db, 'questions'),
+                    where('trade', '==', 'common'),
+                    where('year', '==', year),
+                    where('subject', '==', subject)))
+            ]);
         } else {
-            info.textContent = `✅ ${allQuestions.length} questions available — Select a mode to start!`;
+            [snap1, snap2] = await Promise.all([
+                getDocs(query(collection(db, 'questions'),
+                    where('trade', '==', trade),
+                    where('year', '==', year),
+                    where('subject', '==', subject),
+                    where('chapter', '==', chapter))),
+                getDocs(query(collection(db, 'questions'),
+                    where('trade', '==', 'common'),
+                    where('year', '==', year),
+                    where('subject', '==', subject),
+                    where('chapter', '==', chapter)))
+            ]);
+        }
+        allQuestions = [];
+        [...snap1.docs, ...snap2.docs].forEach(doc =>
+            allQuestions.push({id: doc.id, ...doc.data()})
+        );
+        if (allQuestions.length === 0) {
+            info.textContent = '❌ No questions found yet!';
+        } else {
+            info.textContent = '✅ ' + allQuestions.length + ' questions — Select a mode!';
         }
     } catch(e) {
-        info.textContent = '❌ Error loading questions. Please try again.';
+        info.textContent = '❌ Error loading. Please try again.';
         console.error(e);
     }
 }
 
 window.startQuiz = function(selectedMode) {
-    if (allQuestions.length === 0) {
-        alert('No questions available yet!');
-        return;
-    }
+    if (allQuestions.length === 0) { alert('No questions available!'); return; }
     mode = selectedMode;
-    questions = [...allQuestions];
-
-    // Shuffle questions
-    questions.sort(() => Math.random() - 0.5);
-
-    // Limit questions for quick mode
+    questions = [...allQuestions].sort(() => Math.random() - 0.5);
     if (mode === 'quick') questions = questions.slice(0, 10);
     if (mode === 'mock') questions = questions.slice(0, 50);
-
-    currentIndex = 0;
-    score = 0;
-    skipped = 0;
-    wrong = 0;
-
+    currentIndex = 0; score = 0; skipped = 0; wrong = 0;
     document.getElementById('modeSelector').style.display = 'none';
     document.getElementById('questionCard').style.display = 'block';
     document.getElementById('quizInfo').style.display = 'flex';
-
-    const titles = { practice:'📖 Practice', exam:'⏱️ Exam Mode', mock:'🏆 Mock Exam', quick:'⚡ Quick 10' };
+    const titles = { practice:'📖 Practice', exam:'⏱️ Exam', mock:'🏆 Mock', quick:'⚡ Quick 10' };
     document.getElementById('headerTitle').textContent = titles[mode];
-
     if (mode === 'exam' || mode === 'mock') {
         timeLeft = questions.length * 60;
         document.getElementById('timer').style.display = 'block';
@@ -256,7 +288,7 @@ window.startQuiz = function(selectedMode) {
     showQuestion();
 };
 
-function showQuestion() {
+async function showQuestion() {
     if (currentIndex >= questions.length) { showResults(); return; }
     answered = false;
     const q = questions[currentIndex];
@@ -265,32 +297,47 @@ function showQuestion() {
     document.getElementById('questionNumber').textContent = 'Question ' + (currentIndex + 1);
     document.getElementById('questionCount').textContent = 'Question ' + (currentIndex + 1) + ' of ' + questions.length;
     document.getElementById('scoreInfo').textContent = 'Score: ' + score;
-   // Show question in selected language
-const isGu = currentLang === 'gu';
-document.getElementById('questionText').textContent = 
-    (isGu && q.question_gu) ? q.question_gu : q.question;
-
-// Show options in selected language
-const opts = (isGu && q.options_gu && q.options_gu.length) ? q.options_gu : q.options;
     document.getElementById('explanation').style.display = 'none';
     document.getElementById('nextBtn').style.display = 'none';
 
-// Show image if question has one
-if (q.image && q.image.trim() !== '') {
-    document.getElementById('qImage').src = q.image;
-    document.getElementById('questionImage').style.display = 'block';
-} else {
-    document.getElementById('questionImage').style.display = 'none';
+    // Show image if exists
+    if (q.image && q.image.trim()) {
+        document.getElementById('qImage').src = q.image;
+        document.getElementById('questionImage').style.display = 'block';
+    } else {
+        document.getElementById('questionImage').style.display = 'none';
+    }
+
+    // Show question with translation if needed
+    if (currentLang !== 'en') {
+        document.getElementById('questionText').textContent = '⏳ Translating...';
+        document.getElementById('optionsGrid').innerHTML = '<div style="text-align:center;padding:20px;color:#888;">⏳ Loading...</div>';
+
+        const [transQ, ...transOpts] = await Promise.all([
+            translateText(q.question, currentLang),
+            translateText(q.options[0], currentLang),
+            translateText(q.options[1], currentLang),
+            translateText(q.options[2], currentLang),
+            translateText(q.options[3], currentLang)
+        ]);
+
+        document.getElementById('questionText').textContent = transQ;
+        renderOptions(transOpts, q.correct);
+    } else {
+        document.getElementById('questionText').textContent = q.question;
+        renderOptions(q.options, q.correct);
+    }
 }
 
+function renderOptions(opts, correct) {
     const labels = ['A','B','C','D'];
-let html = '';
-opts.forEach((opt, i) => {
-    html += `<button class="option-btn" onclick="selectAnswer(${i})" id="opt${i}">
-        <span class="option-label">${labels[i]}</span>
-        <span>${opt}</span>
-    </button>`;
-});
+    let html = '';
+    opts.forEach((opt, i) => {
+        html += `<button class="option-btn" onclick="selectAnswer(${i})" id="opt${i}">
+            <span class="option-label">${labels[i]}</span>
+            <span>${opt}</span>
+        </button>`;
+    });
     document.getElementById('optionsGrid').innerHTML = html;
 }
 
@@ -304,19 +351,24 @@ window.selectAnswer = function(selected) {
     if (selected === q.correct) { score++; }
     else { wrong++; buttons[selected].classList.add('wrong'); }
     document.getElementById('scoreInfo').textContent = 'Score: ' + score;
+
     if (mode === 'practice' || mode === 'quick') {
         const exp = document.getElementById('explanation');
-        const expText = (isGu && q.explanation_gu) ? q.explanation_gu : (q.explanation || 'No explanation available.');
-        exp.textContent = '💡 ' + expText;
-        exp.style.display = 'block';
+        const expText = q.explanation || 'No explanation available.';
+        if (currentLang !== 'en') {
+            translateText(expText, currentLang).then(translated => {
+                exp.textContent = '💡 ' + translated;
+                exp.style.display = 'block';
+            });
+        } else {
+            exp.textContent = '💡 ' + expText;
+            exp.style.display = 'block';
+        }
     }
     document.getElementById('nextBtn').style.display = 'block';
 };
 
-window.skipQuestion = function() {
-    if (!answered) skipped++;
-    nextQuestion();
-};
+window.skipQuestion = function() { if (!answered) skipped++; nextQuestion(); };
 
 window.nextQuestion = function() {
     currentIndex++;
@@ -345,25 +397,13 @@ function showResults() {
     document.getElementById('scoreLabel').textContent = label;
     document.getElementById('headerTitle').textContent = 'Results';
 
-    // Save result to localStorage
+    // Save result
     const results = JSON.parse(localStorage.getItem('quizResults') || '[]');
-    results.unshift({
-        trade, tradeName, subject, chapter: chapterName,
-        score: percent, total, correct: score,
-        wrong, skipped, mode,
-        date: new Date().toISOString()
-    });
+    results.unshift({ trade, tradeName, subject, chapter: chapterName, score: percent, total, correct: score, wrong, skipped, mode, date: new Date().toISOString() });
     localStorage.setItem('quizResults', JSON.stringify(results.slice(0, 50)));
 
-    // Save to Firebase if logged in
     if (currentUser) {
-        addDoc(collection(db, 'results'), {
-            userId: currentUser.uid,
-            trade, tradeName, subject,
-            chapter: chapterName, score: percent,
-            total, correct: score, wrong, skipped, mode,
-            date: new Date().toISOString()
-        }).catch(console.error);
+        addDoc(collection(db, 'results'), { userId: currentUser.uid, trade, tradeName, subject, chapter: chapterName, score: percent, total, correct: score, wrong, skipped, mode, date: new Date().toISOString() }).catch(console.error);
     }
 }
 
@@ -389,24 +429,6 @@ window.retryQuiz = function() {
 window.goHome = function() { window.location.href = 'index.html'; };
 window.goBack = function() { window.location.href = 'chapters.html'; };
 
-window.switchLang = function(lang) {
-    currentLang = lang;
-    localStorage.setItem('selectedLang', lang);
-    document.getElementById('btnEn').style.background = 
-        lang === 'en' ? '#ffd600' : 'rgba(255,255,255,0.2)';
-    document.getElementById('btnEn').style.color = 
-        lang === 'en' ? '#333' : 'white';
-    document.getElementById('btnGu').style.background = 
-        lang === 'gu' ? '#ffd600' : 'rgba(255,255,255,0.2)';
-    document.getElementById('btnGu').style.color = 
-        lang === 'gu' ? '#333' : 'white';
-    if (document.getElementById('questionCard').style.display !== 'none') {
-        showQuestion();
-    }
-};
-
-// Set initial language button state
-switchLang(currentLang);
 loadQuestions();
 </script>
 </body>
