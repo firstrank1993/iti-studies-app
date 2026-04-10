@@ -298,8 +298,27 @@ window.setLang = function(lang, btn) {
 
 // Restore saved language on page load
 const savedLang = localStorage.getItem('selectedLang') || 'en';
-const activeLangBtn = document.querySelector('.lang-btn[onclick*="' + savedLang + '"]');
-if (activeLangBtn) setLang(savedLang, activeLangBtn);
+const allLangBtns = document.querySelectorAll('.lang-btn');
+allLangBtns.forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes("'" + savedLang + "'")) {
+        btn.classList.add('active');
+    }
+});
+if (savedLang !== 'en') {
+    const t = translations[savedLang];
+    if (t) {
+        document.getElementById('hero-title').textContent = t.heroTitle;
+        document.getElementById('hero-sub').textContent = t.heroSub;
+        document.getElementById('trade-title').textContent = t.trade;
+        document.getElementById('s1').textContent = t.s1;
+        document.getElementById('s2').textContent = t.s2;
+        document.getElementById('s3').textContent = t.s3;
+        document.getElementById('n1').textContent = t.n1;
+        document.getElementById('n2').textContent = t.n2;
+        document.getElementById('n3').textContent = t.n3;
+    }
+}
     
 loadTrades();
 </script>
