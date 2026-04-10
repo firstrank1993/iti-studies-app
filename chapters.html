@@ -152,7 +152,7 @@ snap.forEach = (fn) => snap.docs.forEach(fn);
             </button>`;
 
         let num = 1;
-        Object.entries(chapters).forEach(([chapter, count]) => {
+Object.entries(chapters).sort((a, b) => a[0].localeCompare(b[0], undefined, {numeric: true})).forEach(([chapter, count]) => {
             html += `
             <div class="chapter-card" onclick="selectChapter('${chapter}', '${chapter}')">
                 <div class="chapter-number">${num}</div>
