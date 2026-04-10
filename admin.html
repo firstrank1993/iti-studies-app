@@ -42,6 +42,9 @@
         .format-table th { background: #e8f0fe; padding: 8px; text-align: left; color: #1a73e8; }
         .format-table td { padding: 8px; border: 1px solid #e0e0e0; }
         .download-btn { background: #e8f0fe; color: #1a73e8; border: 2px solid #1a73e8; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; margin-top: 12px; }
+        .toggle-row { display: flex; align-items: center; gap: 12px; background: #e8f0fe; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; }
+        .toggle-label { font-size: 14px; font-weight: 600; flex: 1; }
+        .toggle-desc { font-size: 12px; color: #666; }
     </style>
 </head>
 <body>
@@ -51,7 +54,7 @@
     <div class="admin-badge">🔐 ADMIN</div>
 </header>
 <main>
-    <!-- Login Section -->
+    <!-- Login -->
     <div class="card" id="loginSection">
         <div class="card-title">🔐 Admin Login</div>
         <div class="login-form">
@@ -62,67 +65,58 @@
 
     <!-- Admin Panel -->
     <div id="adminPanel" class="hidden">
+
+        <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-box"><div class="stat-num" id="totalQ">0</div><div class="stat-lbl">Total Questions</div></div>
             <div class="stat-box"><div class="stat-num" id="totalT">0</div><div class="stat-lbl">Trades</div></div>
             <div class="stat-box"><div class="stat-num" id="totalS">0</div><div class="stat-lbl">Subjects</div></div>
         </div>
+
+        <!-- CSV Format -->
         <div class="card">
             <div class="card-title">📋 CSV Format Guide</div>
-            <p style="font-size:14px;color:#666;margin-bottom:12px;">Your CSV must have these exact column headers:</p>
             <table class="format-table">
                 <tr><th>Column</th><th>Description</th><th>Example</th></tr>
-                <tr><td>question</td><td>The MCQ question</td><td>What is Ohm's Law?</td></tr>
+                <tr><td>question</td><td>MCQ question</td><td>What is Ohm's Law?</td></tr>
                 <tr><td>optionA</td><td>Option A</td><td>V=IR</td></tr>
                 <tr><td>optionB</td><td>Option B</td><td>V=I+R</td></tr>
                 <tr><td>optionC</td><td>Option C</td><td>V=I/R</td></tr>
                 <tr><td>optionD</td><td>Option D</td><td>V=I*I</td></tr>
-                <tr><td>correct</td><td>Correct option (A/B/C/D)</td><td>A</td></tr>
+                <tr><td>correct</td><td>Correct answer (A/B/C/D)</td><td>A</td></tr>
                 <tr><td>explanation</td><td>Answer explanation</td><td>Ohm's law states V=IR</td></tr>
-                <tr><td>trade</td><td>Trade name (lowercase)</td><td>electrician</td></tr>
+                <tr><td>trade</td><td>Trade name or "common"</td><td>electrician</td></tr>
                 <tr><td>year</td><td>Year (1 or 2)</td><td>1</td></tr>
                 <tr><td>subject</td><td>Subject name</td><td>Basic Electricity</td></tr>
                 <tr><td>chapter</td><td>Chapter name</td><td>Chapter 1</td></tr>
+                <tr><td>image</td><td>Image URL (optional)</td><td>https://...</td></tr>
             </table>
-            <button class="download-btn" id="downloadBtn">⬇️ Download Sample CSV File</button>
+            <button class="download-btn" id="downloadBtn">⬇️ Download Sample CSV</button>
         </div>
-        <!-- Image Converter Tool -->
-<div class="card">
-    <div class="card-title">🖼️ Image to Base64 Converter</div>
-    <p style="font-size:14px;color:#666;margin-bottom:16px;">
-        Convert your question images to text — then paste in your Excel CSV file!
-    </p>
-    <div style="border:2px dashed #1a73e8;border-radius:12px;padding:24px;text-align:center;background:#f8f9ff;cursor:pointer;" id="imgDropArea">
-        <div style="font-size:48px;margin-bottom:8px;">🖼️</div>
-        <div style="font-weight:600;color:#1a73e8;">Click to Select Image</div>
-        <div style="font-size:12px;color:#888;margin-top:4px;">JPG, PNG supported — keep under 100KB for best results</div>
-    </div>
-    <input type="file" id="imgFile" accept="image/*" style="display:none" />
-    <div id="imgResult" style="display:none;margin-top:16px;">
-        <img id="imgPreview" style="max-width:200px;max-height:150px;border-radius:8px;border:2px solid #1a73e8;display:block;margin:0 auto 12px;" />
-        <div style="background:#1a1a2e;color:#00ff88;padding:12px;border-radius:8px;font-size:12px;font-family:monospace;word-break:break-all;max-height:80px;overflow-y:auto;" id="base64Output"></div>
-        <button style="background:#1a73e8;color:white;border:none;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:10px;width:100%;" id="copyBase64Btn">📋 Copy Base64 Text</button>
-        <p style="font-size:12px;color:#666;margin-top:8px;text-align:center;">Paste this text in the "image" column of your Excel file</p>
-    </div>
-</div>
+
+        <!-- Upload -->
         <div class="card">
             <div class="card-title">📤 Upload Questions (CSV)</div>
-            <div style="display:flex;align-items:center;gap:12px;background:#e8f0fe;padding:12px;border-radius:10px;margin-bottom:16px;">
-    <span style="font-size:14px;font-weight:600;">🌐 Auto Gujarati Translation</span>
-    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-left:auto;">
-        <input type="checkbox" id="translateToggle" checked style="width:18px;height:18px;">
-        <span style="font-size:13px;color:#666;">Enable (slower but bilingual)</span>
-    </label>
-</div>
+
+            <!-- Translation Toggle -->
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">🌐 Auto Gujarati Translation</div>
+                    <div class="toggle-desc">Translates questions to Gujarati during upload (slower)</div>
+                </div>
+                <input type="checkbox" id="translateToggle" style="width:20px;height:20px;cursor:pointer;">
+            </div>
+
             <div class="upload-area" id="uploadArea">
                 <div class="upload-icon">📁</div>
                 <div class="upload-text">Click to Select CSV File</div>
                 <div class="upload-sub">Only .csv files supported</div>
             </div>
             <input type="file" id="csvFile" accept=".csv" style="display:none" />
+
             <div id="previewSection" class="hidden">
                 <div style="margin-top:20px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
                         <strong id="previewTitle">Preview</strong>
                         <button class="btn btn-success" id="uploadBtn">🚀 Upload to Firebase</button>
                     </div>
@@ -132,6 +126,7 @@
                 </div>
             </div>
         </div>
+
         <button class="btn btn-danger" id="logoutBtn" style="width:100%;margin-bottom:20px;">🚪 Logout</button>
     </div>
 </main>
@@ -153,8 +148,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const ADMIN_PASSWORD = "iti@admin2025";
-const GEMINI_API_KEY = "AIzaSyAdTLQGvuyM9q6cquTLVw-urQStXk9ISlA";    
 let parsedData = [];
+
+// ── Translate using MyMemory API ──
+async function translateToGujarati(text) {
+    if (!text || !text.trim()) return '';
+    try {
+        const url = 'https://api.mymemory.translated.net/get?q=' + 
+            encodeURIComponent(text) + '&langpair=en|gu';
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.responseStatus === 200) {
+            return data.responseData.translatedText || '';
+        }
+        return '';
+    } catch(e) {
+        return '';
+    }
+}
 
 function showToast(msg) {
     const t = document.getElementById('toast');
@@ -184,6 +195,20 @@ async function loadStats() {
     } catch(e) { console.error(e); }
 }
 
+function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') { inQuotes = !inQuotes; }
+        else if (char === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
+        else { current += char; }
+    }
+    result.push(current.trim());
+    return result;
+}
+
 function parseCSV(text) {
     const lines = text.trim().split('\n');
     const headers = parseCSVLine(lines[0]);
@@ -192,29 +217,10 @@ function parseCSV(text) {
         if (!lines[i].trim()) continue;
         const values = parseCSVLine(lines[i]);
         const row = {};
-        headers.forEach((h, idx) => row[h] = values[idx] || '');
+        headers.forEach((h, idx) => row[h.trim()] = (values[idx] || '').trim());
         rows.push(row);
     }
     return rows;
-}
-
-function parseCSVLine(line) {
-    const result = [];
-    let current = '';
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        if (char === '"') {
-            inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-            result.push(current.trim());
-            current = '';
-        } else {
-            current += char;
-        }
-    }
-    result.push(current.trim());
-    return result;
 }
 
 function showPreview(data) {
@@ -230,7 +236,7 @@ function showPreview(data) {
     addLog('📋 ' + data.length + ' questions ready to upload');
 }
 
-// ── Event Listeners (no onclick in HTML!) ──
+// ── Login ──
 document.getElementById('loginBtn').addEventListener('click', function() {
     const pwd = document.getElementById('adminPassword').value;
     if (pwd === ADMIN_PASSWORD) {
@@ -253,6 +259,7 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
     document.getElementById('adminPanel').classList.add('hidden');
 });
 
+// ── File Upload ──
 document.getElementById('uploadArea').addEventListener('click', function() {
     document.getElementById('csvFile').click();
 });
@@ -268,91 +275,41 @@ document.getElementById('csvFile').addEventListener('change', function(e) {
     reader.readAsText(file);
 });
 
+// ── Upload to Firebase ──
 document.getElementById('uploadBtn').addEventListener('click', async function() {
     if (!parsedData.length) return;
     const total = parsedData.length;
     let uploaded = 0;
+    const translateEnabled = document.getElementById('translateToggle').checked;
+
     addLog('🚀 Starting upload of ' + total + ' questions...');
-   const translateEnabled = document.getElementById('translateToggle').checked;
-if (translateEnabled) {
-    addLog('🌐 AI translation enabled — upload will be slower...');
-} else {
-    addLog('⚡ Translation disabled — fast upload mode!');
-}
+    if (translateEnabled) addLog('🌐 Gujarati translation enabled...');
+    else addLog('⚡ Fast mode — English only');
 
-for (const row of parsedData) {
-    try {
-        // Translate to Gujarati using Gemini AI
-        let question_gu = '';
-        let options_gu = ['', '', '', ''];
-        let explanation_gu = '';
-if (translateEnabled) {
-        try {
-    // Translate question
-    const qRes = await fetch(
-        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(row.question)}&langpair=en|gu`
-    );
-    const qData = await qRes.json();
-    question_gu = qData.responseData.translatedText || '';
-
-    // Translate options
-    for (let i = 0; i < 4; i++) {
-        const optKey = ['optionA','optionB','optionC','optionD'][i];
-        const optRes = await fetch(
-            `https://api.mymemory.translated.net/get?q=${encodeURIComponent(row[optKey]||'')}&langpair=en|gu`
-        );
-        const optData = await optRes.json();
-        options_gu[i] = optData.responseData.translatedText || '';
-    }
-
-    // Translate explanation
-    if (row.explanation) {
-        const expRes = await fetch(
-            `https://api.mymemory.translated.net/get?q=${encodeURIComponent(row.explanation)}&langpair=en|gu`
-        );
-        const expData = await expRes.json();
-        explanation_gu = expData.responseData.translatedText || '';
-    }
-
-} catch(transErr) {
-    addLog('⚠️ Translation failed — saving English only');
-}
-}
-
-        const correctMap = {A:0, B:1, C:2, D:3};
-        await addDoc(collection(db, 'questions'), {
-            question: row.question || '',
-            question_gu: question_gu,
-            options: [row.optionA||'', row.optionB||'', row.optionC||'', row.optionD||''],
-            options_gu: options_gu,
-            correct: correctMap[(row.correct||'A').toUpperCase()] ?? 0,
-            explanation: row.explanation || '',
-            explanation_gu: explanation_gu,
-            trade: (row.trade || '').toLowerCase().trim(),
-            year: (row.year || '1').toString().trim(),
-            subject: (row.subject || '').trim(),
-            chapter: (row.chapter || '').trim(),
-            image: (row.image || '').trim(),
-            createdAt: new Date().toISOString()
-        });
-
-        uploaded++;
-        document.getElementById('uploadProgress').style.width = 
-            Math.round((uploaded/total)*100) + '%';
-        if (uploaded % 5 === 0) addLog('✅ Uploaded ' + uploaded + '/' + total);
-
-    } catch(e) {
-        addLog('❌ Error: ' + e.message);
-    }
-}
     const correctMap = {A:0, B:1, C:2, D:3};
+
     for (const row of parsedData) {
         try {
+            let question_gu = '', options_gu = ['','','',''], explanation_gu = '';
+
+            if (translateEnabled) {
+                question_gu = await translateToGujarati(row.question || '');
+                options_gu[0] = await translateToGujarati(row.optionA || '');
+                options_gu[1] = await translateToGujarati(row.optionB || '');
+                options_gu[2] = await translateToGujarati(row.optionC || '');
+                options_gu[3] = await translateToGujarati(row.optionD || '');
+                explanation_gu = await translateToGujarati(row.explanation || '');
+                addLog('🌐 Translated: ' + (row.question||'').substring(0,30) + '...');
+            }
+
             await addDoc(collection(db, 'questions'), {
                 question: row.question || '',
+                question_gu,
                 options: [row.optionA||'', row.optionB||'', row.optionC||'', row.optionD||''],
+                options_gu,
                 correct: correctMap[(row.correct||'A').toUpperCase()] ?? 0,
                 explanation: row.explanation || '',
+                explanation_gu,
                 trade: (row.trade || '').toLowerCase().trim(),
                 year: (row.year || '1').toString().trim(),
                 subject: (row.subject || '').trim(),
@@ -360,9 +317,13 @@ if (translateEnabled) {
                 image: (row.image || '').trim(),
                 createdAt: new Date().toISOString()
             });
+
             uploaded++;
-            document.getElementById('uploadProgress').style.width = Math.round((uploaded/total)*100) + '%';
-            if (uploaded % 10 === 0) addLog('✅ Uploaded ' + uploaded + '/' + total);
+            document.getElementById('uploadProgress').style.width = 
+                Math.round((uploaded/total)*100) + '%';
+            if (uploaded % 5 === 0 || uploaded === total) {
+                addLog('✅ Uploaded ' + uploaded + '/' + total);
+            }
         } catch(e) {
             addLog('❌ Error: ' + e.message);
         }
@@ -372,49 +333,21 @@ if (translateEnabled) {
     loadStats();
 });
 
+// ── Download Sample CSV ──
 document.getElementById('downloadBtn').addEventListener('click', function() {
     const csv = "question,optionA,optionB,optionC,optionD,correct,explanation,trade,year,subject,chapter,image\n" +
         "What is the unit of resistance?,Ampere,Volt,Ohm,Watt,C,Ohm is the unit of resistance,electrician,1,Basic Electricity,Chapter 1,\n" +
         "What does MCB stand for?,Main Circuit Breaker,Miniature Circuit Breaker,Motor Control Board,Manual Circuit Box,B,MCB stands for Miniature Circuit Breaker,electrician,1,Basic Electricity,Chapter 1,\n" +
-        "What is standard AC frequency in India?,50 Hz,60 Hz,100 Hz,25 Hz,A,India uses 50 Hz AC frequency,electrician,1,Basic Electricity,Chapter 1,";
+        "What is standard AC frequency in India?,50 Hz,60 Hz,100 Hz,25 Hz,A,India uses 50 Hz AC frequency,electrician,1,Basic Electricity,Chapter 1,\n" +
+        "What is communication?,Sending message,Receiving message,Exchange of information,Writing only,C,Communication means exchange of information,common,1,Employability Skills,Chapter 1,\n" +
+        "What is a resume?,Identity card,Job application,Salary slip,Work permit,B,Resume summarizes your skills and experience,common,1,Employability Skills,Chapter 1,";
     const blob = new Blob([csv], {type:'text/csv'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'sample_questions.csv';
     a.click();
-});
-    // Image converter
-document.getElementById('imgDropArea').addEventListener('click', function() {
-    document.getElementById('imgFile').click();
-});
-
-document.getElementById('imgFile').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (file.size > 200000) {
-        showToast('⚠️ Image too large! Please use image under 200KB');
-        return;
-    }
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-        const base64 = ev.target.result;
-        document.getElementById('imgPreview').src = base64;
-        document.getElementById('base64Output').textContent = base64;
-        document.getElementById('imgResult').style.display = 'block';
-        showToast('✅ Image converted! Copy the text below.');
-    };
-    reader.readAsDataURL(file);
-});
-
-document.getElementById('copyBase64Btn').addEventListener('click', function() {
-    const text = document.getElementById('base64Output').textContent;
-    navigator.clipboard.writeText(text).then(() => {
-        showToast('✅ Copied! Paste in your Excel image column.');
-    }).catch(() => {
-        document.getElementById('base64Output').select();
-        showToast('✅ Text selected — press Ctrl+C to copy!');
-    });
+    URL.revokeObjectURL(url);
 });
 </script>
 </body>
