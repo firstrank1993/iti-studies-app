@@ -64,6 +64,10 @@
 <header>
     <button class="back-btn" onclick="goBack()">←</button>
     <div class="header-title" id="headerTitle">Quiz</div>
+    <div style="display:flex;gap:4px;" id="langSwitcher">
+    <button onclick="switchLang('en')" id="btnEn" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:3px 8px;border-radius:12px;cursor:pointer;font-size:12px;">EN</button>
+    <button onclick="switchLang('gu')" id="btnGu" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:3px 8px;border-radius:12px;cursor:pointer;font-size:12px;">ગુ</button>
+</div>
     <div class="timer" id="timer" style="display:none">⏱ 00:00</div>
 </header>
 <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -146,6 +150,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 const trade = localStorage.getItem('selectedTrade') || '';
+let currentLang = localStorage.getItem('selectedLang') || 'en';    
 const tradeName = localStorage.getItem('selectedTradeName') || 'Quiz';
 const year = localStorage.getItem('selectedYear') || '1';
 const subject = localStorage.getItem('selectedSubject') || '';
@@ -260,7 +265,13 @@ function showQuestion() {
     document.getElementById('questionNumber').textContent = 'Question ' + (currentIndex + 1);
     document.getElementById('questionCount').textContent = 'Question ' + (currentIndex + 1) + ' of ' + questions.length;
     document.getElementById('scoreInfo').textContent = 'Score: ' + score;
-    document.getElementById('questionText').textContent = q.question;
+   // Show question in selected language
+const isGu = currentLang === 'gu';
+document.getElementById('questionText').textContent = 
+    (isGu && q.question_gu) ? q.question_gu : q.question;
+
+// Show options in selected language
+const opts = (isGu && q.options_gu && q.options_gu.length) ? q.options_gu : q.options;
     document.getElementById('explanation').style.display = 'none';
     document.getElementById('nextBtn').style.display = 'none';
 
@@ -273,13 +284,13 @@ if (q.image && q.image.trim() !== '') {
 }
 
     const labels = ['A','B','C','D'];
-    let html = '';
-    q.options.forEach((opt, i) => {
-        html += `<button class="option-btn" onclick="selectAnswer(${i})" id="opt${i}">
-            <span class="option-label">${labels[i]}</span>
-            <span>${opt}</span>
-        </button>`;
-    });
+let html = '';
+opts.forEach((opt, i) => {
+    html += `<button class="option-btn" onclick="selectAnswer(${i})" id="opt${i}">
+        <span class="option-label">${labels[i]}</span>
+        <span>${opt}</span>
+    </button>`;
+});
     document.getElementById('optionsGrid').innerHTML = html;
 }
 
@@ -295,7 +306,8 @@ window.selectAnswer = function(selected) {
     document.getElementById('scoreInfo').textContent = 'Score: ' + score;
     if (mode === 'practice' || mode === 'quick') {
         const exp = document.getElementById('explanation');
-        exp.textContent = '💡 ' + (q.explanation || 'No explanation available.');
+        const expText = (isGu && q.explanation_gu) ? q.explanation_gu : (q.explanation || 'No explanation available.');
+        exp.textContent = '💡 ' + expText;
         exp.style.display = 'block';
     }
     document.getElementById('nextBtn').style.display = 'block';
@@ -377,6 +389,24 @@ window.retryQuiz = function() {
 window.goHome = function() { window.location.href = 'index.html'; };
 window.goBack = function() { window.location.href = 'chapters.html'; };
 
+window.switchLang = function(lang) {
+    currentLang = lang;
+    localStorage.setItem('selectedLang', lang);
+    document.getElementById('btnEn').style.background = 
+        lang === 'en' ? '#ffd600' : 'rgba(255,255,255,0.2)';
+    document.getElementById('btnEn').style.color = 
+        lang === 'en' ? '#333' : 'white';
+    document.getElementById('btnGu').style.background = 
+        lang === 'gu' ? '#ffd600' : 'rgba(255,255,255,0.2)';
+    document.getElementById('btnGu').style.color = 
+        lang === 'gu' ? '#333' : 'white';
+    if (document.getElementById('questionCard').style.display !== 'none') {
+        showQuestion();
+    }
+};
+
+// Set initial language button state
+switchLang(currentLang);
 loadQuestions();
 </script>
 </body>
