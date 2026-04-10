@@ -5,6 +5,17 @@
       "firebase.json",
       ".github/**",
       "node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Content-Security-Policy",
+            "value": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; connect-src 'self' https://*.googleapis.com https://*.firebase.com https://*.firebaseio.com https://generativelanguage.googleapis.com wss://*.firebaseio.com;"
+          }
+        ]
+      }
     ]
   }
 }
