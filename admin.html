@@ -44,8 +44,11 @@
         .format-table td { padding: 8px; border: 1px solid #e0e0e0; }
         .download-btn { background: #e8f0fe; color: #1a73e8; border: 2px solid #1a73e8; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; margin-top: 12px; }
         .toggle-row { display: flex; align-items: center; gap: 12px; background: #e8f0fe; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; }
-        .toggle-label { font-size: 14px; font-weight: 600; flex: 1; }
-        .toggle-desc { font-size: 12px; color: #666; }
+        .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .filter-label { font-size: 13px; font-weight: 600; color: #333; display: block; margin-bottom: 6px; }
+        .q-item { background: white; border: 1px solid #e0e8ff; border-radius: 10px; padding: 12px; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 10px; }
+        .q-text { font-size: 13px; font-weight: 600; }
+        .q-meta { font-size: 11px; color: #888; margin-top: 4px; }
     </style>
 </head>
 <body>
@@ -89,7 +92,7 @@
                 <tr><td>trade</td><td>Trade name or "common"</td><td>electrician</td></tr>
                 <tr><td>year</td><td>Year (1 or 2)</td><td>1</td></tr>
                 <tr><td>subject</td><td>Subject name</td><td>Basic Electricity</td></tr>
-                <tr><td>chapter</td><td>Chapter name</td><td>Chapter 1</td></tr>
+                <tr><td>chapter</td><td>Chapter name</td><td>Module 1</td></tr>
                 <tr><td>image</td><td>Image URL (optional)</td><td>https://...</td></tr>
             </table>
             <button class="download-btn" id="downloadBtn">⬇️ Download Sample CSV</button>
@@ -98,23 +101,19 @@
         <!-- Upload -->
         <div class="card">
             <div class="card-title">📤 Upload Questions (CSV)</div>
-
-            <!-- Translation Toggle -->
             <div class="toggle-row">
-                <div>
-                    <div class="toggle-label">🌐 Auto Gujarati Translation</div>
-                    <div class="toggle-desc">Translates questions to Gujarati during upload (slower)</div>
+                <div style="flex:1;">
+                    <div style="font-size:14px;font-weight:600;">🌐 Auto Gujarati Translation</div>
+                    <div style="font-size:12px;color:#666;">Slower but bilingual upload</div>
                 </div>
                 <input type="checkbox" id="translateToggle" style="width:20px;height:20px;cursor:pointer;">
             </div>
-
             <div class="upload-area" id="uploadArea">
                 <div class="upload-icon">📁</div>
                 <div class="upload-text">Click to Select CSV File</div>
                 <div class="upload-sub">Only .csv files supported</div>
             </div>
             <input type="file" id="csvFile" accept=".csv" style="display:none" />
-
             <div id="previewSection" class="hidden">
                 <div style="margin-top:20px;">
                     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
@@ -127,67 +126,66 @@
                 </div>
             </div>
         </div>
-<!-- Question Manager -->
-<div class="card">
-    <div class="card-title">🗂️ Question Manager</div>
-    <p style="font-size:14px;color:#666;margin-bottom:16px;">
-        Filter and delete questions by trade, year, subject or chapter
-    </p>
 
-    <!-- Filters -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-        <div>
-            <label style="font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:6px;">Trade</label>
-            <select class="input-field" id="filterTrade" style="padding:10px;">
-                <option value="">All Trades</option>
-                <option value="electrician">Electrician</option>
-                <option value="wireman">Wireman</option>
-                <option value="fitter">Fitter</option>
-                <option value="machinist">Machinist</option>
-                <option value="turner">Turner</option>
-                <option value="welder">Welder</option>
-                <option value="diesel">Diesel Mechanic</option>
-                <option value="mmv">Mechanic MV</option>
-                <option value="copa">COPA</option>
-                <option value="civil">Draughtsman Civil</option>
-                <option value="rac">RAC</option>
-                <option value="aocp">AOCP</option>
-                <option value="dressmaking">Dress Making</option>
-                <option value="sewing">Sewing Technology</option>
-                <option value="common">Common</option>
-            </select>
+        <!-- Question Manager -->
+        <div class="card">
+            <div class="card-title">🗂️ Question Manager</div>
+            <p style="font-size:14px;color:#666;margin-bottom:16px;">Search and delete questions by filters</p>
+            <div class="filter-grid">
+                <div>
+                    <label class="filter-label">Trade</label>
+                    <select class="input-field" id="filterTrade" style="padding:10px;">
+                        <option value="">All Trades</option>
+                        <option value="electrician">Electrician</option>
+                        <option value="wireman">Wireman</option>
+                        <option value="fitter">Fitter</option>
+                        <option value="machinist">Machinist</option>
+                        <option value="turner">Turner</option>
+                        <option value="welder">Welder</option>
+                        <option value="diesel">Diesel Mechanic</option>
+                        <option value="mmv">Mechanic MV</option>
+                        <option value="copa">COPA</option>
+                        <option value="civil">Draughtsman Civil</option>
+                        <option value="rac">RAC</option>
+                        <option value="aocp">AOCP</option>
+                        <option value="dressmaking">Dress Making</option>
+                        <option value="sewing">Sewing Technology</option>
+                        <option value="common">Common</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="filter-label">Year</label>
+                    <select class="input-field" id="filterYear" style="padding:10px;">
+                        <option value="">All Years</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="filter-label">Subject</label>
+                    <input type="text" class="input-field" id="filterSubject" placeholder="e.g. Basic Electricity" style="padding:10px;" />
+                </div>
+                <div>
+                    <label class="filter-label">Chapter</label>
+                    <input type="text" class="input-field" id="filterChapter" placeholder="e.g. Module 1" style="padding:10px;" />
+                </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-bottom:16px;">
+                <button class="btn btn-primary" id="searchQBtn" style="flex:1;">🔍 Search Questions</button>
+                <button class="btn btn-danger" id="deleteFilteredBtn" style="flex:1;display:none;">🗑️ Delete Selected</button>
+            </div>
+            <div id="searchResults" style="display:none;">
+                <div style="background:#e8f0fe;border-radius:10px;padding:14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+                    <span id="searchCount" style="font-weight:600;color:#1a73e8;"></span>
+                    <label style="font-size:12px;cursor:pointer;">
+                        <input type="checkbox" id="selectAll" style="margin-right:4px;">
+                        Select All
+                    </label>
+                </div>
+                <div id="questionsList" style="max-height:400px;overflow-y:auto;"></div>
+            </div>
         </div>
-        <div>
-            <label style="font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:6px;">Year</label>
-            <select class="input-field" id="filterYear" style="padding:10px;">
-                <option value="">All Years</option>
-                <option value="1">1st Year</option>
-                <option value="2">2nd Year</option>
-            </select>
-        </div>
-        <div>
-            <label style="font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:6px;">Subject</label>
-            <input type="text" class="input-field" id="filterSubject" placeholder="e.g. Basic Electricity" style="padding:10px;" />
-        </div>
-        <div>
-            <label style="font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:6px;">Chapter</label>
-            <input type="text" class="input-field" id="filterChapter" placeholder="e.g. Module 1" style="padding:10px;" />
-        </div>
-    </div>
 
-    <div style="display:flex;gap:10px;margin-bottom:16px;">
-        <button class="btn btn-primary" id="searchQBtn" style="flex:1;">🔍 Search Questions</button>
-        <button class="btn btn-danger" id="deleteFilteredBtn" style="flex:1;display:none;">🗑️ Delete Filtered Questions</button>
-    </div>
-
-    <div id="searchResults" style="display:none;">
-        <div style="background:#e8f0fe;border-radius:10px;padding:14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
-            <span id="searchCount" style="font-weight:600;color:#1a73e8;"></span>
-            <span style="font-size:12px;color:#666;">Select questions to delete</span>
-        </div>
-        <div id="questionsList" style="max-height:300px;overflow-y:auto;"></div>
-    </div>
-</div>
         <button class="btn btn-danger" id="logoutBtn" style="width:100%;margin-bottom:20px;">🚪 Logout</button>
     </div>
 </main>
@@ -211,23 +209,6 @@ const db = getFirestore(app);
 const ADMIN_PASSWORD = "iti@admin2025";
 let parsedData = [];
 let searchedDocs = [];
-
-// ── Translate using MyMemory API ──
-async function translateToGujarati(text) {
-    if (!text || !text.trim()) return '';
-    try {
-        const url = 'https://api.mymemory.translated.net/get?q=' + 
-            encodeURIComponent(text) + '&langpair=en|gu';
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.responseStatus === 200) {
-            return data.responseData.translatedText || '';
-        }
-        return '';
-    } catch(e) {
-        return '';
-    }
-}
 
 function showToast(msg) {
     const t = document.getElementById('toast');
@@ -255,6 +236,17 @@ async function loadStats() {
         document.getElementById('totalT').textContent = trades.size;
         document.getElementById('totalS').textContent = subjects.size;
     } catch(e) { console.error(e); }
+}
+
+async function translateToGujarati(text) {
+    if (!text || !text.trim()) return '';
+    try {
+        const url = 'https://api.mymemory.translated.net/get?q=' +
+            encodeURIComponent(text) + '&langpair=en|gu';
+        const res = await fetch(url);
+        const data = await res.json();
+        return data.responseData.translatedText || '';
+    } catch(e) { return ''; }
 }
 
 function parseCSVLine(line) {
@@ -343,17 +335,13 @@ document.getElementById('uploadBtn').addEventListener('click', async function() 
     const total = parsedData.length;
     let uploaded = 0;
     const translateEnabled = document.getElementById('translateToggle').checked;
-
     addLog('🚀 Starting upload of ' + total + ' questions...');
     if (translateEnabled) addLog('🌐 Gujarati translation enabled...');
     else addLog('⚡ Fast mode — English only');
-
     const correctMap = {A:0, B:1, C:2, D:3};
-
     for (const row of parsedData) {
         try {
             let question_gu = '', options_gu = ['','','',''], explanation_gu = '';
-
             if (translateEnabled) {
                 question_gu = await translateToGujarati(row.question || '');
                 options_gu[0] = await translateToGujarati(row.optionA || '');
@@ -361,9 +349,7 @@ document.getElementById('uploadBtn').addEventListener('click', async function() 
                 options_gu[2] = await translateToGujarati(row.optionC || '');
                 options_gu[3] = await translateToGujarati(row.optionD || '');
                 explanation_gu = await translateToGujarati(row.explanation || '');
-                addLog('🌐 Translated: ' + (row.question||'').substring(0,30) + '...');
             }
-
             await addDoc(collection(db, 'questions'), {
                 question: row.question || '',
                 question_gu,
@@ -379,16 +365,11 @@ document.getElementById('uploadBtn').addEventListener('click', async function() 
                 image: (row.image || '').trim(),
                 createdAt: new Date().toISOString()
             });
-
             uploaded++;
-            document.getElementById('uploadProgress').style.width = 
+            document.getElementById('uploadProgress').style.width =
                 Math.round((uploaded/total)*100) + '%';
-            if (uploaded % 5 === 0 || uploaded === total) {
-                addLog('✅ Uploaded ' + uploaded + '/' + total);
-            }
-        } catch(e) {
-            addLog('❌ Error: ' + e.message);
-        }
+            if (uploaded % 5 === 0 || uploaded === total) addLog('✅ Uploaded ' + uploaded + '/' + total);
+        } catch(e) { addLog('❌ Error: ' + e.message); }
     }
     addLog('🎉 Done! ' + uploaded + ' questions uploaded!');
     showToast('✅ ' + uploaded + ' questions uploaded!');
@@ -398,110 +379,110 @@ document.getElementById('uploadBtn').addEventListener('click', async function() 
 // ── Download Sample CSV ──
 document.getElementById('downloadBtn').addEventListener('click', function() {
     const csv = "question,optionA,optionB,optionC,optionD,correct,explanation,trade,year,subject,chapter,image\n" +
-        "What is the unit of resistance?,Ampere,Volt,Ohm,Watt,C,Ohm is the unit of resistance,electrician,1,Basic Electricity,Chapter 1,\n" +
-        "What does MCB stand for?,Main Circuit Breaker,Miniature Circuit Breaker,Motor Control Board,Manual Circuit Box,B,MCB stands for Miniature Circuit Breaker,electrician,1,Basic Electricity,Chapter 1,\n" +
-        "What is standard AC frequency in India?,50 Hz,60 Hz,100 Hz,25 Hz,A,India uses 50 Hz AC frequency,electrician,1,Basic Electricity,Chapter 1,\n" +
-        "What is communication?,Sending message,Receiving message,Exchange of information,Writing only,C,Communication means exchange of information,common,1,Employability Skills,Chapter 1,\n" +
-        "What is a resume?,Identity card,Job application,Salary slip,Work permit,B,Resume summarizes your skills and experience,common,1,Employability Skills,Chapter 1,";
+        "What is the unit of resistance?,Ampere,Volt,Ohm,Watt,C,Ohm is the unit of resistance,electrician,1,Basic Electricity,Module 1,\n" +
+        "What does MCB stand for?,Main Circuit Breaker,Miniature Circuit Breaker,Motor Control Board,Manual Circuit Box,B,MCB stands for Miniature Circuit Breaker,electrician,1,Basic Electricity,Module 1,\n" +
+        "What is standard AC frequency in India?,50 Hz,60 Hz,100 Hz,25 Hz,A,India uses 50 Hz AC frequency,electrician,1,Basic Electricity,Module 1,\n" +
+        "What is communication?,Sending message,Receiving message,Exchange of information,Writing only,C,Communication means exchange of information,common,1,Employability Skills,Module 1,\n" +
+        "What is a resume?,Identity card,Job application,Salary slip,Work permit,B,Resume summarizes skills and experience,common,1,Employability Skills,Module 1,";
     const blob = new Blob([csv], {type:'text/csv'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'sample_questions.csv';
+    a.href = url; a.download = 'sample_questions.csv';
     a.click();
     URL.revokeObjectURL(url);
 });
 
-// Ensure search button works
-setTimeout(function() {
-    const btn = document.getElementById('searchQBtn');
-    if (btn) {
-        btn.onclick = async function() {
-            const trade = document.getElementById('filterTrade').value;
-            const year = document.getElementById('filterYear').value;
-            const subject = document.getElementById('filterSubject').value.trim();
-            const chapter = document.getElementById('filterChapter').value.trim();
+// ── Question Manager ──
+document.getElementById('searchQBtn').addEventListener('click', async function() {
+    const tradeVal = document.getElementById('filterTrade').value;
+    const yearVal = document.getElementById('filterYear').value;
+    const subjectVal = document.getElementById('filterSubject').value.trim();
+    const chapterVal = document.getElementById('filterChapter').value.trim();
 
-            showToast('🔍 Searching...');
+    showToast('🔍 Searching questions...');
 
-            try {
-                let constraints = [];
-                if (trade) constraints.push(where('trade', '==', trade));
-                if (year) constraints.push(where('year', '==', year));
-                if (subject) constraints.push(where('subject', '==', subject));
-                if (chapter) constraints.push(where('chapter', '==', chapter));
+    try {
+        let constraints = [];
+        if (tradeVal) constraints.push(where('trade', '==', tradeVal));
+        if (yearVal) constraints.push(where('year', '==', yearVal));
+        if (subjectVal) constraints.push(where('subject', '==', subjectVal));
+        if (chapterVal) constraints.push(where('chapter', '==', chapterVal));
 
-                const snap = await getDocs(
-                    constraints.length > 0 ?
-                    query(collection(db, 'questions'), ...constraints) :
-                    collection(db, 'questions')
-                );
+        const snap = await getDocs(
+            constraints.length > 0 ?
+            query(collection(db, 'questions'), ...constraints) :
+            collection(db, 'questions')
+        );
 
-                searchedDocs = [];
-                snap.forEach(d => searchedDocs.push({id: d.id, ...d.data()}));
+        searchedDocs = [];
+        snap.forEach(d => searchedDocs.push({id: d.id, ...d.data()}));
 
-                document.getElementById('searchResults').style.display = 'block';
-                document.getElementById('deleteFilteredBtn').style.display = 'flex';
-                document.getElementById('searchCount').textContent =
-                    '📋 Found ' + searchedDocs.length + ' questions';
+        document.getElementById('searchResults').style.display = 'block';
+        document.getElementById('deleteFilteredBtn').style.display = 'block';
+        document.getElementById('searchCount').textContent =
+            '📋 Found ' + searchedDocs.length + ' questions';
 
-                let html = '';
-                searchedDocs.slice(0, 20).forEach(q => {
-                    html += `
-                    <div style="background:white;border:1px solid #e0e8ff;border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;">
-                        <input type="checkbox" class="qCheckbox" data-id="${q.id}" style="width:16px;height:16px;margin-top:3px;flex-shrink:0;">
-                        <div style="flex:1;">
-                            <div style="font-size:13px;font-weight:600;">${(q.question||'').substring(0,80)}...</div>
-                            <div style="font-size:11px;color:#888;margin-top:4px;">
-                                ${q.trade} | Year ${q.year} | ${q.subject} | ${q.chapter}
-                            </div>
-                        </div>
-                    </div>`;
-                });
+        let html = '';
+        searchedDocs.slice(0, 50).forEach(q => {
+            html += `<div class="q-item">
+                <input type="checkbox" class="qCheckbox" data-id="${q.id}"
+                    style="width:16px;height:16px;margin-top:3px;flex-shrink:0;">
+                <div style="flex:1;">
+                    <div class="q-text">${(q.question||'').substring(0,80)}...</div>
+                    <div class="q-meta">${q.trade||''} | Year ${q.year||''} | ${q.subject||''} | ${q.chapter||''}</div>
+                </div>
+            </div>`;
+        });
 
-                if (searchedDocs.length > 20) {
-                    html += `<div style="text-align:center;padding:10px;color:#888;font-size:13px;">
-                        Showing first 20 of ${searchedDocs.length} questions
-                    </div>`;
-                }
+        if (searchedDocs.length > 50) {
+            html += `<div style="text-align:center;padding:10px;color:#888;font-size:13px;">
+                Showing first 50 of ${searchedDocs.length} questions</div>`;
+        }
 
-                document.getElementById('questionsList').innerHTML = html ||
-                    '<div style="text-align:center;padding:20px;color:#888;">No questions found</div>';
+        document.getElementById('questionsList').innerHTML = html ||
+            '<div style="text-align:center;padding:20px;color:#888;">No questions found</div>';
 
-                showToast('✅ Found ' + searchedDocs.length + ' questions!');
+        showToast('✅ Found ' + searchedDocs.length + ' questions!');
 
-            } catch(e) {
-                showToast('❌ Error: ' + e.message);
-                console.error(e);
-            }
-        };
+    } catch(e) {
+        showToast('❌ Error: ' + e.message);
+        console.error(e);
+    }
+});
+
+// ── Select All ──
+document.getElementById('selectAll').addEventListener('change', function() {
+    document.querySelectorAll('.qCheckbox').forEach(cb => cb.checked = this.checked);
+});
+
+// ── Delete Questions ──
+document.getElementById('deleteFilteredBtn').addEventListener('click', async function() {
+    const checked = document.querySelectorAll('.qCheckbox:checked');
+    const toDelete = checked.length > 0 ?
+        [...checked].map(c => c.dataset.id) :
+        searchedDocs.map(q => q.id);
+
+    if (toDelete.length === 0) {
+        showToast('⚠️ No questions selected!');
+        return;
     }
 
-    const delBtn = document.getElementById('deleteFilteredBtn');
-    if (delBtn) {
-        delBtn.onclick = async function() {
-            const checked = document.querySelectorAll('.qCheckbox:checked');
-            const toDelete = checked.length > 0 ?
-                [...checked].map(c => c.dataset.id) :
-                searchedDocs.map(q => q.id);
+    if (!confirm('Delete ' + toDelete.length + ' questions? This cannot be undone!')) return;
 
-            if (!confirm('Delete ' + toDelete.length + ' questions? Cannot be undone!')) return;
-
-            let deleted = 0;
-            for (const id of toDelete) {
-                try {
-                    await deleteDoc(doc(db, 'questions', id));
-                    deleted++;
-                } catch(e) { console.error(e); }
-            }
-            showToast('✅ Deleted ' + deleted + ' questions!');
-            document.getElementById('searchResults').style.display = 'none';
-            document.getElementById('deleteFilteredBtn').style.display = 'none';
-            loadStats();
-        };
+    showToast('🗑️ Deleting...');
+    let deleted = 0;
+    for (const id of toDelete) {
+        try {
+            await deleteDoc(doc(db, 'questions', id));
+            deleted++;
+        } catch(e) { console.error(e); }
     }
-}, 1000);
-
+    showToast('✅ Deleted ' + deleted + ' questions!');
+    document.getElementById('searchResults').style.display = 'none';
+    document.getElementById('deleteFilteredBtn').style.display = 'none';
+    loadStats();
+    document.getElementById('searchQBtn').click();
+});
 </script>
 </body>
 </html>
