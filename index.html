@@ -230,23 +230,55 @@ async function loadTrades() {
     }
 }
 
-function getDefaultTrades() {
-    const trades = [
-        {id:'electrician', icon:'⚡', name:'Electrician', count:'0'},
-        {id:'wireman', icon:'🔌', name:'Wireman', count:'0'},
-        {id:'fitter', icon:'🔧', name:'Fitter', count:'0'},
-        {id:'machinist', icon:'⚙️', name:'Machinist', count:'0'},
-        {id:'turner', icon:'🔩', name:'Turner', count:'0'},
-        {id:'welder', icon:'🔥', name:'Welder', count:'0'},
-        {id:'diesel', icon:'🚗', name:'Diesel Mechanic', count:'0'},
-        {id:'mmv', icon:'🚛', name:'Mechanic Motor Vehicle', count:'0'},
-        {id:'copa', icon:'💻', name:'COPA', count:'0'},
-        {id:'civil', icon:'📐', name:'Draughtsman Civil', count:'0'},
-        {id:'rac', icon:'❄️', name:'RAC (AC & Refrigeration)', count:'0'},
-        {id:'aocp', icon:'🧪', name:'AOCP', count:'0'},
-        {id:'dressmaking', icon:'👗', name:'Dress Making / Fashion Design', count:'0'},
-        {id:'sewing', icon:'🧵', name:'Sewing Technology', count:'0'},
-    ];
+async function loadTrades() {
+    const grid = document.getElementById('tradesGrid');
+    try {
+        const snapshot = await getDocs(collection(db, 'questions'));
+
+        // Count questions per trade
+        const tradeCounts = {};
+        snapshot.forEach(doc => {
+            const t = doc.data().trade;
+            if (t && t !== 'common') {
+                tradeCounts[t] = (tradeCounts[t] || 0) + 1;
+            }
+        });
+
+        const trades = [
+            {id:'electrician', icon:'⚡', name:'Electrician'},
+            {id:'wireman', icon:'🔌', name:'Wireman'},
+            {id:'fitter', icon:'🔧', name:'Fitter'},
+            {id:'machinist', icon:'⚙️', name:'Machinist'},
+            {id:'turner', icon:'🔩', name:'Turner'},
+            {id:'welder', icon:'🔥', name:'Welder'},
+            {id:'diesel', icon:'🚗', name:'Diesel Mechanic'},
+            {id:'mmv', icon:'🚛', name:'Mechanic Motor Vehicle'},
+            {id:'copa', icon:'💻', name:'COPA'},
+            {id:'civil', icon:'📐', name:'Draughtsman Civil'},
+            {id:'rac', icon:'❄️', name:'RAC (AC & Refrigeration)'},
+            {id:'aocp', icon:'🧪', name:'AOCP'},
+            {id:'dressmaking', icon:'👗', name:'Dress Making / Fashion Design'},
+            {id:'sewing', icon:'🧵', name:'Sewing Technology'},
+        ];
+
+        let html = '';
+        trades.forEach(t => {
+            const count = tradeCounts[t.id] || 0;
+            const countText = count > 0 ? count + '+ Questions' : 'Coming Soon';
+            html += `
+            <div class="trade-card" onclick="selectTrade('${t.id}','${t.name}')">
+                <div class="trade-icon">${t.icon}</div>
+                <div class="trade-name">${t.name}</div>
+                <div class="trade-count">${countText}</div>
+            </div>`;
+        });
+        grid.innerHTML = html;
+
+    } catch(e) {
+        grid.innerHTML = getDefaultTrades();
+        console.error(e);
+    }
+}
     
     return trades.map(t => `
         <div class="trade-card" onclick="selectTrade('${t.id}','${t.name}')">
