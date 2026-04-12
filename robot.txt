@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://itistudies-4b277.web.app/sitemap.xml
