@@ -219,29 +219,6 @@ window.handleLogout = async function() {
 async function loadTrades() {
     const grid = document.getElementById('tradesGrid');
     try {
-        const snapshot = await getDocs(collection(db, 'trades'));
-        if (snapshot.empty) {
-            grid.innerHTML = getDefaultTrades();
-        } else {
-            let html = '';
-            snapshot.forEach(doc => {
-                const t = doc.data();
-                html += `<div class="trade-card" onclick="selectTrade('${doc.id}','${t.name}')">
-                    <div class="trade-icon">${t.icon || '📚'}</div>
-                    <div class="trade-name">${t.name}</div>
-                    <div class="trade-count">${t.questionCount || 0}+ Questions</div>
-                </div>`;
-            });
-            grid.innerHTML = html;
-        }
-    } catch(e) {
-        grid.innerHTML = getDefaultTrades();
-    }
-}
-
-async function loadTrades() {
-    const grid = document.getElementById('tradesGrid');
-    try {
         const snapshot = await getDocs(collection(db, 'questions'));
 
         // Count questions per trade
