@@ -410,6 +410,97 @@ document.getElementById('downloadBtn').addEventListener('click', function() {
     a.click();
     URL.revokeObjectURL(url);
 });
+
+// Ensure search button works
+setTimeout(function() {
+    const btn = document.getElementById('searchQBtn');
+    if (btn) {
+        btn.onclick = async function() {
+            const trade = document.getElementById('filterTrade').value;
+            const year = document.getElementById('filterYear').value;
+            const subject = document.getElementById('filterSubject').value.trim();
+            const chapter = document.getElementById('filterChapter').value.trim();
+
+            showToast('🔍 Searching...');
+
+            try {
+                let constraints = [];
+                if (trade) constraints.push(where('trade', '==', trade));
+                if (year) constraints.push(where('year', '==', year));
+                if (subject) constraints.push(where('subject', '==', subject));
+                if (chapter) constraints.push(where('chapter', '==', chapter));
+
+                const snap = await getDocs(
+                    constraints.length > 0 ?
+                    query(collection(db, 'questions'), ...constraints) :
+                    collection(db, 'questions')
+                );
+
+                searchedDocs = [];
+                snap.forEach(d => searchedDocs.push({id: d.id, ...d.data()}));
+
+                document.getElementById('searchResults').style.display = 'block';
+                document.getElementById('deleteFilteredBtn').style.display = 'flex';
+                document.getElementById('searchCount').textContent =
+                    '📋 Found ' + searchedDocs.length + ' questions';
+
+                let html = '';
+                searchedDocs.slice(0, 20).forEach(q => {
+                    html += `
+                    <div style="background:white;border:1px solid #e0e8ff;border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;">
+                        <input type="checkbox" class="qCheckbox" data-id="${q.id}" style="width:16px;height:16px;margin-top:3px;flex-shrink:0;">
+                        <div style="flex:1;">
+                            <div style="font-size:13px;font-weight:600;">${(q.question||'').substring(0,80)}...</div>
+                            <div style="font-size:11px;color:#888;margin-top:4px;">
+                                ${q.trade} | Year ${q.year} | ${q.subject} | ${q.chapter}
+                            </div>
+                        </div>
+                    </div>`;
+                });
+
+                if (searchedDocs.length > 20) {
+                    html += `<div style="text-align:center;padding:10px;color:#888;font-size:13px;">
+                        Showing first 20 of ${searchedDocs.length} questions
+                    </div>`;
+                }
+
+                document.getElementById('questionsList').innerHTML = html ||
+                    '<div style="text-align:center;padding:20px;color:#888;">No questions found</div>';
+
+                showToast('✅ Found ' + searchedDocs.length + ' questions!');
+
+            } catch(e) {
+                showToast('❌ Error: ' + e.message);
+                console.error(e);
+            }
+        };
+    }
+
+    const delBtn = document.getElementById('deleteFilteredBtn');
+    if (delBtn) {
+        delBtn.onclick = async function() {
+            const checked = document.querySelectorAll('.qCheckbox:checked');
+            const toDelete = checked.length > 0 ?
+                [...checked].map(c => c.dataset.id) :
+                searchedDocs.map(q => q.id);
+
+            if (!confirm('Delete ' + toDelete.length + ' questions? Cannot be undone!')) return;
+
+            let deleted = 0;
+            for (const id of toDelete) {
+                try {
+                    await deleteDoc(doc(db, 'questions', id));
+                    deleted++;
+                } catch(e) { console.error(e); }
+            }
+            showToast('✅ Deleted ' + deleted + ' questions!');
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('deleteFilteredBtn').style.display = 'none';
+            loadStats();
+        };
+    }
+}, 1000);
+
 </script>
 </body>
 </html>
