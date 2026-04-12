@@ -126,7 +126,67 @@
                 </div>
             </div>
         </div>
+<!-- Question Manager -->
+<div class="card">
+    <div class="card-title">🗂️ Question Manager</div>
+    <p style="font-size:14px;color:#666;margin-bottom:16px;">
+        Filter and delete questions by trade, year, subject or chapter
+    </p>
 
+    <!-- Filters -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div>
+            <label style="font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:6px;">Trade</label>
+            <select class="input-field" id="filterTrade" style="padding:10px;">
+                <option value="">All Trades</option>
+                <option value="electrician">Electrician</option>
+                <option value="wireman">Wireman</option>
+                <option value="fitter">Fitter</option>
+                <option value="machinist">Machinist</option>
+                <option value="turner">Turner</option>
+                <option value="welder">Welder</option>
+                <option value="diesel">Diesel Mechanic</option>
+                <option value="mmv">Mechanic MV</option>
+                <option value="copa">COPA</option>
+                <option value="civil">Draughtsman Civil</option>
+                <option value="rac">RAC</option>
+                <option value="aocp">AOCP</option>
+                <option value="dressmaking">Dress Making</option>
+                <option value="sewing">Sewing Technology</option>
+                <option value="common">Common</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:6px;">Year</label>
+            <select class="input-field" id="filterYear" style="padding:10px;">
+                <option value="">All Years</option>
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:6px;">Subject</label>
+            <input type="text" class="input-field" id="filterSubject" placeholder="e.g. Basic Electricity" style="padding:10px;" />
+        </div>
+        <div>
+            <label style="font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:6px;">Chapter</label>
+            <input type="text" class="input-field" id="filterChapter" placeholder="e.g. Module 1" style="padding:10px;" />
+        </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:16px;">
+        <button class="btn btn-primary" id="searchQBtn" style="flex:1;">🔍 Search Questions</button>
+        <button class="btn btn-danger" id="deleteFilteredBtn" style="flex:1;display:none;">🗑️ Delete Filtered Questions</button>
+    </div>
+
+    <div id="searchResults" style="display:none;">
+        <div style="background:#e8f0fe;border-radius:10px;padding:14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+            <span id="searchCount" style="font-weight:600;color:#1a73e8;"></span>
+            <span style="font-size:12px;color:#666;">Select questions to delete</span>
+        </div>
+        <div id="questionsList" style="max-height:300px;overflow-y:auto;"></div>
+    </div>
+</div>
         <button class="btn btn-danger" id="logoutBtn" style="width:100%;margin-bottom:20px;">🚪 Logout</button>
     </div>
 </main>
