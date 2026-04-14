@@ -175,14 +175,9 @@ window.selectTrade = function(tradeId, tradeName) {
 async function loadTrades() {
     const grid = document.getElementById('tradesGrid');
     try {
-        const snapshot = await getDocs(collection(db, 'questions'));
-        const tradeCounts = {};
-        snapshot.forEach(doc => {
-            const t = doc.data().trade;
-            if (t && t !== 'common') {
-                tradeCounts[t] = (tradeCounts[t] || 0) + 1;
-            }
-        });
+        // Fast load — reads ONE document instead of ALL questions!
+        const countDoc = await getDoc(doc(db, 'appData', 'tradeCounts'));
+        const tradeCounts = countDoc.exists() ? (countDoc.data().counts || {}) : {};
 
         const trades = [
             {id:'electrician', icon:'⚡', name:'Electrician'},
@@ -216,11 +211,10 @@ async function loadTrades() {
 
     } catch(e) {
         console.error(e);
-        grid.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">Error loading trades. Please refresh!</div>';
+        grid.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">Error loading. Please refresh!</div>';
     }
 }
-
-// ── Toast ──
+    // ── Toast ──
 window.showToast = function(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
