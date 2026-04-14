@@ -129,6 +129,7 @@ async function loadSubjects() {
             return;
         }
 
+        // Get unique subjects with counts
         const subjects = {};
         allDocs.forEach(doc => {
             const d = doc.data();
@@ -138,7 +139,7 @@ async function loadSubjects() {
             }
         });
 
-        // Sort subjects alphabetically
+        // Sort alphabetically
         const sortedSubjects = Object.entries(subjects)
             .sort((a, b) => a[0].localeCompare(b[0]));
 
@@ -157,11 +158,10 @@ async function loadSubjects() {
         list.innerHTML = html;
 
     } catch(e) {
-        list.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><div>Error loading subjects. Please try again.</div></div>`;
+        list.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><div>Error loading. Please try again.</div></div>`;
         console.error(e);
     }
 }
-
 window.selectSubject = function(subject) {
     localStorage.setItem('selectedSubject', subject);
     window.location.href = 'chapters.html';
