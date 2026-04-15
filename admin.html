@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ITI Studies - Admin Panel</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; }
@@ -108,11 +109,11 @@
                 <input type="checkbox" id="translateToggle" style="width:20px;height:20px;cursor:pointer;">
             </div>
             <div class="upload-area" id="uploadArea">
-                <div class="upload-icon">📁</div>
-                <div class="upload-text">Click to Select CSV File</div>
-                <div class="upload-sub">Only .csv files supported</div>
-            </div>
-            <input type="file" id="csvFile" accept=".csv" style="display:none" />
+    <div class="upload-icon">📁</div>
+    <div class="upload-text">Click to Select CSV or Excel File</div>
+    <div class="upload-sub">Supports .csv and .xlsx files</div>
+</div>
+<input type="file" id="csvFile" accept=".csv,.xlsx,.xls" style="display:none" />
             <div id="previewSection" class="hidden">
                 <div style="margin-top:20px;">
                     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
@@ -347,12 +348,42 @@ document.getElementById('uploadArea').addEventListener('click', function() {
 document.getElementById('csvFile').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-        parsedData = parseCSV(ev.target.result);
-        showPreview(parsedData);
-    };
-    reader.readAsText(file);
+
+    const fileName = file.name.toLowerCase();
+
+    if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+        // Handle Excel file
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            try {
+                const data = new Uint8Array(ev.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, {defval: ''});
+                parsedData = jsonData.map(row => {
+                    const normalized = {};
+                    Object.keys(row).forEach(key => {
+                        normalized[key.trim()] = String(row[key] || '').trim();
+                    });
+                    return normalized;
+                });
+                showPreview(parsedData);
+                addLog('📊 Excel file loaded: ' + parsedData.length + ' questions found');
+            } catch(e) {
+                showToast('❌ Error reading Excel file: ' + e.message);
+                console.error(e);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    } else {
+        // Handle CSV file
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            parsedData = parseCSV(ev.target.result);
+            showPreview(parsedData);
+        };
+        reader.readAsText(file);
+    }
 });
 
 // ── Upload ──
