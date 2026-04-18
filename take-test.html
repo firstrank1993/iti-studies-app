@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITI Studies - Take Test</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7565701101523786" crossorigin="anonymous"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; }
+        header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+        .header-title { font-size: 18px; font-weight: 600; flex: 1; }
+        .timer-badge { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 15px; font-weight: 700; }
+        .timer-badge.warning { background: #ff5252; animation: blink 1s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.6} }
+        .progress-bar { height: 6px; background: #e0e0e0; }
+        .progress-fill { height: 100%; background: #1a73e8; transition: width 0.3s; }
+        main { padding: 16px; max-width: 800px; margin: 0 auto; padding-bottom: 20px; }
+        .card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 16px; }
+        /* Student Info Form */
+        .form-title { font-size: 20px; font-weight: 700; color: #1a73e8; margin-bottom: 6px; }
+        .form-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+        .form-group { margin-bottom: 14px; }
+        .form-label { font-size: 13px; font-weight: 600; color: #333; display: block; margin-bottom: 6px; }
+        .form-input { width: 100%; padding: 12px 14px; border: 2px solid #e0e8ff; border-radius: 10px; font-size: 14px; outline: none; }
+        .form-input:focus { border-color: #1a73e8; }
+        .start-btn { width: 100%; background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+        /* Test Info */
+        .test-info-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 16px; }
+        .info-box { background: #e8f0fe; border-radius: 10px; padding: 12px; text-align: center; }
+        .info-num { font-size: 20px; font-weight: 700; color: #1a73e8; }
+        .info-lbl { font-size: 11px; color: #666; margin-top: 3px; }
+        .instructions-box { background: #fff3e0; border-radius: 10px; padding: 14px; margin-bottom: 16px; font-size: 13px; color: #e65100; border-left: 4px solid #ff9800; }
+        /* Quiz */
+        .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .q-number { font-size: 12px; color: #1a73e8; font-weight: 600; text-transform: uppercase; }
+        .q-marks { font-size: 12px; color: #888; }
+        .q-image { width: 100%; border-radius: 10px; margin-bottom: 14px; max-height: 220px; object-fit: contain; display: none; }
+        .q-text { font-size: 16px; font-weight: 600; line-height: 1.5; margin-bottom: 20px; }
+        .options-list { display: flex; flex-direction: column; gap: 10px; }
+        .option { background: #f8f9ff; border: 2px solid #e0e8ff; border-radius: 10px; padding: 13px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s; font-size: 14px; }
+        .option:hover { border-color: #1a73e8; background: #e8f0fe; }
+        .option.selected { border-color: #1a73e8; background: #e8f0fe; }
+        .option-label { background: #1a73e8; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+        .option.selected .option-label { background: #0d47a1; }
+        .q-actions { display: flex; gap: 10px; margin-top: 16px; }
+        .btn-prev { flex: 1; background: #f0f4f8; color: #333; border: none; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-next-q { flex: 2; background: #1a73e8; color: white; border: none; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-submit { flex: 2; background: #4caf50; color: white; border: none; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        /* Question Navigator */
+        .q-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .q-nav-btn { width: 36px; height: 36px; border-radius: 8px; border: 2px solid #e0e8ff; background: white; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .q-nav-btn.answered { background: #1a73e8; color: white; border-color: #1a73e8; }
+        .q-nav-btn.current { border-color: #ffd600; background: #fff9e6; }
+        /* Result */
+        .result-card { text-align: center; padding: 20px 0; }
+        .result-emoji { font-size: 64px; margin-bottom: 12px; }
+        .result-score { font-size: 48px; font-weight: 700; color: #1a73e8; }
+        .result-label { font-size: 16px; color: #666; margin-bottom: 20px; }
+        .result-stats { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin: 16px 0; }
+        .result-stat { background: #f0f4f8; border-radius: 12px; padding: 14px; }
+        .result-stat-num { font-size: 22px; font-weight: 700; color: #1a73e8; }
+        .result-stat-lbl { font-size: 12px; color: #888; margin-top: 3px; }
+        .rank-box { background: linear-gradient(135deg, #ffd600, #ff9800); border-radius: 14px; padding: 20px; margin: 16px 0; text-align: center; }
+        .rank-num { font-size: 48px; font-weight: 700; color: white; }
+        .rank-lbl { font-size: 14px; color: rgba(255,255,255,0.9); margin-top: 4px; }
+        .home-btn { width: 100%; background: #1a73e8; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 12px; }
+        /* Expired/Error */
+        .error-card { text-align: center; padding: 40px 20px; }
+        .error-icon { font-size: 64px; margin-bottom: 16px; }
+        /* Loading */
+        .loading-screen { text-align: center; padding: 60px 20px; }
+        .loading-icon { font-size: 48px; margin-bottom: 16px; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 999; display: none; }
+        .ad-banner { background: #e8f0fe; border: 1px dashed #1a73e8; text-align: center; padding: 10px; color: #888; font-size: 12px; margin-bottom: 16px; border-radius: 8px; }
+        .submit-confirm { background: #fff3e0; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 13px; color: #e65100; display: none; }
+    </style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<header>
+    <div class="header-title" id="headerTitle">ITI Studies - Test</div>
+    <div class="timer-badge" id="timerBadge" style="display:none">⏱ 00:00</div>
+</header>
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+<main>
+    <!-- Loading Screen -->
+    <div class="card" id="loadingScreen">
+        <div class="loading-screen">
+            <div class="loading-icon">⏳</div>
+            <div style="font-size:16px;font-weight:600;">Loading Test...</div>
+            <div style="font-size:13px;color:#888;margin-top:8px;">Please wait</div>
+        </div>
+    </div>
+
+    <!-- Error Screen -->
+    <div class="card" id="errorScreen" style="display:none">
+        <div class="error-card">
+            <div class="error-icon" id="errorIcon">❌</div>
+            <div style="font-size:20px;font-weight:700;margin-bottom:8px;" id="errorTitle">Test Not Found</div>
+            <div style="font-size:14px;color:#888;margin-bottom:20px;" id="errorMsg">This test link is invalid or has expired.</div>
+            <button class="home-btn" onclick="window.location.href='index.html'">🏠 Go to Home</button>
+        </div>
+    </div>
+
+    <!-- Student Info Form -->
+    <div class="card" id="studentForm" style="display:none">
+        <div class="form-title" id="testTitleDisplay">Test</div>
+        <div class="form-sub" id="testSubDisplay">Fill in your details to start</div>
+
+        <!-- Test Info -->
+        <div class="test-info-grid">
+            <div class="info-box"><div class="info-num" id="infoQ">-</div><div class="info-lbl">Questions</div></div>
+            <div class="info-box"><div class="info-num" id="infoDur">-</div><div class="info-lbl">Duration (mins)</div></div>
+            <div class="info-box"><div class="info-num" id="infoMarks">-</div><div class="info-lbl">Total Marks</div></div>
+            <div class="info-box"><div class="info-num" id="infoExpiry">-</div><div class="info-lbl">Valid Till</div></div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions-box" id="instructionsBox" style="display:none">
+            <strong>📋 Instructions:</strong><br>
+            <span id="instructionsText"></span>
+        </div>
+
+        <!-- Student Details -->
+        <div class="form-group">
+            <label class="form-label">👤 Your Full Name *</label>
+            <input type="text" class="form-input" id="studentName" placeholder="Enter your full name" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">📱 Mobile Number *</label>
+            <input type="tel" class="form-input" id="studentMobile" placeholder="Enter 10-digit mobile number" maxlength="10" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">🎓 Enrollment Number *</label>
+            <input type="text" class="form-input" id="studentEnroll" placeholder="Enter your enrollment number" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">🏫 ITI Name <span style="color:#888;font-weight:400;">(optional)</span></label>
+            <input type="text" class="form-input" id="studentITI" placeholder="Enter your ITI name" />
+        </div>
+
+        <button class="start-btn" id="startTestBtn">🚀 Start Test</button>
+    </div>
+
+    <!-- Quiz Section -->
+    <div id="quizSection" style="display:none">
+        <!-- Question Navigator -->
+        <div class="card" style="padding:16px;">
+            <div style="font-size:12px;font-weight:600;color:#666;margin-bottom:10px;">Question Navigator:</div>
+            <div class="q-nav" id="qNav"></div>
+            <div style="display:flex;gap:12px;font-size:11px;color:#888;margin-top:8px;">
+                <span>⬜ Not answered</span>
+                <span style="color:#1a73e8;">🟦 Answered</span>
+            </div>
+        </div>
+
+        <!-- Question Card -->
+        <div class="card" id="questionCard">
+            <div class="q-header">
+                <span class="q-number" id="qNum">Question 1 of 10</span>
+                <span class="q-marks" id="qMarks">1 Mark</span>
+            </div>
+            <img class="q-image" id="qImage" src="" alt="">
+            <div class="q-text" id="qText">Loading...</div>
+            <div class="options-list" id="optionsList"></div>
+            <div class="q-actions">
+                <button class="btn-prev" id="prevBtn">← Prev</button>
+                <button class="btn-next-q" id="nextQBtn">Next →</button>
+            </div>
+            <div class="submit-confirm" id="submitConfirm">
+                ⚠️ You have answered <strong id="answeredCount">0</strong> out of <strong id="totalQCount">0</strong> questions.
+                Are you sure you want to submit?
+                <div style="display:flex;gap:8px;margin-top:10px;">
+                    <button style="flex:1;background:#f0f4f8;color:#333;border:none;padding:10px;border-radius:8px;cursor:pointer;" onclick="document.getElementById('submitConfirm').style.display='none'">Cancel</button>
+                    <button style="flex:1;background:#4caf50;color:white;border:none;padding:10px;border-radius:8px;font-weight:600;cursor:pointer;" id="confirmSubmitBtn">Submit Test ✅</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-submit" id="submitBtn" style="width:100%;margin-bottom:16px;">📤 Submit Test</button>
+    </div>
+
+    <!-- Result Section -->
+    <div class="card" id="resultSection" style="display:none">
+        <!-- Ad on result page -->
+        <div class="ad-banner">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7565701101523786" data-ad-slot="auto" data-ad-format="horizontal"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="result-card">
+            <div class="result-emoji" id="resultEmoji">🎉</div>
+            <div style="font-size:16px;font-weight:600;margin-bottom:4px;" id="resultName">Student</div>
+            <div class="result-score" id="resultScore">0</div>
+            <div style="font-size:13px;color:#888;">out of <span id="resultTotal">0</span> marks</div>
+            <div class="result-label" id="resultLabel">Test Complete!</div>
+
+            <div class="result-stats">
+                <div class="result-stat"><div class="result-stat-num" id="resCorrect">0</div><div class="result-stat-lbl">Correct ✅</div></div>
+                <div class="result-stat"><div class="result-stat-num" id="resWrong">0</div><div class="result-stat-lbl">Wrong ❌</div></div>
+                <div class="result-stat"><div class="result-stat-num" id="resSkipped">0</div><div class="result-stat-lbl">Skipped ⏭</div></div>
+                <div class="result-stat"><div class="result-stat-num" id="resPercent">0%</div><div class="result-stat-lbl">Percentage</div></div>
+            </div>
+
+            <!-- Rank Box -->
+            <div class="rank-box">
+                <div style="font-size:14px;color:rgba(255,255,255,0.9);margin-bottom:4px;">🏆 Your Rank</div>
+                <div class="rank-num" id="rankNum">-</div>
+                <div class="rank-lbl" id="rankLbl">Calculating rank...</div>
+            </div>
+
+            <button class="home-btn" onclick="window.location.href='index.html'">🏠 Go to Home</button>
+        </div>
+    </div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, addDoc, doc, getDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC0tkiVx89eNQJozHAUPBGRqonTB6M6ShE",
+    authDomain: "itistudies-4b277.firebaseapp.com",
+    projectId: "itistudies-4b277",
+    storageBucket: "itistudies-4b277.firebasestorage.app",
+    messagingSenderId: "549937347076",
+    appId: "1:549937347076:web:72231b8f1bde6c2dd15351",
+    measurementId: "G-HKW4C7Q81Z"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const urlParams = new URLSearchParams(window.location.search);
+const testId = urlParams.get('id');
+
+let testData = null;
+let questions = [];
+let answers = {};
+let currentIndex = 0;
+let timerInterval = null;
+let timeLeft = 0;
+let studentInfo = {};
+let submitted = false;
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+}
+
+function showError(icon, title, msg) {
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('errorScreen').style.display = 'block';
+    document.getElementById('errorIcon').textContent = icon;
+    document.getElementById('errorTitle').textContent = title;
+    document.getElementById('errorMsg').textContent = msg;
+}
+
+// ── Load Test ──
+async function loadTest() {
+    if (!testId) { showError('❌', 'Invalid Link', 'No test ID found in the link.'); return; }
+
+    try {
+        const testDoc = await getDoc(doc(db, 'tests', testId));
+        if (!testDoc.exists()) { showError('❌', 'Test Not Found', 'This test link is invalid.'); return; }
+
+        testData = testDoc.data();
+
+        // Check expiry
+        if (testData.expiry && new Date(testData.expiry) < new Date()) {
+            showError('⏰', 'Test Expired', 'This test has expired on ' + new Date(testData.expiry).toLocaleString('en-IN') + '. Contact your teacher for a new link.');
+            return;
+        }
+
+        // Check if active
+        if (!testData.isActive) {
+            showError('🔒', 'Test Inactive', 'This test has been deactivated by the creator.');
+            return;
+        }
+
+        // Show student form
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('studentForm').style.display = 'block';
+        document.getElementById('testTitleDisplay').textContent = testData.title || 'Test';
+        document.getElementById('testSubDisplay').textContent = testData.trade + ' | Year ' + testData.year;
+        document.getElementById('infoQ').textContent = testData.questionCount;
+        document.getElementById('infoDur').textContent = testData.duration;
+        document.getElementById('infoMarks').textContent = testData.totalMarks;
+        document.getElementById('infoExpiry').textContent = new Date(testData.expiry).toLocaleDateString('en-IN');
+        document.getElementById('headerTitle').textContent = testData.title || 'Test';
+
+        if (testData.instructions) {
+            document.getElementById('instructionsBox').style.display = 'block';
+            document.getElementById('instructionsText').textContent = testData.instructions;
+        }
+
+    } catch(e) {
+        showError('❌', 'Error Loading Test', 'Please check your internet connection and try again.');
+        console.error(e);
+    }
+}
+
+// ── Start Test ──
+document.getElementById('startTestBtn').addEventListener('click', async function() {
+    const name = document.getElementById('studentName').value.trim();
+    const mobile = document.getElementById('studentMobile').value.trim();
+    const enroll = document.getElementById('studentEnroll').value.trim();
+    const iti = document.getElementById('studentITI').value.trim();
+
+    if (!name) { showToast('⚠️ Please enter your name!'); return; }
+    if (!mobile || mobile.length !== 10) { showToast('⚠️ Please enter valid 10-digit mobile number!'); return; }
+    if (!enroll) { showToast('⚠️ Please enter your enrollment number!'); return; }
+
+    studentInfo = { name, mobile, enroll, iti };
+
+    showToast('⏳ Loading questions...');
+    this.disabled = true;
+    this.textContent = '⏳ Loading...';
+
+    try {
+        await loadQuestions();
+        document.getElementById('studentForm').style.display = 'none';
+        document.getElementById('quizSection').style.display = 'block';
+        buildNavigator();
+        showQuestion(0);
+        startTimer();
+    } catch(e) {
+        showToast('❌ Error loading questions: ' + e.message);
+        this.disabled = false;
+        this.textContent = '🚀 Start Test';
+    }
+});
+
+// ── Load Questions ──
+async function loadQuestions() {
+    const { trade, year, subjects, chapters, questionCount } = testData;
+    let allQs = [];
+
+    for (const subject of subjects) {
+        const chaptersToLoad = chapters && chapters.length ? chapters : null;
+
+        if (chaptersToLoad) {
+            for (const chapter of chaptersToLoad) {
+                const [s1, s2] = await Promise.all([
+                    getDocs(query(collection(db,'questions'), where('trade','==',trade), where('year','==',year), where('subject','==',subject), where('chapter','==',chapter))),
+                    getDocs(query(collection(db,'questions'), where('trade','==','common'), where('year','==',year), where('subject','==',subject), where('chapter','==',chapter)))
+                ]);
+                [...s1.docs, ...s2.docs].forEach(d => allQs.push({id:d.id,...d.data()}));
+            }
+        } else {
+            const [s1, s2] = await Promise.all([
+                getDocs(query(collection(db,'questions'), where('trade','==',trade), where('year','==',year), where('subject','==',subject))),
+                getDocs(query(collection(db,'questions'), where('trade','==','common'), where('year','==',year), where('subject','==',subject)))
+            ]);
+            [...s1.docs, ...s2.docs].forEach(d => allQs.push({id:d.id,...d.data()}));
+        }
+    }
+
+    // Remove duplicates
+    const seen = new Set();
+    allQs = allQs.filter(q => { if (seen.has(q.id)) return false; seen.add(q.id); return true; });
+
+    // Shuffle and limit to questionCount
+    allQs.sort(() => Math.random() - 0.5);
+    questions = allQs.slice(0, questionCount);
+
+    if (!questions.length) throw new Error('No questions found for this test!');
+}
+
+// ── Build Navigator ──
+function buildNavigator() {
+    const nav = document.getElementById('qNav');
+    let html = '';
+    questions.forEach((q, i) => {
+        html += `<button class="q-nav-btn ${i===0?'current':''}" id="navBtn${i}" onclick="jumpToQuestion(${i})">${i+1}</button>`;
+    });
+    nav.innerHTML = html;
+    document.getElementById('totalQCount').textContent = questions.length;
+}
+
+// ── Show Question ──
+function showQuestion(index) {
+    currentIndex = index;
+    const q = questions[index];
+
+    // Update progress
+    document.getElementById('progressFill').style.width = ((index/questions.length)*100) + '%';
+    document.getElementById('qNum').textContent = 'Question ' + (index+1) + ' of ' + questions.length;
+    document.getElementById('qMarks').textContent = testData.marksPerQ + ' Mark' + (testData.marksPerQ > 1 ? 's' : '');
+
+    // Update navigator
+    document.querySelectorAll('.q-nav-btn').forEach(b => b.classList.remove('current'));
+    document.getElementById('navBtn' + index).classList.add('current');
+
+    // Image
+    if (q.image && q.image.trim()) {
+        document.getElementById('qImage').src = q.image;
+        document.getElementById('qImage').style.display = 'block';
+    } else {
+        document.getElementById('qImage').style.display = 'none';
+    }
+
+    // Question text
+    document.getElementById('qText').textContent = q.question;
+
+    // Options
+    const labels = ['A','B','C','D'];
+    let html = '';
+    q.options.forEach((opt, i) => {
+        const isSelected = answers[index] === i;
+        html += `<div class="option ${isSelected?'selected':''}" data-index="${i}" id="opt${i}">
+            <span class="option-label">${labels[i]}</span>
+            <span>${opt}</span>
+        </div>`;
+    });
+    document.getElementById('optionsList').innerHTML = html;
+
+    // Option click handlers
+    document.querySelectorAll('.option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            selectOption(parseInt(this.dataset.index));
+        });
+    });
+
+    // Prev/Next buttons
+    document.getElementById('prevBtn').disabled = index === 0;
+    document.getElementById('prevBtn').style.opacity = index === 0 ? '0.4' : '1';
+
+    const isLast = index === questions.length - 1;
+    document.getElementById('nextQBtn').textContent = isLast ? '📤 Review & Submit' : 'Next →';
+    document.getElementById('submitConfirm').style.display = 'none';
+}
+
+function selectOption(optIndex) {
+    answers[currentIndex] = optIndex;
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    document.getElementById('opt' + optIndex).classList.add('selected');
+    // Update navigator
+    const navBtn = document.getElementById('navBtn' + currentIndex);
+    navBtn.classList.add('answered');
+    document.getElementById('answeredCount').textContent = Object.keys(answers).length;
+}
+
+window.jumpToQuestion = function(index) {
+    showQuestion(index);
+};
+
+document.getElementById('prevBtn').addEventListener('click', () => {
+    if (currentIndex > 0) showQuestion(currentIndex - 1);
+});
+
+document.getElementById('nextQBtn').addEventListener('click', () => {
+    if (currentIndex < questions.length - 1) {
+        showQuestion(currentIndex + 1);
+    } else {
+        // Show submit confirmation
+        document.getElementById('answeredCount').textContent = Object.keys(answers).length;
+        document.getElementById('submitConfirm').style.display = 'block';
+        document.getElementById('submitConfirm').scrollIntoView({behavior:'smooth'});
+    }
+});
+
+document.getElementById('submitBtn').addEventListener('click', () => {
+    document.getElementById('answeredCount').textContent = Object.keys(answers).length;
+    document.getElementById('submitConfirm').style.display = 'block';
+    document.getElementById('submitConfirm').scrollIntoView({behavior:'smooth'});
+});
+
+document.getElementById('confirmSubmitBtn').addEventListener('click', () => submitTest());
+
+// ── Timer ──
+function startTimer() {
+    timeLeft = testData.duration * 60;
+    document.getElementById('timerBadge').style.display = 'block';
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        const mins = Math.floor(timeLeft/60).toString().padStart(2,'0');
+        const secs = (timeLeft%60).toString().padStart(2,'0');
+        document.getElementById('timerBadge').textContent = '⏱ ' + mins + ':' + secs;
+        if (timeLeft <= 300) document.getElementById('timerBadge').classList.add('warning');
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            showToast('⏰ Time up! Submitting...');
+            setTimeout(() => submitTest(), 1500);
+        }
+    }, 1000);
+}
+
+// ── Submit Test ──
+async function submitTest() {
+    if (submitted) return;
+    submitted = true;
+    clearInterval(timerInterval);
+
+    let correct = 0, wrong = 0, skipped = 0;
+    questions.forEach((q, i) => {
+        if (answers[i] === undefined) { skipped++; }
+        else if (answers[i] === q.correct) { correct++; }
+        else { wrong++; }
+    });
+
+    const marksObtained = correct * testData.marksPerQ;
+    const totalMarks = testData.totalMarks;
+    const percentage = Math.round((marksObtained / totalMarks) * 100);
+    const timeTaken = testData.duration - Math.floor(timeLeft/60);
+
+    // Save result to Firebase
+    try {
+        await addDoc(collection(db, 'testResults'), {
+            testId,
+            testTitle: testData.title,
+            studentName: studentInfo.name,
+            studentMobile: studentInfo.mobile,
+            studentEnroll: studentInfo.enroll,
+            studentITI: studentInfo.iti || '',
+            correct,
+            wrong,
+            skipped,
+            marksObtained,
+            totalMarks,
+            percentage,
+            timeTaken,
+            submittedAt: new Date().toISOString()
+        });
+
+        // Calculate rank
+        const allResults = await getDocs(query(
+            collection(db, 'testResults'),
+            where('testId', '==', testId),
+            orderBy('marksObtained', 'desc')
+        ));
+
+        let rank = 1;
+        allResults.forEach(d => {
+            if (d.data().marksObtained > marksObtained) rank++;
+        });
+
+        showResult(correct, wrong, skipped, marksObtained, totalMarks, percentage, rank, allResults.size);
+
+    } catch(e) {
+        console.error(e);
+        showResult(correct, wrong, skipped, marksObtained, totalMarks, percentage, null, null);
+    }
+}
+
+function showResult(correct, wrong, skipped, marks, total, percent, rank, totalStudents) {
+    document.getElementById('quizSection').style.display = 'none';
+    document.getElementById('timerBadge').style.display = 'none';
+    document.getElementById('resultSection').style.display = 'block';
+
+    document.getElementById('resultName').textContent = studentInfo.name;
+    document.getElementById('resultScore').textContent = marks;
+    document.getElementById('resultTotal').textContent = total;
+    document.getElementById('resCorrect').textContent = correct;
+    document.getElementById('resWrong').textContent = wrong;
+    document.getElementById('resSkipped').textContent = skipped;
+    document.getElementById('resPercent').textContent = percent + '%';
+
+    let emoji = '😔', label = 'Keep Practicing!';
+    if (percent >= 80) { emoji = '🏆'; label = 'Excellent Work!'; }
+    else if (percent >= 60) { emoji = '😊'; label = 'Good Job!'; }
+    else if (percent >= 40) { emoji = '📚'; label = 'Keep Studying!'; }
+    document.getElementById('resultEmoji').textContent = emoji;
+    document.getElementById('resultLabel').textContent = label;
+
+    if (rank) {
+        document.getElementById('rankNum').textContent = '#' + rank;
+        document.getElementById('rankLbl').textContent = 'out of ' + totalStudents + ' students';
+    } else {
+        document.getElementById('rankNum').textContent = '✅';
+        document.getElementById('rankLbl').textContent = 'Result saved!';
+    }
+
+    window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Init
+loadTest();
+</script>
+</body>
+</html>
