@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITI Studies - Rank Board</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7565701101523786" crossorigin="anonymous"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; padding-bottom: 30px; }
+        header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+        .back-btn { background: none; border: none; color: white; font-size: 22px; cursor: pointer; }
+        .header-title { font-size: 18px; font-weight: 600; flex: 1; }
+        main { padding: 16px; max-width: 800px; margin: 0 auto; }
+        .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 16px; }
+        /* Test Info */
+        .test-title { font-size: 20px; font-weight: 700; color: #1a73e8; margin-bottom: 6px; }
+        .test-meta { font-size: 13px; color: #888; margin-bottom: 16px; }
+        .test-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+        .stat-box { background: #e8f0fe; border-radius: 10px; padding: 12px; text-align: center; }
+        .stat-num { font-size: 22px; font-weight: 700; color: #1a73e8; }
+        .stat-lbl { font-size: 11px; color: #666; margin-top: 3px; }
+        /* Podium */
+        .podium { display: flex; justify-content: center; align-items: flex-end; gap: 8px; margin: 20px 0; }
+        .podium-place { text-align: center; }
+        .podium-bar { border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .podium-1 { background: linear-gradient(135deg, #ffd600, #ff9800); width: 90px; height: 100px; }
+        .podium-2 { background: linear-gradient(135deg, #b0bec5, #78909c); width: 80px; height: 75px; }
+        .podium-3 { background: linear-gradient(135deg, #cd7f32, #a0522d); width: 80px; height: 60px; }
+        .podium-name { font-size: 12px; font-weight: 700; margin-top: 6px; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .podium-score { font-size: 11px; color: #888; margin-top: 2px; }
+        /* Table */
+        .rank-table { width: 100%; border-collapse: collapse; }
+        .rank-table th { background: #1a73e8; color: white; padding: 12px 10px; text-align: left; font-size: 13px; }
+        .rank-table td { padding: 12px 10px; border-bottom: 1px solid #f0f4f8; font-size: 13px; }
+        .rank-table tr:hover td { background: #f8f9ff; }
+        .rank-badge { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; font-size: 12px; font-weight: 700; }
+        .rank-1 { background: #ffd600; color: #333; }
+        .rank-2 { background: #b0bec5; color: #333; }
+        .rank-3 { background: #cd7f32; color: white; }
+        .rank-other { background: #e8f0fe; color: #1a73e8; }
+        .score-bar-wrap { display: flex; align-items: center; gap: 8px; }
+        .score-bar { height: 6px; background: #e0e8ff; border-radius: 3px; flex: 1; }
+        .score-bar-fill { height: 100%; background: #1a73e8; border-radius: 3px; }
+        /* Access Control */
+        .access-form { text-align: center; padding: 20px 0; }
+        .access-icon { font-size: 48px; margin-bottom: 12px; }
+        .access-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .access-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+        .access-btn { background: white; color: #333; border: 2px solid #e0e0e0; display: flex; align-items: center; gap: 12px; justify-content: center; width: 100%; font-size: 15px; padding: 14px; border-radius: 10px; cursor: pointer; }
+        .access-btn:hover { background: #f5f5f5; }
+        /* Ad */
+        .ad-banner { background: #e8f0fe; border: 1px dashed #1a73e8; text-align: center; padding: 10px; color: #888; font-size: 12px; margin-bottom: 16px; border-radius: 8px; }
+        /* Loading */
+        .loading { text-align: center; padding: 40px; color: #888; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 999; display: none; }
+        .export-btn { background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 25px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .refresh-btn { background: #1a73e8; color: white; border: none; padding: 10px 20px; border-radius: 25px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .no-results { text-align: center; padding: 40px; color: #888; }
+        .no-results-icon { font-size: 48px; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<header>
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+    <div class="header-title">🏆 Rank Board</div>
+</header>
+
+<main>
+    <!-- Access Gate — Login Required -->
+    <div class="card" id="accessGate">
+        <div class="access-form">
+            <div class="access-icon">🔐</div>
+            <div class="access-title">Login to View Rank Board</div>
+            <div class="access-sub">Only the test creator and admin can view the complete rank board</div>
+            <button class="access-btn" id="googleLoginBtn">
+                <img src="https://www.google.com/favicon.ico" width="20" height="20" alt="G">
+                Sign in with Google
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="card" id="loadingCard" style="display:none">
+        <div class="loading">⏳ Loading rank board...</div>
+    </div>
+
+    <!-- Access Denied -->
+    <div class="card" id="accessDenied" style="display:none">
+        <div class="access-form">
+            <div class="access-icon">🚫</div>
+            <div class="access-title">Access Denied</div>
+            <div class="access-sub">Only the test creator or admin can view the rank board</div>
+            <button onclick="window.location.href='index.html'" style="background:#1a73e8;color:white;border:none;padding:12px 24px;border-radius:25px;font-size:14px;font-weight:600;cursor:pointer;">Go to Home</button>
+        </div>
+    </div>
+
+    <!-- Rank Board Content -->
+    <div id="rankContent" style="display:none">
+        <!-- Test Info -->
+        <div class="card">
+            <div class="test-title" id="testTitle">Test Name</div>
+            <div class="test-meta" id="testMeta">Loading...</div>
+            <div class="test-stats">
+                <div class="stat-box"><div class="stat-num" id="totalStudents">0</div><div class="stat-lbl">Students</div></div>
+                <div class="stat-box"><div class="stat-num" id="avgScore">0%</div><div class="stat-lbl">Avg Score</div></div>
+                <div class="stat-box"><div class="stat-num" id="topScore">0</div><div class="stat-lbl">Top Marks</div></div>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="refresh-btn" onclick="loadRankBoard()">🔄 Refresh</button>
+                <button class="export-btn" onclick="exportCSV()">📥 Export CSV</button>
+            </div>
+        </div>
+
+        <!-- Ad Banner -->
+        <div class="ad-banner">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7565701101523786" data-ad-slot="auto" data-ad-format="horizontal"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <!-- Podium -->
+        <div class="card" id="podiumCard" style="display:none">
+            <div style="text-align:center;font-size:16px;font-weight:700;color:#1a73e8;margin-bottom:16px;">🏆 Top 3 Students</div>
+            <div class="podium" id="podium"></div>
+        </div>
+
+        <!-- Full Rank Table -->
+        <div class="card">
+            <div style="font-size:16px;font-weight:700;color:#1a73e8;margin-bottom:16px;">📋 Complete Rank Board</div>
+            <div id="noResults" class="no-results" style="display:none">
+                <div class="no-results-icon">📭</div>
+                <div>No students have appeared yet!</div>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="rank-table" id="rankTable" style="display:none">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Enrollment</th>
+                            <th>ITI</th>
+                            <th>Score</th>
+                            <th>%</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC0tkiVx89eNQJozHAUPBGRqonTB6M6ShE",
+    authDomain: "itistudies-4b277.firebaseapp.com",
+    projectId: "itistudies-4b277",
+    storageBucket: "itistudies-4b277.firebasestorage.app",
+    messagingSenderId: "549937347076",
+    appId: "1:549937347076:web:72231b8f1bde6c2dd15351",
+    measurementId: "G-HKW4C7Q81Z"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+const urlParams = new URLSearchParams(window.location.search);
+const testId = urlParams.get('id');
+
+let testData = null;
+let currentUser = null;
+let allResults = [];
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+}
+
+// ── Auth ──
+onAuthStateChanged(auth, async user => {
+    currentUser = user;
+    if (!user) {
+        document.getElementById('accessGate').style.display = 'block';
+        return;
+    }
+    document.getElementById('accessGate').style.display = 'none';
+    document.getElementById('loadingCard').style.display = 'block';
+    await checkAccessAndLoad(user);
+});
+
+document.getElementById('googleLoginBtn').addEventListener('click', async () => {
+    try { await signInWithPopup(auth, provider); }
+    catch(e) { showToast('Login failed: ' + e.code); }
+});
+
+async function checkAccessAndLoad(user) {
+    if (!testId) {
+        document.getElementById('loadingCard').style.display = 'none';
+        document.getElementById('accessDenied').style.display = 'block';
+        return;
+    }
+
+    try {
+        // Load test data
+        const testDoc = await getDoc(doc(db, 'tests', testId));
+        if (!testDoc.exists()) {
+            document.getElementById('loadingCard').style.display = 'none';
+            document.getElementById('accessDenied').style.display = 'block';
+            return;
+        }
+        testData = testDoc.data();
+
+        // Check if user is creator or admin
+        const isCreator = testData.createdBy === user.uid;
+        const adminDoc = await getDoc(doc(db, 'admins', user.email));
+        const isAdmin = adminDoc.exists() && adminDoc.data().role === 'admin';
+
+        if (!isCreator && !isAdmin) {
+            document.getElementById('loadingCard').style.display = 'none';
+            document.getElementById('accessDenied').style.display = 'block';
+            return;
+        }
+
+        // Authorized! Load rank board
+        document.getElementById('loadingCard').style.display = 'none';
+        document.getElementById('rankContent').style.display = 'block';
+        populateTestInfo();
+        await loadRankBoard();
+
+    } catch(e) {
+        console.error(e);
+        showToast('Error: ' + e.message);
+    }
+}
+
+function populateTestInfo() {
+    document.getElementById('testTitle').textContent = testData.title || 'Test';
+    document.getElementById('testMeta').textContent =
+        testData.trade + ' | Year ' + testData.year +
+        ' | ' + testData.questionCount + ' Questions' +
+        ' | ' + testData.duration + ' mins' +
+        ' | ' + testData.marksPerQ + ' mark/question';
+}
+
+window.loadRankBoard = async function() {
+    try {
+        const snap = await getDocs(query(
+            collection(db, 'testResults'),
+            where('testId', '==', testId),
+            orderBy('marksObtained', 'desc'),
+            orderBy('timeTaken', 'asc')
+        ));
+
+        allResults = [];
+        snap.forEach(d => allResults.push(d.data()));
+
+        if (!allResults.length) {
+            document.getElementById('noResults').style.display = 'block';
+            document.getElementById('rankTable').style.display = 'none';
+            document.getElementById('podiumCard').style.display = 'none';
+            document.getElementById('totalStudents').textContent = '0';
+            document.getElementById('avgScore').textContent = '0%';
+            document.getElementById('topScore').textContent = '0';
+            return;
+        }
+
+        // Stats
+        document.getElementById('totalStudents').textContent = allResults.length;
+        const avgPct = Math.round(allResults.reduce((a,b) => a + b.percentage, 0) / allResults.length);
+        document.getElementById('avgScore').textContent = avgPct + '%';
+        document.getElementById('topScore').textContent = allResults[0].marksObtained;
+
+        // Podium
+        if (allResults.length >= 1) {
+            document.getElementById('podiumCard').style.display = 'block';
+            buildPodium(allResults.slice(0,3));
+        }
+
+        // Table
+        document.getElementById('rankTable').style.display = 'table';
+        document.getElementById('noResults').style.display = 'none';
+        const maxMarks = testData.totalMarks;
+
+        let html = '';
+        allResults.forEach((r, i) => {
+            const rank = i + 1;
+            const rankClass = rank===1?'rank-1':rank===2?'rank-2':rank===3?'rank-3':'rank-other';
+            const rankText = rank<=3?['🥇','🥈','🥉'][rank-1]:rank;
+            const barWidth = Math.round((r.marksObtained/maxMarks)*100);
+            html += `<tr>
+                <td><span class="rank-badge ${rankClass}">${rankText}</span></td>
+                <td><strong>${r.studentName}</strong></td>
+                <td>${r.studentEnroll}</td>
+                <td>${r.studentITI || '-'}</td>
+                <td>
+                    <div class="score-bar-wrap">
+                        <span style="font-weight:700;color:#1a73e8;">${r.marksObtained}/${maxMarks}</span>
+                        <div class="score-bar"><div class="score-bar-fill" style="width:${barWidth}%"></div></div>
+                    </div>
+                </td>
+                <td><span style="font-weight:600;">${r.percentage}%</span></td>
+                <td>${r.timeTaken || '-'} min</td>
+            </tr>`;
+        });
+        document.getElementById('rankTableBody').innerHTML = html;
+
+    } catch(e) {
+        showToast('Error loading results: ' + e.message);
+        console.error(e);
+    }
+};
+
+function buildPodium(top) {
+    const positions = top.length >= 2 ?
+        [top[1], top[0], top[2]].filter(Boolean) :
+        [top[0]];
+
+    const barClasses = top.length >= 2 ?
+        ['podium-2', 'podium-1', 'podium-3'] :
+        ['podium-1'];
+
+    const medals = top.length >= 2 ?
+        ['🥈', '🥇', '🥉'] :
+        ['🥇'];
+
+    let html = '';
+    positions.forEach((p, i) => {
+        if (!p) return;
+        html += `<div class="podium-place">
+            <div class="podium-bar ${barClasses[i]}">${medals[i]}</div>
+            <div class="podium-name">${p.studentName}</div>
+            <div class="podium-score">${p.marksObtained} marks</div>
+        </div>`;
+    });
+    document.getElementById('podium').innerHTML = html;
+}
+
+// ── Export CSV ──
+window.exportCSV = function() {
+    if (!allResults.length) { showToast('No results to export!'); return; }
+    let csv = 'Rank,Name,Mobile,Enrollment,ITI,Marks,Total Marks,Percentage,Time Taken\n';
+    allResults.forEach((r,i) => {
+        csv += `${i+1},"${r.studentName}","${r.studentMobile}","${r.studentEnroll}","${r.studentITI||''}",${r.marksObtained},${r.totalMarks},${r.percentage}%,${r.timeTaken||0} min\n`;
+    });
+    const blob = new Blob([csv], {type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (testData.title||'test') + '_results.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('✅ Results exported!');
+};
+</script>
+</body>
+</html>
