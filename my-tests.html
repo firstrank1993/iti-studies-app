@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tests - ITI Studies</title>
+    <meta name="robots" content="noindex, follow">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; padding-bottom: 80px; }
+        header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+        .back-btn { background: none; border: none; color: white; font-size: 22px; cursor: pointer; }
+        .header-title { font-size: 18px; font-weight: 600; flex: 1; }
+        main { padding: 16px; max-width: 800px; margin: 0 auto; }
+        .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 16px; }
+        /* Login Gate */
+        .login-gate { text-align: center; padding: 40px 20px; }
+        .login-icon { font-size: 56px; margin-bottom: 14px; }
+        .login-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .login-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+        .login-btn { background: white; color: #333; border: 2px solid #e0e0e0; padding: 12px 20px; border-radius: 10px; display: flex; align-items: center; gap: 10px; justify-content: center; width: 100%; font-size: 15px; cursor: pointer; }
+        /* Test Card */
+        .test-card { background: white; border-radius: 14px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 12px; border-left: 4px solid #1a73e8; }
+        .test-card.expired { border-left-color: #f44336; opacity: 0.8; }
+        .test-card.active { border-left-color: #4caf50; }
+        .test-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+        .test-title { font-size: 16px; font-weight: 700; }
+        .test-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+        .badge-active { background: #e8f5e9; color: #4caf50; }
+        .badge-expired { background: #ffebee; color: #f44336; }
+        .test-meta { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin-bottom: 12px; }
+        .test-meta-item { background: #f8f9ff; border-radius: 8px; padding: 8px 10px; }
+        .test-meta-label { font-size: 10px; color: #888; }
+        .test-meta-value { font-size: 13px; font-weight: 600; color: #333; margin-top: 2px; }
+        .test-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .btn-share { background: #e8f0fe; color: #1a73e8; }
+        .btn-whatsapp { background: #e8f5e9; color: #2e7d32; }
+        .btn-rank { background: #fff3e0; color: #e65100; }
+        .btn-delete { background: #ffebee; color: #f44336; }
+        .btn-toggle { background: #f0f4f8; color: #666; }
+        .share-link-box { background: #f0f4f8; border-radius: 8px; padding: 10px; margin-top: 10px; display: none; }
+        .share-link-text { font-size: 12px; color: #1a73e8; word-break: break-all; margin-bottom: 8px; }
+        .copy-btn { background: #1a73e8; color: white; border: none; padding: 6px 14px; border-radius: 15px; font-size: 12px; cursor: pointer; }
+        /* Stats */
+        .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+        .stat-box { background: #e8f0fe; border-radius: 12px; padding: 14px; text-align: center; }
+        .stat-num { font-size: 22px; font-weight: 700; color: #1a73e8; }
+        .stat-lbl { font-size: 11px; color: #666; margin-top: 3px; }
+        /* Empty */
+        .empty-state { text-align: center; padding: 40px 20px; color: #888; }
+        .empty-icon { font-size: 56px; margin-bottom: 14px; }
+        /* Loading */
+        .loading { text-align: center; padding: 40px; color: #888; }
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 8px 0 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #888; font-size: 10px; gap: 3px; flex: 1; }
+        .nav-item.active { color: #1a73e8; }
+        .nav-icon { font-size: 22px; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 999; display: none; }
+        .section-title { font-size: 16px; font-weight: 700; color: #1a73e8; margin-bottom: 14px; }
+        .create-test-btn { width: 100%; background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    </style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<header>
+    <button class="back-btn" onclick="window.location.href='profile.html'">←</button>
+    <div class="header-title">🔗 My Created Tests</div>
+</header>
+
+<main>
+    <!-- Login Gate -->
+    <div class="card" id="loginGate">
+        <div class="login-gate">
+            <div class="login-icon">🔐</div>
+            <div class="login-title">Login Required</div>
+            <div class="login-sub">Please login to view your created tests</div>
+            <button class="login-btn" id="loginBtn">
+                <img src="https://www.google.com/favicon.ico" width="20" height="20" alt="G">
+                Sign in with Google
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div id="mainContent" style="display:none">
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-box"><div class="stat-num" id="totalTests">0</div><div class="stat-lbl">Total Tests</div></div>
+            <div class="stat-box"><div class="stat-num" id="activeTests">0</div><div class="stat-lbl">Active</div></div>
+            <div class="stat-box"><div class="stat-num" id="totalAppeared">0</div><div class="stat-lbl">Students</div></div>
+        </div>
+
+        <!-- Create New -->
+        <button class="create-test-btn" onclick="window.location.href='practice.html#create'">
+            ➕ Create New Test
+        </button>
+        <div style="height:16px;"></div>
+
+        <!-- Tests List -->
+        <div class="section-title">📋 Your Tests</div>
+        <div id="testsList">
+            <div class="loading">⏳ Loading your tests...</div>
+        </div>
+    </div>
+</main>
+
+<nav class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='index.html'"><span class="nav-icon">🏠</span><span>Home</span></div>
+    <div class="nav-item" onclick="window.location.href='practice.html'"><span class="nav-icon">📝</span><span>Practice</span></div>
+    <div class="nav-item active" onclick="window.location.href='profile.html'"><span class="nav-icon">👤</span><span>Profile</span></div>
+</nav>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, deleteDoc, updateDoc, doc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC0tkiVx89eNQJozHAUPBGRqonTB6M6ShE",
+    authDomain: "itistudies-4b277.firebaseapp.com",
+    projectId: "itistudies-4b277",
+    storageBucket: "itistudies-4b277.firebasestorage.app",
+    messagingSenderId: "549937347076",
+    appId: "1:549937347076:web:72231b8f1bde6c2dd15351",
+    measurementId: "G-HKW4C7Q81Z"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+let currentUser = null;
+let allTests = [];
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+}
+
+// ── Auth ──
+onAuthStateChanged(auth, async user => {
+    if (user) {
+        currentUser = user;
+        document.getElementById('loginGate').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        await loadMyTests();
+    } else {
+        document.getElementById('loginGate').style.display = 'block';
+        document.getElementById('mainContent').style.display = 'none';
+    }
+});
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+    try { await signInWithPopup(auth, provider); }
+    catch(e) { showToast('Login failed!'); }
+});
+
+// ── Load Tests ──
+async function loadMyTests() {
+    const list = document.getElementById('testsList');
+    try {
+        const snap = await getDocs(query(
+            collection(db, 'tests'),
+            where('createdBy', '==', currentUser.uid),
+            orderBy('createdAt', 'desc')
+        ));
+
+        allTests = [];
+        snap.forEach(d => allTests.push({id: d.id, ...d.data()}));
+
+        if (!allTests.length) {
+            list.innerHTML = `<div class="empty-state">
+                <div class="empty-icon">📝</div>
+                <div style="font-size:16px;font-weight:600;">No tests created yet!</div>
+                <div style="font-size:13px;color:#aaa;margin-top:6px;">Create your first test and share with students</div>
+            </div>`;
+            return;
+        }
+
+        // Stats
+        const now = new Date();
+        const active = allTests.filter(t => new Date(t.expiry) > now).length;
+        document.getElementById('totalTests').textContent = allTests.length;
+        document.getElementById('activeTests').textContent = active;
+
+        // Load appeared counts
+        let totalAppeared = 0;
+        const appearedMap = {};
+        for (const test of allTests.slice(0, 10)) {
+            const rSnap = await getDocs(query(
+                collection(db, 'testResults'),
+                where('testId', '==', test.id)
+            ));
+            appearedMap[test.id] = rSnap.size;
+            totalAppeared += rSnap.size;
+        }
+        document.getElementById('totalAppeared').textContent = totalAppeared;
+
+        // Render tests
+        let html = '';
+        allTests.forEach(test => {
+            const isExpired = new Date(test.expiry) < now;
+            const appeared = appearedMap[test.id] || 0;
+            const testLink = window.location.origin + '/take-test.html?id=' + test.id;
+            const expiryStr = new Date(test.expiry).toLocaleString('en-IN');
+
+            html += `<div class="test-card ${isExpired ? 'expired' : 'active'}" id="testCard_${test.id}">
+                <div class="test-top">
+                    <div class="test-title">${test.title}</div>
+                    <span class="test-badge ${isExpired ? 'badge-expired' : 'badge-active'}">
+                        ${isExpired ? '⏰ Expired' : '✅ Active'}
+                    </span>
+                </div>
+
+                <div class="test-meta">
+                    <div class="test-meta-item">
+                        <div class="test-meta-label">Trade & Year</div>
+                        <div class="test-meta-value">${test.trade} · Year ${test.year}</div>
+                    </div>
+                    <div class="test-meta-item">
+                        <div class="test-meta-label">Questions</div>
+                        <div class="test-meta-value">${test.questionCount} · ${test.duration} mins</div>
+                    </div>
+                    <div class="test-meta-item">
+                        <div class="test-meta-label">Total Marks</div>
+                        <div class="test-meta-value">${test.totalMarks} (${test.marksPerQ}/Q)</div>
+                    </div>
+                    <div class="test-meta-item">
+                        <div class="test-meta-label">Students Appeared</div>
+                        <div class="test-meta-value">${appeared} students</div>
+                    </div>
+                    <div class="test-meta-item" style="grid-column:span 2;">
+                        <div class="test-meta-label">Valid Till</div>
+                        <div class="test-meta-value">${expiryStr}</div>
+                    </div>
+                </div>
+
+                <div class="test-actions">
+                    <button class="btn btn-share" onclick="toggleShareLink('${test.id}', '${testLink.replace(/'/g,"\\'")}')">
+                        🔗 Share
+                    </button>
+                    <button class="btn btn-whatsapp" onclick="shareWhatsApp('${test.title.replace(/'/g,"\\'")}', '${testLink.replace(/'/g,"\\'")}', '${expiryStr}')">
+                        💬 WhatsApp
+                    </button>
+                    <button class="btn btn-rank" onclick="window.location.href='leaderboard.html?id=${test.id}'">
+                        🏆 Rank Board
+                    </button>
+                    <button class="btn btn-delete" onclick="deleteTest('${test.id}')">
+                        🗑️ Delete
+                    </button>
+                </div>
+
+                <!-- Share Link Box -->
+                <div class="share-link-box" id="shareBox_${test.id}">
+                    <div class="share-link-text">${testLink}</div>
+                    <button class="copy-btn" onclick="copyLink('${testLink.replace(/'/g,"\\'")}')">
+                        📋 Copy Link
+                    </button>
+                </div>
+            </div>`;
+        });
+        list.innerHTML = html;
+
+    } catch(e) {
+        list.innerHTML = '<div class="loading">❌ Error loading tests. Please try again.</div>';
+        console.error(e);
+    }
+}
+
+// ── Actions ──
+window.toggleShareLink = function(testId, link) {
+    const box = document.getElementById('shareBox_' + testId);
+    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+};
+
+window.copyLink = function(link) {
+    navigator.clipboard.writeText(link).then(() => showToast('✅ Link copied!'));
+};
+
+window.shareWhatsApp = function(title, link, expiry) {
+    const msg = '📝 *' + title + '*\n\nAppear for the test:\n' + link + '\n\n📅 Valid till: ' + expiry;
+    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+};
+
+window.deleteTest = async function(testId) {
+    if (!confirm('Delete this test? Students will no longer be able to take it!')) return;
+    try {
+        await deleteDoc(doc(db, 'tests', testId));
+        showToast('✅ Test deleted!');
+        await loadMyTests();
+    } catch(e) {
+        showToast('❌ Error: ' + e.message);
+    }
+};
+</script>
+</body>
+</html>
