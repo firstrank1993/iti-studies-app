@@ -3,130 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - ITI Studies MCQ Practice App</title>
-<meta name="description" content="Manage your ITI Studies profile. Track your progress, view results and access all ITI trade practice materials.">
-<meta name="keywords" content="ITI Studies profile, ITI student profile, ITI exam progress">
-<meta name="robots" content="noindex, follow">
-<link rel="canonical" href="https://itistudies-4b277.web.app/profile.html">
+    <title>My Profile - ITI Studies</title>
+    <meta name="robots" content="noindex, follow">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; }
-        header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 14px 20px; }
-        .logo { font-size: 20px; font-weight: 700; }
-        .logo span { color: #ffd600; }
-        main { padding: 20px; max-width: 800px; margin: 0 auto; padding-bottom: 90px; }
-        .profile-card { background: white; border-radius: 20px; padding: 32px 24px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
-        .profile-photo { width: 90px; height: 90px; border-radius: 50%; border: 4px solid #1a73e8; margin: 0 auto 16px; object-fit: cover; }
-        .profile-placeholder { width: 90px; height: 90px; border-radius: 50%; background: #e8f0fe; border: 4px solid #1a73e8; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
-        .profile-name { font-size: 22px; font-weight: 700; }
-        .profile-email { font-size: 14px; color: #888; margin-top: 4px; }
-        .profile-badge { display: inline-block; background: #e8f0fe; color: #1a73e8; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 10px; }
-        .menu-card { background: white; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; margin-bottom: 16px; }
-        .menu-item { display: flex; align-items: center; gap: 16px; padding: 16px 20px; border-bottom: 1px solid #f0f4f8; cursor: pointer; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; padding-bottom: 80px; }
+        header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+        .header-title { font-size: 18px; font-weight: 600; flex: 1; }
+        main { padding: 16px; max-width: 800px; margin: 0 auto; }
+        .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 16px; }
+        /* Profile Card */
+        .profile-header { text-align: center; padding: 20px 0 10px; }
+        .profile-photo { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #1a73e8; margin-bottom: 12px; }
+        .profile-photo-placeholder { width: 80px; height: 80px; border-radius: 50%; background: #e8f0fe; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 12px; }
+        .profile-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .profile-email { font-size: 13px; color: #888; margin-bottom: 16px; }
+        .login-btn { background: white; color: #333; border: 2px solid #e0e0e0; padding: 12px 20px; border-radius: 10px; display: flex; align-items: center; gap: 10px; justify-content: center; width: 100%; font-size: 15px; cursor: pointer; }
+        .login-btn:hover { background: #f5f5f5; }
+        .logout-btn { background: #ffebee; color: #f44336; border: none; padding: 10px 24px; border-radius: 25px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+        .stat-box { background: #e8f0fe; border-radius: 12px; padding: 14px; text-align: center; }
+        .stat-num { font-size: 22px; font-weight: 700; color: #1a73e8; }
+        .stat-lbl { font-size: 11px; color: #666; margin-top: 3px; }
+        /* Menu Items */
+        .menu-item { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid #f0f4f8; cursor: pointer; text-decoration: none; color: #333; }
         .menu-item:last-child { border-bottom: none; }
-        .menu-item:hover { background: #f8f9ff; }
+        .menu-item:hover { color: #1a73e8; }
         .menu-icon { font-size: 24px; width: 36px; text-align: center; }
         .menu-text { flex: 1; }
-        .menu-title { font-weight: 600; font-size: 15px; }
+        .menu-title { font-size: 15px; font-weight: 600; }
         .menu-sub { font-size: 12px; color: #888; margin-top: 2px; }
         .menu-arrow { color: #ccc; font-size: 18px; }
-        .login-card { background: white; border-radius: 20px; padding: 40px 24px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-        .login-icon { font-size: 64px; margin-bottom: 16px; }
-        .login-btn { background: #1a73e8; color: white; border: none; padding: 14px 32px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; }
-        .logout-btn { width: 100%; background: #ffebee; color: #f44336; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #888; font-size: 11px; gap: 4px; }
+        /* Results List */
+        .result-item { background: #f8f9ff; border-radius: 10px; padding: 14px; margin-bottom: 10px; border-left: 4px solid #1a73e8; }
+        .result-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .result-title { font-size: 14px; font-weight: 700; }
+        .result-score { font-size: 18px; font-weight: 700; color: #1a73e8; }
+        .result-meta { font-size: 12px; color: #888; }
+        .result-bar { height: 4px; background: #e0e8ff; border-radius: 2px; margin-top: 8px; }
+        .result-bar-fill { height: 100%; background: #1a73e8; border-radius: 2px; }
+        .empty-state { text-align: center; padding: 30px; color: #888; }
+        .empty-icon { font-size: 40px; margin-bottom: 10px; }
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 8px 0 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #888; font-size: 10px; gap: 3px; flex: 1; }
         .nav-item.active { color: #1a73e8; }
         .nav-icon { font-size: 22px; }
-        .version { text-align: center; font-size: 12px; color: #ccc; margin-top: 20px; }
+        .section-title { font-size: 16px; font-weight: 700; color: #1a73e8; margin-bottom: 14px; }
+        .badge { background: #1a73e8; color: white; font-size: 11px; padding: 2px 8px; border-radius: 20px; }
     </style>
 </head>
 <body>
-<header><div class="logo">ITI <span>Studies</span></div></header>
+<header>
+    <div class="header-title">👤 My Profile</div>
+</header>
+
 <main>
-   <!-- Guest View -->
-<div id="guestView">
-    <div class="login-card">
-        <div class="login-icon">👤</div>
-        <div style="font-size:20px;font-weight:700;margin-bottom:8px;">Login to Your Account</div>
-        <div style="font-size:14px;color:#888;margin-bottom:24px;">Save progress, track results and access all features!</div>
-        <button class="login-btn" onclick="handleLogin()">🔐 Login with Google</button>
+    <!-- Not Logged In -->
+    <div class="card" id="notLoggedIn">
+        <div class="profile-header">
+            <div class="profile-photo-placeholder">👤</div>
+            <div class="profile-name">Welcome!</div>
+            <div class="profile-email">Login to save your progress</div>
+        </div>
+        <button class="login-btn" id="loginBtn">
+            <img src="https://www.google.com/favicon.ico" width="20" height="20" alt="G">
+            Sign in with Google
+        </button>
     </div>
-    <!-- Info Links for Guests -->
-    <div class="menu-card" style="margin-top:16px;">
-        <div class="menu-item" onclick="window.location.href='about.html'">
-            <div class="menu-icon">ℹ️</div>
-            <div class="menu-text"><div class="menu-title">About Us</div><div class="menu-sub">Learn about ITI Studies</div></div>
-            <div class="menu-arrow">›</div>
+
+    <!-- Logged In -->
+    <div class="card" id="loggedIn" style="display:none">
+        <div class="profile-header">
+            <img class="profile-photo" id="userPhoto" src="" alt="">
+            <div class="profile-name" id="userName">User</div>
+            <div class="profile-email" id="userEmail"></div>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
         </div>
-        <div class="menu-item" onclick="window.location.href='contact.html'">
-            <div class="menu-icon">📞</div>
-            <div class="menu-text"><div class="menu-title">Contact Us</div><div class="menu-sub">Get in touch with us</div></div>
-            <div class="menu-arrow">›</div>
-        </div>
-        <div class="menu-item" onclick="window.location.href='privacy.html'">
-            <div class="menu-icon">🔒</div>
-            <div class="menu-text"><div class="menu-title">Privacy Policy</div><div class="menu-sub">How we use your data</div></div>
-            <div class="menu-arrow">›</div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-box"><div class="stat-num" id="totalQuizzes">0</div><div class="stat-lbl">Quizzes</div></div>
+            <div class="stat-box"><div class="stat-num" id="avgScore">0%</div><div class="stat-lbl">Avg Score</div></div>
+            <div class="stat-box"><div class="stat-num" id="testsCreated">0</div><div class="stat-lbl">Tests Created</div></div>
         </div>
     </div>
-</div>
-    <!-- Logged In View -->
-    <div id="userView" style="display:none">
-        <div class="profile-card">
-            <div class="profile-placeholder" id="profilePlaceholder"> </div>
-            <img class="profile-photo" id="profilePhoto" src="" alt="" style="display:none">
-            <div class="profile-name" id="profileName">Student</div>
-            <div class="profile-email" id="profileEmail"></div>
-            <div class="profile-badge">  ITI Student</div>
-        </div>
-        <div class="menu-card">
-            <div class="menu-item" onclick="window.location.href='results.html'">
-                <div class="menu-icon"> </div>
-                <div class="menu-text"><div class="menu-title">My Results</div><div class="menu-sub">View your quiz history</div></div>
-                <div class="menu-arrow">›</div>
+
+    <!-- Menu -->
+    <div class="card">
+        <div class="section-title">📋 My Activity</div>
+        <a href="#results" class="menu-item" id="myResultsLink">
+            <span class="menu-icon">📊</span>
+            <div class="menu-text">
+                <div class="menu-title">My Practice Results</div>
+                <div class="menu-sub">View your MCQ practice history</div>
             </div>
-            <div class="menu-item" onclick="window.location.href='quiz.html'">
-                <div class="menu-icon"> </div>
-                <div class="menu-text"><div class="menu-title">Start Practice</div><div class="menu-sub">Practice MCQs now</div></div>
-                <div class="menu-arrow">›</div>
+            <span class="menu-arrow">›</span>
+        </a>
+        <a href="my-tests.html" class="menu-item">
+            <span class="menu-icon">🔗</span>
+            <div class="menu-text">
+                <div class="menu-title">My Created Tests</div>
+                <div class="menu-sub">Manage tests you've created</div>
             </div>
-            <div class="menu-item" onclick="window.location.href='index.html'">
-                <div class="menu-icon"> </div>
-                <div class="menu-text"><div class="menu-title">Select Trade</div><div class="menu-sub">Change your trade</div></div>
-                <div class="menu-arrow">›</div>
+            <span class="menu-arrow">›</span>
+        </a>
+    </div>
+
+    <!-- Settings & Info -->
+    <div class="card">
+        <div class="section-title">⚙️ Settings & Info</div>
+        <a href="about.html" class="menu-item">
+            <span class="menu-icon">ℹ️</span>
+            <div class="menu-text">
+                <div class="menu-title">About ITI Studies</div>
+                <div class="menu-sub">Learn about our platform</div>
             </div>
-           <div class="menu-item" onclick="window.location.href='about.html'">
-    <div class="menu-icon">ℹ️</div>
-    <div class="menu-text"><div class="menu-title">About Us</div><div class="menu-sub">Learn about ITI Studies</div></div>
-    <div class="menu-arrow">›</div>
-</div>
-<div class="menu-item" onclick="window.location.href='contact.html'">
-    <div class="menu-icon">📞</div>
-    <div class="menu-text"><div class="menu-title">Contact Us</div><div class="menu-sub">Get in touch with us</div></div>
-    <div class="menu-arrow">›</div>
-</div>
-<div class="menu-item" onclick="window.location.href='privacy.html'">
-    <div class="menu-icon">🔒</div>
-    <div class="menu-text"><div class="menu-title">Privacy Policy</div><div class="menu-sub">How we use your data</div></div>
-    <div class="menu-arrow">›</div>
-</div>
-        </div>
-        <button class="logout-btn" onclick="handleLogout()">  Logout</button>
-        <div class="version">ITI Studies v1.0 | Made for Gujarat ITI Students</div>
+            <span class="menu-arrow">›</span>
+        </a>
+        <a href="contact.html" class="menu-item">
+            <span class="menu-icon">📞</span>
+            <div class="menu-text">
+                <div class="menu-title">Contact Us</div>
+                <div class="menu-sub">Get help and support</div>
+            </div>
+            <span class="menu-arrow">›</span>
+        </a>
+        <a href="privacy.html" class="menu-item">
+            <span class="menu-icon">🔒</span>
+            <div class="menu-text">
+                <div class="menu-title">Privacy Policy</div>
+                <div class="menu-sub">How we protect your data</div>
+            </div>
+            <span class="menu-arrow">›</span>
+        </a>
+        <a href="admin.html" class="menu-item">
+            <span class="menu-icon">🔐</span>
+            <div class="menu-text">
+                <div class="menu-title">Admin Panel</div>
+                <div class="menu-sub">For administrators only</div>
+            </div>
+            <span class="menu-arrow">›</span>
+        </a>
+    </div>
+
+    <!-- Practice Results -->
+    <div class="card" id="resultsSection" style="display:none">
+        <div class="section-title">📊 Recent Practice Results</div>
+        <div id="resultsList"></div>
     </div>
 </main>
+
 <nav class="bottom-nav">
     <div class="nav-item" onclick="window.location.href='index.html'"><span class="nav-icon">🏠</span><span>Home</span></div>
-    <div class="nav-item" onclick="window.location.href='results.html'"><span class="nav-icon">📊</span><span>Results</span></div>
+    <div class="nav-item" onclick="window.location.href='practice.html'"><span class="nav-icon">📝</span><span>Practice</span></div>
     <div class="nav-item active"><span class="nav-icon">👤</span><span>Profile</span></div>
 </nav>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
 const firebaseConfig = {
-    apiKey: "AIzaSyC6tkiVx09eNQJozHAUPBGRqonTB6M6ShE",
+    apiKey: "AIzaSyC0tkiVx89eNQJozHAUPBGRqonTB6M6ShE",
     authDomain: "itistudies-4b277.firebaseapp.com",
     projectId: "itistudies-4b277",
     storageBucket: "itistudies-4b277.firebasestorage.app",
@@ -134,32 +176,97 @@ const firebaseConfig = {
     appId: "1:549937347076:web:72231b8f1bde6c2dd15351",
     measurementId: "G-HKW4C7Q81Z"
 };
+
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-onAuthStateChanged(auth, user => {
+
+// ── Auth ──
+onAuthStateChanged(auth, async user => {
     if (user) {
-        document.getElementById('guestView').style.display = 'none';
-        document.getElementById('userView').style.display = 'block';
-        document.getElementById('profileName').textContent = user.displayName || 'Student';
-        document.getElementById('profileEmail').textContent = user.email || '';
-        if (user.photoURL) {
-            document.getElementById('profilePhoto').src = user.photoURL;
-            document.getElementById('profilePhoto').style.display = 'block';
-            document.getElementById('profilePlaceholder').style.display = 'none';
-        }
+        document.getElementById('notLoggedIn').style.display = 'none';
+        document.getElementById('loggedIn').style.display = 'block';
+        document.getElementById('userPhoto').src = user.photoURL || '';
+        document.getElementById('userName').textContent = user.displayName || 'Student';
+        document.getElementById('userEmail').textContent = user.email;
+
+        // Save user to Firestore for tracking
+        await setDoc(doc(db, 'users', user.uid), {
+            name: user.displayName || '',
+            email: user.email,
+            photo: user.photoURL || '',
+            lastLogin: new Date().toISOString(),
+            uid: user.uid
+        }, { merge: true });
+
+        loadResults();
+        loadTestsCreated(user);
     } else {
-        document.getElementById('guestView').style.display = 'block';
-        document.getElementById('userView').style.display = 'none';
+        document.getElementById('notLoggedIn').style.display = 'block';
+        document.getElementById('loggedIn').style.display = 'none';
+        document.getElementById('resultsSection').style.display = 'none';
     }
 });
-window.handleLogin = async function() {
-    try { await signInWithPopup(auth, provider); } catch(e) { console.error(e); }
-};
-window.handleLogout = async function() {
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+    try { await signInWithPopup(auth, provider); }
+    catch(e) { console.error(e); }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
     await signOut(auth);
-};
+});
+
+// ── Load Practice Results ──
+function loadResults() {
+    const raw = JSON.parse(localStorage.getItem('quizResults') || '[]');
+    if (!raw.length) {
+        document.getElementById('resultsSection').style.display = 'none';
+        return;
+    }
+
+    document.getElementById('resultsSection').style.display = 'block';
+    document.getElementById('totalQuizzes').textContent = raw.length;
+
+    const avg = Math.round(raw.reduce((a,b) => a + b.score, 0) / raw.length);
+    document.getElementById('avgScore').textContent = avg + '%';
+
+    const recent = raw.slice(0, 10);
+    let html = '';
+    recent.forEach(r => {
+        const date = new Date(r.date).toLocaleDateString('en-IN');
+        html += `<div class="result-item">
+            <div class="result-top">
+                <div>
+                    <div class="result-title">${r.tradeName || r.trade} — ${r.subject}</div>
+                    <div class="result-meta">${r.chapter} • ${date}</div>
+                </div>
+                <div class="result-score">${r.score}%</div>
+            </div>
+            <div class="result-meta">${r.correct} correct · ${r.wrong} wrong · ${r.skipped} skipped · ${r.total} total</div>
+            <div class="result-bar"><div class="result-bar-fill" style="width:${r.score}%"></div></div>
+        </div>`;
+    });
+    document.getElementById('resultsList').innerHTML = html;
+}
+
+// ── Load Tests Created ──
+async function loadTestsCreated(user) {
+    try {
+        const snap = await getDocs(query(
+            collection(db, 'tests'),
+            where('createdBy', '==', user.uid)
+        ));
+        document.getElementById('testsCreated').textContent = snap.size;
+    } catch(e) { console.error(e); }
+}
+
+// Handle results link
+document.getElementById('myResultsLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('resultsSection').scrollIntoView({behavior:'smooth'});
+});
 </script>
 </body>
 </html>
-
