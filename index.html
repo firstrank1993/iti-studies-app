@@ -549,28 +549,6 @@ loadContent('news', 'newsList');
     </div>
 </nav>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, enableIndexedDbPersistence, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyC0tkiVx89eNQJozHAUPBGRqonTB6M6ShE",
-    authDomain: "itistudies-4b277.firebaseapp.com",
-    projectId: "itistudies-4b277",
-    storageBucket: "itistudies-4b277.firebasestorage.app",
-    messagingSenderId: "549937347076",
-    appId: "1:549937347076:web:72231b8f1bde6c2dd15351",
-    measurementId: "G-HKW4C7Q81Z"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-
-enableIndexedDbPersistence(db).catch(err => console.log('Persistence:', err.code));
-
 // ── Auth State ──
 onAuthStateChanged(auth, user => {
     if (user) {
