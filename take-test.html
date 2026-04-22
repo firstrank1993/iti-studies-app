@@ -478,18 +478,47 @@ async function submitTest() {
     buildAnswerReview();
     document.getElementById('reviewSection').style.display='block';
 
-    // Save to Firebase and get rank
-    try {
-        await addDoc(collection(db,'testResults'),{
-            testId, testTitle:testData.title,
-            studentName:studentInfo.name,
-            studentMobile:studentInfo.mobile,
-            studentEnroll:studentInfo.enroll,
-            studentITI:studentInfo.iti||'',
-            correct, wrong, skipped,
-            marksObtained, totalMarks, percentage,
-            timeTaken, submittedAt:new Date().toISOString()
-        });
+   // Get rank FIRST before saving
+try {
+    // Step 1 — Get existing results first
+    const existingResults = await getDocs(query(
+        collection(db, 'testResults'),
+        where('testId', '==', testId)
+    ));
+
+    // Step 2 — Calculate rank based on existing results
+    let rank = 1;
+    existingResults.forEach(d => {
+        const r = d.data();
+        if (r.marksObtained > marksObtained ||
+           (r.marksObtained === marksObtained && r.timeTaken < timeTaken)) {
+            rank++;
+        }
+    });
+    const totalStudents = existingResults.size + 1; // +1 for current student
+
+    // Step 3 — Show rank immediately!
+    document.getElementById('rankNum').textContent = '#' + rank;
+    document.getElementById('rankLbl').textContent = 'out of ' + totalStudents + ' students';
+
+    // Step 4 — Save result to Firebase (in background)
+    await addDoc(collection(db, 'testResults'), {
+        testId, testTitle: testData.title,
+        studentName: studentInfo.name,
+        studentMobile: studentInfo.mobile,
+        studentEnroll: studentInfo.enroll,
+        studentITI: studentInfo.iti || '',
+        correct, wrong, skipped,
+        marksObtained, totalMarks, percentage,
+        timeTaken, submittedAt: new Date().toISOString()
+    });
+
+} catch(e) {
+    // Still show rank even if Firebase fails
+    document.getElementById('rankNum').textContent = '✅';
+    document.getElementById('rankLbl').textContent = 'Result saved!';
+    console.error(e);
+}
 
         // Calculate rank
         const allResults=await getDocs(query(
