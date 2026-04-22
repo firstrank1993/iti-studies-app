@@ -35,7 +35,7 @@
         .q-image { width: 100%; border-radius: 10px; margin-bottom: 14px; max-height: 220px; object-fit: contain; display: none; }
         .q-text { font-size: 16px; font-weight: 600; line-height: 1.5; margin-bottom: 20px; }
         .options-list { display: flex; flex-direction: column; gap: 10px; }
-        .option { background: #f8f9ff; border: 2px solid #e0e8ff; border-radius: 10px; padding: 13px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 14px; transition: all 0.2s; }
+        .option { background: #f8f9ff; border: 2px solid #e0e8ff; border-radius: 10px; padding: 13px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s; font-size: 14px; }
         .option:hover { border-color: #1a73e8; background: #e8f0fe; }
         .option.selected { border-color: #1a73e8; background: #e8f0fe; }
         .option-label { background: #1a73e8; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
@@ -44,13 +44,16 @@
         .btn-prev { flex: 1; background: #f0f4f8; color: #333; border: none; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
         .btn-next-q { flex: 2; background: #1a73e8; color: white; border: none; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
         .btn-submit { width: 100%; background: #4caf50; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 16px; }
-        .q-nav { display: flex; flex-wrap: wrap; gap: 8px; }
+        .q-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
         .q-nav-btn { width: 36px; height: 36px; border-radius: 8px; border: 2px solid #e0e8ff; background: white; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .q-nav-btn.answered { background: #1a73e8; color: white; border-color: #1a73e8; }
         .q-nav-btn.current { border-color: #ffd600; background: #fff9e6; }
+
+        /* Result */
         .result-card { text-align: center; padding: 10px 0 20px; }
         .result-emoji { font-size: 64px; margin-bottom: 12px; }
         .result-score { font-size: 48px; font-weight: 700; color: #1a73e8; }
+        .result-label { font-size: 16px; color: #666; margin-bottom: 20px; }
         .result-stats { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin: 16px 0; }
         .result-stat { background: #f0f4f8; border-radius: 12px; padding: 14px; }
         .result-stat-num { font-size: 22px; font-weight: 700; color: #1a73e8; }
@@ -58,15 +61,15 @@
         .rank-box { background: linear-gradient(135deg, #ffd600, #ff9800); border-radius: 14px; padding: 20px; margin: 16px 0; text-align: center; }
         .rank-num { font-size: 48px; font-weight: 700; color: white; }
         .rank-lbl { font-size: 14px; color: rgba(255,255,255,0.9); margin-top: 4px; }
-        .review-item { border-radius: 12px; padding: 16px; margin-bottom: 14px; border-left: 4px solid #e0e8ff; background: #f8f9ff; }
+
+        /* Solution Review */
+        .review-section { margin-top: 8px; }
+        .review-title { font-size: 18px; font-weight: 700; color: #1a73e8; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #e8f0fe; }
+        .review-item { background: #f8f9ff; border-radius: 12px; padding: 16px; margin-bottom: 14px; border-left: 4px solid #e0e8ff; }
         .review-item.correct-ans { border-left-color: #4caf50; }
         .review-item.wrong-ans { border-left-color: #f44336; }
         .review-item.skipped-ans { border-left-color: #ff9800; }
-        .review-q-num { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; margin-bottom: 6px; }
-        .review-status { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
-        .status-correct { background: #e8f5e9; color: #4caf50; }
-        .status-wrong { background: #ffebee; color: #f44336; }
-        .status-skipped { background: #fff3e0; color: #ff9800; }
+        .review-q-num { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; margin-bottom: 8px; }
         .review-q-text { font-size: 14px; font-weight: 600; margin-bottom: 12px; line-height: 1.5; }
         .review-options { display: flex; flex-direction: column; gap: 6px; }
         .review-option { padding: 10px 14px; border-radius: 8px; font-size: 13px; display: flex; align-items: center; gap: 10px; border: 2px solid #e0e8ff; background: white; }
@@ -76,11 +79,16 @@
         .review-option.is-correct .review-opt-label { background: #4caf50; color: white; }
         .review-option.is-wrong .review-opt-label { background: #f44336; color: white; }
         .review-explanation { background: #e8f5e9; border-left: 3px solid #4caf50; padding: 10px 12px; border-radius: 6px; margin-top: 10px; font-size: 12px; color: #2e7d32; }
-        .home-btn { width: 100%; background: #1a73e8; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px; }
-        .view-answers-btn { width: 100%; background: #e8f0fe; color: #1a73e8; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px; }
-        .submit-confirm { background: #fff3e0; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 13px; color: #e65100; display: none; }
+        .review-status { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
+        .status-correct { background: #e8f5e9; color: #4caf50; }
+        .status-wrong { background: #ffebee; color: #f44336; }
+        .status-skipped { background: #fff3e0; color: #ff9800; }
+
+        .home-btn { width: 100%; background: #1a73e8; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 12px; }
+        .section-title { font-size: 16px; font-weight: 700; color: #1a73e8; margin-bottom: 14px; }
         .loading-screen { text-align: center; padding: 60px 20px; }
         .error-card { text-align: center; padding: 40px 20px; }
+        .submit-confirm { background: #fff3e0; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 13px; color: #e65100; display: none; }
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 999; display: none; white-space: nowrap; }
     </style>
 </head>
@@ -150,7 +158,7 @@
         <div class="card" style="padding:16px;">
             <div style="font-size:12px;font-weight:600;color:#666;margin-bottom:10px;">Question Navigator:</div>
             <div class="q-nav" id="qNav"></div>
-            <div style="display:flex;gap:12px;font-size:11px;color:#888;margin-top:10px;">
+            <div style="display:flex;gap:12px;font-size:11px;color:#888;margin-top:8px;">
                 <span>⬜ Not answered</span>
                 <span style="color:#1a73e8;">🟦 Answered</span>
             </div>
@@ -169,12 +177,10 @@
                 <button class="btn-next-q" id="nextQBtn">Next →</button>
             </div>
             <div class="submit-confirm" id="submitConfirm">
-                ⚠️ You answered <strong id="answeredCount">0</strong> of <strong id="totalQCount">0</strong> questions. Submit?
+                ⚠️ You have answered <strong id="answeredCount">0</strong> of <strong id="totalQCount">0</strong> questions. Submit?
                 <div style="display:flex;gap:8px;margin-top:10px;">
-                    <button style="flex:1;background:#f0f4f8;color:#333;border:none;padding:10px;border-radius:8px;cursor:pointer;"
-                        onclick="document.getElementById('submitConfirm').style.display='none'">Cancel</button>
-                    <button style="flex:1;background:#4caf50;color:white;border:none;padding:10px;border-radius:8px;font-weight:600;cursor:pointer;"
-                        id="confirmSubmitBtn">Submit ✅</button>
+                    <button style="flex:1;background:#f0f4f8;color:#333;border:none;padding:10px;border-radius:8px;cursor:pointer;" onclick="document.getElementById('submitConfirm').style.display='none'">Cancel</button>
+                    <button style="flex:1;background:#4caf50;color:white;border:none;padding:10px;border-radius:8px;font-weight:600;cursor:pointer;" id="confirmSubmitBtn">Submit ✅</button>
                 </div>
             </div>
         </div>
@@ -187,42 +193,41 @@
             <div class="result-emoji" id="resultEmoji">🎉</div>
             <div style="font-size:16px;font-weight:600;margin-bottom:4px;" id="resultName"></div>
             <div class="result-score" id="resultScore">0</div>
-            <div style="font-size:13px;color:#888;margin-bottom:4px;">out of <span id="resultTotal">0</span> marks</div>
-            <div style="font-size:16px;color:#666;margin-bottom:16px;" id="resultLabel">Test Complete!</div>
+            <div style="font-size:13px;color:#888;">out of <span id="resultTotal">0</span> marks</div>
+            <div class="result-label" id="resultLabel">Test Complete!</div>
             <div class="result-stats">
                 <div class="result-stat"><div class="result-stat-num" id="resCorrect">0</div><div class="result-stat-lbl">Correct ✅</div></div>
                 <div class="result-stat"><div class="result-stat-num" id="resWrong">0</div><div class="result-stat-lbl">Wrong ❌</div></div>
                 <div class="result-stat"><div class="result-stat-num" id="resSkipped">0</div><div class="result-stat-lbl">Skipped ⏭</div></div>
                 <div class="result-stat"><div class="result-stat-num" id="resPercent">0%</div><div class="result-stat-lbl">Percentage</div></div>
             </div>
-            <div class="rank-box">
+            <!-- Rank Box -->
+            <div class="rank-box" id="rankBox">
                 <div style="font-size:14px;color:rgba(255,255,255,0.9);margin-bottom:4px;">🏆 Your Rank</div>
                 <div class="rank-num" id="rankNum">⏳</div>
-                <div class="rank-lbl" id="rankLbl">Calculating...</div>
+                <div class="rank-lbl" id="rankLbl">Calculating rank...</div>
             </div>
-            <button class="view-answers-btn" onclick="document.getElementById('reviewSection').scrollIntoView({behavior:'smooth'})">
-                📋 View Answer Sheet ↓
+            <button class="home-btn" onclick="window.location.href='index.html'" style="margin-bottom:8px;">🏠 Go to Home</button>
+            <button onclick="document.getElementById('reviewSection').scrollIntoView({behavior:'smooth'})"
+                style="width:100%;background:#e8f0fe;color:#1a73e8;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;">
+                📋 View Answer Sheet
             </button>
-            <button class="home-btn" onclick="window.location.href='index.html'">🏠 Go to Home</button>
         </div>
     </div>
 
-    <!-- Answer Review -->
+    <!-- Answer Review Section -->
     <div class="card" id="reviewSection" style="display:none">
-        <div style="font-size:18px;font-weight:700;color:#1a73e8;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #e8f0fe;">
-            📋 Answer Sheet
-        </div>
+        <div class="review-title">📋 Answer Sheet</div>
         <div id="reviewList"></div>
-        <button class="home-btn" onclick="window.location.href='index.html'">🏠 Go to Home</button>
     </div>
 </main>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, addDoc, doc, getDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC6tkiVx09eNQJozHAUPBGRqonTB6M6ShE",
+    apiKey: "AIzaSyC0tkiVx89eNQJozHAUPBGRqonTB6M6ShE",
     authDomain: "itistudies-4b277.firebaseapp.com",
     projectId: "itistudies-4b277",
     storageBucket: "itistudies-4b277.firebasestorage.app",
@@ -234,7 +239,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Get test ID from URL
 const urlParams = new URLSearchParams(window.location.search);
 const testId = urlParams.get('id');
 
@@ -264,50 +268,31 @@ function showError(icon, title, msg) {
 
 // ── Load Test ──
 async function loadTest() {
-    if (!testId) {
-        showError('❌', 'Invalid Link', 'No test ID found in the link.');
-        return;
-    }
+    if (!testId) { showError('❌','Invalid Link','No test ID found.'); return; }
     try {
-        const testDoc = await getDoc(doc(db, 'tests', testId));
-        if (!testDoc.exists()) {
-            showError('❌', 'Test Not Found', 'This test link is invalid.');
-            return;
-        }
+        const testDoc = await getDoc(doc(db,'tests',testId));
+        if (!testDoc.exists()) { showError('❌','Test Not Found','This test link is invalid.'); return; }
         testData = testDoc.data();
-
-        // Check expiry
         if (testData.expiry && new Date(testData.expiry) < new Date()) {
-            showError('⏰', 'Test Expired',
-                'This test expired on ' + new Date(testData.expiry).toLocaleString('en-IN'));
+            showError('⏰','Test Expired','This test expired on ' + new Date(testData.expiry).toLocaleString('en-IN'));
             return;
         }
-
-        // Check active
-        if (testData.isActive === false) {
-            showError('🔒', 'Test Inactive', 'This test has been deactivated.');
-            return;
-        }
-
-        // Show form
+        if (!testData.isActive) { showError('🔒','Test Inactive','This test has been deactivated.'); return; }
         document.getElementById('loadingScreen').style.display = 'none';
         document.getElementById('studentForm').style.display = 'block';
-        document.getElementById('headerTitle').textContent = testData.title || 'Test';
         document.getElementById('testTitleDisplay').textContent = testData.title || 'Test';
-        document.getElementById('infoQ').textContent = testData.questionCount || '-';
-        document.getElementById('infoDur').textContent = testData.duration || '-';
-        document.getElementById('infoMarks').textContent = testData.totalMarks || '-';
-        document.getElementById('infoExpiry').textContent =
-            testData.expiry ? new Date(testData.expiry).toLocaleDateString('en-IN') : '-';
-
-        if (testData.instructions && testData.instructions.trim()) {
+        document.getElementById('infoQ').textContent = testData.questionCount;
+        document.getElementById('infoDur').textContent = testData.duration;
+        document.getElementById('infoMarks').textContent = testData.totalMarks;
+        document.getElementById('infoExpiry').textContent = new Date(testData.expiry).toLocaleDateString('en-IN');
+        document.getElementById('headerTitle').textContent = testData.title || 'Test';
+        if (testData.instructions) {
             document.getElementById('instructionsBox').style.display = 'block';
             document.getElementById('instructionsText').textContent = testData.instructions;
         }
-
     } catch(e) {
-        showError('❌', 'Error Loading', 'Check internet connection and try again. Error: ' + e.message);
-        console.error('loadTest error:', e);
+        showError('❌','Error Loading','Check internet and try again.');
+        console.error(e);
     }
 }
 
@@ -317,23 +302,14 @@ document.getElementById('startTestBtn').addEventListener('click', async function
     const mobile = document.getElementById('studentMobile').value.trim();
     const enroll = document.getElementById('studentEnroll').value.trim();
     const iti = document.getElementById('studentITI').value.trim();
-
     if (!name) { showToast('⚠️ Enter your name!'); return; }
     if (!mobile || mobile.length !== 10) { showToast('⚠️ Enter valid 10-digit mobile!'); return; }
     if (!enroll) { showToast('⚠️ Enter enrollment number!'); return; }
-
-    studentInfo = { name, mobile, enroll, iti };
+    studentInfo = {name, mobile, enroll, iti};
     this.disabled = true;
     this.textContent = '⏳ Loading questions...';
-
     try {
         await loadQuestions();
-        if (!questions.length) {
-            showToast('❌ No questions found for this test!');
-            this.disabled = false;
-            this.textContent = '🚀 Start Test';
-            return;
-        }
         document.getElementById('studentForm').style.display = 'none';
         document.getElementById('quizSection').style.display = 'block';
         document.getElementById('totalQCount').textContent = questions.length;
@@ -342,7 +318,6 @@ document.getElementById('startTestBtn').addEventListener('click', async function
         startTimer();
     } catch(e) {
         showToast('❌ Error: ' + e.message);
-        console.error('startTest error:', e);
         this.disabled = false;
         this.textContent = '🚀 Start Test';
     }
@@ -350,68 +325,37 @@ document.getElementById('startTestBtn').addEventListener('click', async function
 
 // ── Load Questions ──
 async function loadQuestions() {
-    const trade = testData.trade;
-    const year = testData.year;
-    const subjects = testData.subjects || [];
-    const chapters = testData.chapters || [];
-    const questionCount = testData.questionCount || 10;
-
+    const {trade, year, subjects, chapters, questionCount} = testData;
     let allQs = [];
-
     for (const subject of subjects) {
-        try {
-            if (chapters.length > 0) {
-                for (const chapter of chapters) {
-                    const [s1, s2] = await Promise.all([
-                        getDocs(query(collection(db,'questions'),
-                            where('trade','==',trade),
-                            where('year','==',year),
-                            where('subject','==',subject),
-                            where('chapter','==',chapter))),
-                        getDocs(query(collection(db,'questions'),
-                            where('trade','==','common'),
-                            where('year','==',year),
-                            where('subject','==',subject),
-                            where('chapter','==',chapter)))
-                    ]);
-                    [...s1.docs, ...s2.docs].forEach(d => allQs.push({id:d.id, ...d.data()}));
-                }
-            } else {
-                const [s1, s2] = await Promise.all([
-                    getDocs(query(collection(db,'questions'),
-                        where('trade','==',trade),
-                        where('year','==',year),
-                        where('subject','==',subject))),
-                    getDocs(query(collection(db,'questions'),
-                        where('trade','==','common'),
-                        where('year','==',year),
-                        where('subject','==',subject)))
+        if (chapters && chapters.length) {
+            for (const chapter of chapters) {
+                const [s1,s2] = await Promise.all([
+                    getDocs(query(collection(db,'questions'),where('trade','==',trade),where('year','==',year),where('subject','==',subject),where('chapter','==',chapter))),
+                    getDocs(query(collection(db,'questions'),where('trade','==','common'),where('year','==',year),where('subject','==',subject),where('chapter','==',chapter)))
                 ]);
-                [...s1.docs, ...s2.docs].forEach(d => allQs.push({id:d.id, ...d.data()}));
+                [...s1.docs,...s2.docs].forEach(d=>allQs.push({id:d.id,...d.data()}));
             }
-        } catch(e) {
-            console.error('Error loading subject:', subject, e);
+        } else {
+            const [s1,s2] = await Promise.all([
+                getDocs(query(collection(db,'questions'),where('trade','==',trade),where('year','==',year),where('subject','==',subject))),
+                getDocs(query(collection(db,'questions'),where('trade','==','common'),where('year','==',year),where('subject','==',subject)))
+            ]);
+            [...s1.docs,...s2.docs].forEach(d=>allQs.push({id:d.id,...d.data()}));
         }
     }
-
-    // Remove duplicates
     const seen = new Set();
-    allQs = allQs.filter(q => {
-        if (seen.has(q.id)) return false;
-        seen.add(q.id); return true;
-    });
-
-    // Shuffle and limit
-    allQs.sort(() => Math.random() - 0.5);
-    questions = allQs.slice(0, questionCount);
+    allQs = allQs.filter(q=>{if(seen.has(q.id))return false;seen.add(q.id);return true;});
+    allQs.sort(()=>Math.random()-0.5);
+    questions = allQs.slice(0,questionCount);
+    if (!questions.length) throw new Error('No questions found!');
 }
 
-// ── Build Navigator ──
+// ── Navigator ──
 function buildNavigator() {
     let html = '';
-    questions.forEach((q,i) => {
-        html += `<button class="q-nav-btn ${i===0?'current':''}"
-            id="navBtn${i}" onclick="jumpToQuestion(${i})">${i+1}</button>`;
+    questions.forEach((q,i)=>{
+        html+=`<button class="q-nav-btn ${i===0?'current':''}" id="navBtn${i}" onclick="jumpToQuestion(${i})">${i+1}</button>`;
     });
     document.getElementById('qNav').innerHTML = html;
 }
@@ -420,231 +364,193 @@ function buildNavigator() {
 function showQuestion(index) {
     currentIndex = index;
     const q = questions[index];
-
-    document.getElementById('progressFill').style.width =
-        ((index / questions.length) * 100) + '%';
-    document.getElementById('qNum').textContent =
-        'Question ' + (index+1) + ' of ' + questions.length;
-    document.getElementById('qMarks').textContent =
-        (testData.marksPerQ||1) + ' Mark' + ((testData.marksPerQ||1) > 1 ? 's' : '');
-
-    document.querySelectorAll('.q-nav-btn').forEach(b => b.classList.remove('current'));
-    const navBtn = document.getElementById('navBtn' + index);
-    if (navBtn) navBtn.classList.add('current');
-
-    if (q.image && q.image.trim()) {
-        document.getElementById('qImage').src = q.image;
-        document.getElementById('qImage').style.display = 'block';
-    } else {
-        document.getElementById('qImage').style.display = 'none';
-    }
-
+    document.getElementById('progressFill').style.width = ((index/questions.length)*100)+'%';
+    document.getElementById('qNum').textContent = 'Question '+(index+1)+' of '+questions.length;
+    document.getElementById('qMarks').textContent = testData.marksPerQ+' Mark'+(testData.marksPerQ>1?'s':'');
+    document.querySelectorAll('.q-nav-btn').forEach(b=>b.classList.remove('current'));
+    document.getElementById('navBtn'+index).classList.add('current');
+    if (q.image&&q.image.trim()) {
+        document.getElementById('qImage').src=q.image;
+        document.getElementById('qImage').style.display='block';
+    } else { document.getElementById('qImage').style.display='none'; }
     document.getElementById('qText').textContent = q.question;
-
-    const labels = ['A','B','C','D'];
-    let html = '';
-    (q.options || []).forEach((opt, i) => {
-        const isSel = answers[index] === i;
-        html += `<div class="option ${isSel?'selected':''}" data-index="${i}">
-            <span class="option-label">${labels[i]}</span>
-            <span>${opt}</span>
-        </div>`;
+    const labels=['A','B','C','D'];
+    let html='';
+    q.options.forEach((opt,i)=>{
+        const isSel = answers[index]===i;
+        html+=`<div class="option ${isSel?'selected':''}" data-index="${i}" id="opt${i}">
+            <span class="option-label">${labels[i]}</span><span>${opt}</span></div>`;
     });
-    document.getElementById('optionsList').innerHTML = html;
-
-    document.querySelectorAll('.option').forEach(opt => {
-        opt.addEventListener('click', function() {
-            selectOption(parseInt(this.dataset.index));
-        });
+    document.getElementById('optionsList').innerHTML=html;
+    document.querySelectorAll('.option').forEach(opt=>{
+        opt.addEventListener('click',function(){selectOption(parseInt(this.dataset.index));});
     });
-
-    document.getElementById('prevBtn').disabled = index === 0;
-    document.getElementById('prevBtn').style.opacity = index === 0 ? '0.4' : '1';
-    document.getElementById('nextQBtn').textContent =
-        index === questions.length - 1 ? '📤 Review & Submit' : 'Next →';
-    document.getElementById('submitConfirm').style.display = 'none';
+    document.getElementById('prevBtn').disabled=index===0;
+    document.getElementById('prevBtn').style.opacity=index===0?'0.4':'1';
+    const isLast=index===questions.length-1;
+    document.getElementById('nextQBtn').textContent=isLast?'📤 Review & Submit':'Next →';
+    document.getElementById('submitConfirm').style.display='none';
 }
 
 function selectOption(optIndex) {
-    answers[currentIndex] = optIndex;
-    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-    const selectedOpt = document.querySelectorAll('.option')[optIndex];
-    if (selectedOpt) selectedOpt.classList.add('selected');
-    const navBtn = document.getElementById('navBtn' + currentIndex);
-    if (navBtn) navBtn.classList.add('answered');
-    document.getElementById('answeredCount').textContent = Object.keys(answers).length;
+    answers[currentIndex]=optIndex;
+    document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+    document.getElementById('opt'+optIndex).classList.add('selected');
+    document.getElementById('navBtn'+currentIndex).classList.add('answered');
+    document.getElementById('answeredCount').textContent=Object.keys(answers).length;
 }
 
-window.jumpToQuestion = function(index) { showQuestion(index); };
+window.jumpToQuestion=function(index){showQuestion(index);};
 
-document.getElementById('prevBtn').addEventListener('click', () => {
-    if (currentIndex > 0) showQuestion(currentIndex - 1);
+document.getElementById('prevBtn').addEventListener('click',()=>{
+    if(currentIndex>0)showQuestion(currentIndex-1);
 });
-
-document.getElementById('nextQBtn').addEventListener('click', () => {
-    if (currentIndex < questions.length - 1) {
-        showQuestion(currentIndex + 1);
-    } else {
-        document.getElementById('answeredCount').textContent = Object.keys(answers).length;
-        document.getElementById('submitConfirm').style.display = 'block';
+document.getElementById('nextQBtn').addEventListener('click',()=>{
+    if(currentIndex<questions.length-1){showQuestion(currentIndex+1);}
+    else{
+        document.getElementById('answeredCount').textContent=Object.keys(answers).length;
+        document.getElementById('submitConfirm').style.display='block';
         document.getElementById('submitConfirm').scrollIntoView({behavior:'smooth'});
     }
 });
-
-document.getElementById('submitBtn').addEventListener('click', () => {
-    document.getElementById('answeredCount').textContent = Object.keys(answers).length;
-    document.getElementById('submitConfirm').style.display = 'block';
+document.getElementById('submitBtn').addEventListener('click',()=>{
+    document.getElementById('answeredCount').textContent=Object.keys(answers).length;
+    document.getElementById('submitConfirm').style.display='block';
     document.getElementById('submitConfirm').scrollIntoView({behavior:'smooth'});
 });
-
-document.getElementById('confirmSubmitBtn').addEventListener('click', () => submitTest());
+document.getElementById('confirmSubmitBtn').addEventListener('click',()=>submitTest());
 
 // ── Timer ──
 function startTimer() {
-    timeLeft = (testData.duration || 60) * 60;
-    document.getElementById('timerBadge').style.display = 'block';
-    timerInterval = setInterval(() => {
+    timeLeft=testData.duration*60;
+    document.getElementById('timerBadge').style.display='block';
+    timerInterval=setInterval(()=>{
         timeLeft--;
-        const mins = Math.floor(timeLeft/60).toString().padStart(2,'0');
-        const secs = (timeLeft%60).toString().padStart(2,'0');
-        document.getElementById('timerBadge').textContent = '⏱ ' + mins + ':' + secs;
-        if (timeLeft <= 300) document.getElementById('timerBadge').classList.add('warning');
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            showToast('⏰ Time up! Submitting...');
-            setTimeout(() => submitTest(), 1500);
-        }
-    }, 1000);
+        const mins=Math.floor(timeLeft/60).toString().padStart(2,'0');
+        const secs=(timeLeft%60).toString().padStart(2,'0');
+        document.getElementById('timerBadge').textContent='⏱ '+mins+':'+secs;
+        if(timeLeft<=300)document.getElementById('timerBadge').classList.add('warning');
+        if(timeLeft<=0){clearInterval(timerInterval);showToast('⏰ Time up! Submitting...');setTimeout(()=>submitTest(),1500);}
+    },1000);
 }
 
 // ── Submit ──
 async function submitTest() {
-    if (submitted) return;
-    submitted = true;
+    if(submitted)return;
+    submitted=true;
     clearInterval(timerInterval);
-    document.getElementById('timerBadge').style.display = 'none';
+    document.getElementById('timerBadge').style.display='none';
 
-    let correct = 0, wrong = 0, skipped = 0;
-    questions.forEach((q, i) => {
-        if (answers[i] === undefined) skipped++;
-        else if (answers[i] === q.correct) correct++;
+    let correct=0,wrong=0,skipped=0;
+    questions.forEach((q,i)=>{
+        if(answers[i]===undefined)skipped++;
+        else if(answers[i]===q.correct)correct++;
         else wrong++;
     });
 
-    const marksPerQ = testData.marksPerQ || 1;
-    const totalMarks = testData.totalMarks || questions.length;
-    const marksObtained = correct * marksPerQ;
-    const percentage = Math.round((marksObtained / totalMarks) * 100);
-    const timeTaken = (testData.duration || 60) - Math.floor(timeLeft / 60);
+    const marksObtained=correct*testData.marksPerQ;
+    const totalMarks=testData.totalMarks;
+    const percentage=Math.round((marksObtained/totalMarks)*100);
+    const timeTaken=testData.duration-Math.floor(timeLeft/60);
 
-    // Hide quiz show result
-    document.getElementById('quizSection').style.display = 'none';
-    document.getElementById('progressFill').style.width = '100%';
-    document.getElementById('resultSection').style.display = 'block';
+    // Hide quiz
+    document.getElementById('quizSection').style.display='none';
+    document.getElementById('progressFill').style.width='100%';
 
-    // Fill result
-    document.getElementById('resultName').textContent = studentInfo.name;
-    document.getElementById('resultScore').textContent = marksObtained;
-    document.getElementById('resultTotal').textContent = totalMarks;
-    document.getElementById('resCorrect').textContent = correct;
-    document.getElementById('resWrong').textContent = wrong;
-    document.getElementById('resSkipped').textContent = skipped;
-    document.getElementById('resPercent').textContent = percentage + '%';
+    // Show result immediately
+    document.getElementById('resultSection').style.display='block';
+    document.getElementById('resultName').textContent=studentInfo.name;
+    document.getElementById('resultScore').textContent=marksObtained;
+    document.getElementById('resultTotal').textContent=totalMarks;
+    document.getElementById('resCorrect').textContent=correct;
+    document.getElementById('resWrong').textContent=wrong;
+    document.getElementById('resSkipped').textContent=skipped;
+    document.getElementById('resPercent').textContent=percentage+'%';
 
-    let emoji = '😔', label = 'Keep Practicing!';
-    if (percentage >= 80) { emoji = '🏆'; label = 'Excellent Work!'; }
-    else if (percentage >= 60) { emoji = '😊'; label = 'Good Job!'; }
-    else if (percentage >= 40) { emoji = '📚'; label = 'Keep Studying!'; }
-    document.getElementById('resultEmoji').textContent = emoji;
-    document.getElementById('resultLabel').textContent = label;
+    let emoji='😔',label='Keep Practicing!';
+    if(percentage>=80){emoji='🏆';label='Excellent Work!';}
+    else if(percentage>=60){emoji='😊';label='Good Job!';}
+    else if(percentage>=40){emoji='📚';label='Keep Studying!';}
+    document.getElementById('resultEmoji').textContent=emoji;
+    document.getElementById('resultLabel').textContent=label;
 
-    // Show answer review
+    // Build answer review
     buildAnswerReview();
-    document.getElementById('reviewSection').style.display = 'block';
-    window.scrollTo({top: 0, behavior: 'smooth'});
+    document.getElementById('reviewSection').style.display='block';
 
-    // Calculate rank from existing results FIRST then save
+    // Save to Firebase and get rank
     try {
-        const existingSnap = await getDocs(query(
-            collection(db, 'testResults'),
-            where('testId', '==', testId)
-        ));
-
-        let rank = 1;
-        existingSnap.forEach(d => {
-            const r = d.data();
-            if (r.marksObtained > marksObtained ||
-               (r.marksObtained === marksObtained && (r.timeTaken || 0) < timeTaken)) {
-                rank++;
-            }
-        });
-        const totalStudents = existingSnap.size + 1;
-
-        // Show rank immediately
-        document.getElementById('rankNum').textContent = '#' + rank;
-        document.getElementById('rankLbl').textContent = 'out of ' + totalStudents + ' students';
-
-        // Save result to Firebase
-        await addDoc(collection(db, 'testResults'), {
-            testId,
-            testTitle: testData.title || '',
-            studentName: studentInfo.name,
-            studentMobile: studentInfo.mobile,
-            studentEnroll: studentInfo.enroll,
-            studentITI: studentInfo.iti || '',
+        await addDoc(collection(db,'testResults'),{
+            testId, testTitle:testData.title,
+            studentName:studentInfo.name,
+            studentMobile:studentInfo.mobile,
+            studentEnroll:studentInfo.enroll,
+            studentITI:studentInfo.iti||'',
             correct, wrong, skipped,
             marksObtained, totalMarks, percentage,
-            timeTaken,
-            submittedAt: new Date().toISOString()
+            timeTaken, submittedAt:new Date().toISOString()
         });
 
+        // Calculate rank
+        const allResults=await getDocs(query(
+            collection(db,'testResults'),
+            where('testId','==',testId)
+        ));
+
+        let rank=1;
+        allResults.forEach(d=>{
+            const r=d.data();
+            if(r.marksObtained>marksObtained||(r.marksObtained===marksObtained&&r.timeTaken<timeTaken))rank++;
+        });
+
+        document.getElementById('rankNum').textContent='#'+rank;
+        document.getElementById('rankLbl').textContent='out of '+allResults.size+' students';
+
     } catch(e) {
-        document.getElementById('rankNum').textContent = '✅';
-        document.getElementById('rankLbl').textContent = 'Result saved!';
-        console.error('Submit error:', e);
+        document.getElementById('rankNum').textContent='✅';
+        document.getElementById('rankLbl').textContent='Result saved!';
+        console.error(e);
     }
+
+    window.scrollTo({top:0,behavior:'smooth'});
 }
 
 // ── Answer Review ──
 function buildAnswerReview() {
-    const labels = ['A','B','C','D'];
-    let html = '';
-    questions.forEach((q, i) => {
-        const studentAns = answers[i];
-        const isCorrect = studentAns === q.correct;
-        const isSkipped = studentAns === undefined;
-        const cardClass = isSkipped ? 'skipped-ans' : isCorrect ? 'correct-ans' : 'wrong-ans';
-        const statusClass = isSkipped ? 'status-skipped' : isCorrect ? 'status-correct' : 'status-wrong';
-        const statusText = isSkipped ? '⏭ Skipped' : isCorrect ? '✅ Correct' : '❌ Wrong';
+    const labels=['A','B','C','D'];
+    let html='';
+    questions.forEach((q,i)=>{
+        const studentAns=answers[i];
+        const isCorrect=studentAns===q.correct;
+        const isSkipped=studentAns===undefined;
+        const cardClass=isSkipped?'skipped-ans':isCorrect?'correct-ans':'wrong-ans';
+        const statusClass=isSkipped?'status-skipped':isCorrect?'status-correct':'status-wrong';
+        const statusText=isSkipped?'⏭ Skipped':isCorrect?'✅ Correct':'❌ Wrong';
 
-        let optsHtml = '';
-        (q.options || []).forEach((opt, j) => {
-            let cls = '';
-            const isCorrectOpt = j === q.correct;
-            const isStudentWrong = j === studentAns && !isCorrect;
-            if (isCorrectOpt) cls = 'is-correct';
-            else if (isStudentWrong) cls = 'is-wrong';
-
-            optsHtml += `<div class="review-option ${cls}">
+        let optionsHtml='';
+        q.options.forEach((opt,j)=>{
+            let cls='';
+            if(j===q.correct)cls='is-correct';
+            else if(j===studentAns&&!isCorrect)cls='is-wrong';
+            optionsHtml+=`<div class="review-option ${cls}">
                 <span class="review-opt-label">${labels[j]}</span>
-                <span style="flex:1;">${opt}</span>
-                ${isCorrectOpt ? '<span>✅</span>' : ''}
-                ${isStudentWrong ? '<span style="font-size:11px;color:#f44336;">← Your answer</span>' : ''}
+                <span>${opt}</span>
+                ${j===q.correct?' ✅':''}
+                ${j===studentAns&&!isCorrect?' ← Your answer':''}
             </div>`;
         });
 
-        html += `<div class="review-item ${cardClass}">
+        html+=`<div class="review-item ${cardClass}">
             <div class="review-q-num">Question ${i+1}</div>
             <span class="review-status ${statusClass}">${statusText}</span>
             <div class="review-q-text">${q.question}</div>
-            <div class="review-options">${optsHtml}</div>
-            ${q.explanation ? `<div class="review-explanation">💡 ${q.explanation}</div>` : ''}
+            <div class="review-options">${optionsHtml}</div>
+            ${q.explanation?`<div class="review-explanation">💡 ${q.explanation}</div>`:''}
         </div>`;
     });
-    document.getElementById('reviewList').innerHTML = html;
+    document.getElementById('reviewList').innerHTML=html;
 }
 
-// Start loading
 loadTest();
 </script>
 </body>
