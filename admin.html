@@ -742,6 +742,120 @@ window.deleteAnnouncement = async function(id) {
         showToast('❌ Error: ' + e.message);
     }
 };
+    // ── Load Users ──
+document.getElementById('loadUsersBtn').addEventListener('click', async function() {
+    const list = document.getElementById('usersList');
+    list.style.display = 'block';
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">⏳ Loading...</div>';
+    try {
+        const snap = await getDocs(collection(db, 'users'));
+        const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const weekStart = new Date(now.getTime() - 7*24*60*60*1000);
+        let todayCount = 0, weekCount = 0;
+        let users = [];
+        snap.forEach(d => {
+            const u = d.data();
+            users.push(u);
+            const login = new Date(u.lastLogin);
+            if (login >= todayStart) todayCount++;
+            if (login >= weekStart) weekCount++;
+        });
+        document.getElementById('totalUsers').textContent = users.length;
+        document.getElementById('todayUsers').textContent = todayCount;
+        document.getElementById('weekUsers').textContent = weekCount;
+        users.sort((a,b) => new Date(b.lastLogin) - new Date(a.lastLogin));
+        let html = '';
+        users.forEach(u => {
+            const lastLogin = u.lastLogin ? new Date(u.lastLogin).toLocaleString('en-IN') : '-';
+            html += `<div style="background:white;border:1px solid #e0e8ff;border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;">
+                <img src="${u.photo||''}" style="width:36px;height:36px;border-radius:50%;background:#e8f0fe;" onerror="this.src=''">
+                <div style="flex:1;">
+                    <div style="font-size:14px;font-weight:600;">${u.name||'Unknown'}</div>
+                    <div style="font-size:12px;color:#888;">${u.email||''}</div>
+                    <div style="font-size:11px;color:#aaa;">Last login: ${lastLogin}</div>
+                </div>
+            </div>`;
+        });
+        list.innerHTML = html || '<div style="text-align:center;padding:20px;color:#888;">No users yet</div>';
+    } catch(e) {
+        list.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">❌ Error loading users</div>';
+        console.error(e);
+    }
+});
+
+// ── Load All Tests ──
+document.getElementById('loadTestsBtn').addEventListener('click', async function() {
+    const list = document.getElementById('allTestsList');
+    list.style.display = 'block';
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">⏳ Loading...</div>';
+    try {
+        const snap = await getDocs(query(
+            collection(db, 'tests'),
+            orderBy('createdAt', 'desc')
+        ));
+        if (snap.empty) {
+            list.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">No tests created yet</div>';
+            return;
+        }
+        let html = '';
+        snap.forEach(d => {
+            const t = d.data();
+            const testId = d.id;
+            const now = new Date();
+            const isExpired = new Date(t.expiry) < now;
+            const expiry = t.expiry ? new Date(t.expiry).toLocaleString('en-IN') : '-';
+            html += `<div style="background:white;border:1px solid #e0e8ff;border-radius:12px;padding:14px;margin-bottom:10px;border-left:4px solid ${isExpired?'#f44336':'#4caf50'};">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;">
+                    <div>
+                        <div style="font-size:14px;font-weight:700;">${t.title||'Untitled'}</div>
+                        <div style="font-size:12px;color:#888;margin-top:3px;">${t.trade} | Year ${t.year} | ${t.questionCount}Q | ${t.duration}min</div>
+                        <div style="font-size:11px;color:#aaa;margin-top:3px;">By: ${t.createdByName||t.createdByEmail||'Unknown'}</div>
+                        <div style="font-size:11px;color:#aaa;">Expiry: ${expiry}</div>
+                    </div>
+                    <span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:${isExpired?'#ffebee':'#e8f5e9'};color:${isExpired?'#f44336':'#4caf50'};flex-shrink:0;">
+                        ${isExpired?'⏰ Expired':'✅ Active'}
+                    </span>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <a href="leaderboard.html?id=${testId}" target="_blank"
+                        style="background:#e8f0fe;color:#1a73e8;border:none;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;">
+                        🏆 Rank Board
+                    </a>
+                    <button onclick="adminToggleTest('${testId}', ${t.isActive})"
+                        style="background:${t.isActive?'#fff3e0':'#e8f5e9'};color:${t.isActive?'#e65100':'#2e7d32'};border:none;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;">
+                        ${t.isActive ? '🔒 Deactivate' : '✅ Activate'}
+                    </button>
+                    <button onclick="adminDeleteTest('${testId}')"
+                        style="background:#ffebee;color:#f44336;border:none;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;">
+                        🗑️ Delete
+                    </button>
+                </div>
+            </div>`;
+        });
+        list.innerHTML = html;
+    } catch(e) {
+        list.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">❌ Error loading tests</div>';
+        console.error(e);
+    }
+});
+
+window.adminToggleTest = async function(testId, isActive) {
+    try {
+        await setDoc(doc(db, 'tests', testId), { isActive: !isActive }, { merge: true });
+        showToast(isActive ? '🔒 Test deactivated!' : '✅ Test activated!');
+        document.getElementById('loadTestsBtn').click();
+    } catch(e) { showToast('❌ Error: ' + e.message); }
+};
+
+window.adminDeleteTest = async function(testId) {
+    if (!confirm('Delete this test permanently?')) return;
+    try {
+        await deleteDoc(doc(db, 'tests', testId));
+        showToast('✅ Test deleted!');
+        document.getElementById('loadTestsBtn').click();
+    } catch(e) { showToast('❌ Error: ' + e.message); }
+};
 </script>
 </body>
 </html>
