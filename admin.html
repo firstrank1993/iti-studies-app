@@ -172,7 +172,17 @@
     </div>
     <div id="annList" style="max-height:400px;overflow-y:auto;"></div>
 </div>
-
+<!-- Users Manager -->
+<div class="card">
+    <div class="card-title">👥 Registered Users</div>
+    <div class="stats-grid" style="margin-bottom:16px;">
+        <div class="stat-box"><div class="stat-num" id="totalUsers">0</div><div class="stat-lbl">Total Users</div></div>
+        <div class="stat-box"><div class="stat-num" id="todayUsers">0</div><div class="stat-lbl">Today</div></div>
+        <div class="stat-box"><div class="stat-num" id="weekUsers">0</div><div class="stat-lbl">This Week</div></div>
+    </div>
+    <button class="btn btn-primary" id="loadUsersBtn" style="width:100%;margin-bottom:16px;">👥 Load Users List</button>
+    <div id="usersList" style="max-height:400px;overflow-y:auto;display:none;"></div>
+</div>
 
         <!-- CSV Format -->
         <div class="card">
