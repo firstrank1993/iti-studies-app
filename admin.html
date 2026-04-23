@@ -109,62 +109,7 @@
                 <div class="user-name" id="userName">Admin</div>
                 <div class="user-email" id="userEmail"></div>
             </div>
-            <!-- Announcements Manager -->
-<div class="card">
-    <div class="card-title">📢 News & Announcements Manager</div>
-    <p style="font-size:14px;color:#666;margin-bottom:16px;">Add news, jobs, notices and results to the home page</p>
-
-    <!-- Add New -->
-    <div style="background:#f8f9ff;border-radius:12px;padding:16px;margin-bottom:16px;">
-        <div style="font-size:15px;font-weight:700;color:#1a73e8;margin-bottom:12px;">➕ Add New Announcement</div>
-
-        <div style="margin-bottom:12px;">
-            <label class="filter-label">Type</label>
-            <select class="input-field" id="annType" style="padding:10px;">
-                <option value="news">📰 News</option>
-                <option value="job">💼 Job Vacancy</option>
-                <option value="notice">📢 Notice</option>
-                <option value="result">🏆 Result</option>
-            </select>
-        </div>
-
-        <div style="margin-bottom:12px;">
-            <label class="filter-label">Title *</label>
-            <input type="text" class="input-field" id="annTitle" placeholder="Enter title..." style="padding:10px;" />
-        </div>
-
-        <div style="margin-bottom:12px;">
-            <label class="filter-label">Description *</label>
-            <textarea class="input-field" id="annDesc" rows="3" placeholder="Enter description..." style="padding:10px;resize:vertical;"></textarea>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-            <div>
-                <label class="filter-label">Source (optional)</label>
-                <input type="text" class="input-field" id="annSource" placeholder="e.g. NCVT, GSDMA" style="padding:10px;" />
-            </div>
-            <div>
-                <label class="filter-label">Link (optional)</label>
-                <input type="url" class="input-field" id="annLink" placeholder="https://..." style="padding:10px;" />
-            </div>
-        </div>
-
-        <button class="btn btn-success" id="addAnnBtn" style="width:100%;">➕ Add Announcement</button>
-    </div>
-
-    <!-- Existing Announcements -->
-    <div style="font-size:15px;font-weight:700;color:#1a73e8;margin-bottom:12px;">📋 Existing Announcements</div>
-    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-        <button class="btn btn-primary" onclick="loadAnnouncements('all')" style="padding:8px 16px;font-size:13px;">All</button>
-        <button class="btn btn-primary" onclick="loadAnnouncements('news')" style="padding:8px 16px;font-size:13px;">📰 News</button>
-        <button class="btn btn-primary" onclick="loadAnnouncements('job')" style="padding:8px 16px;font-size:13px;">💼 Jobs</button>
-        <button class="btn btn-primary" onclick="loadAnnouncements('notice')" style="padding:8px 16px;font-size:13px;">📢 Notices</button>
-        <button class="btn btn-primary" onclick="loadAnnouncements('result')" style="padding:8px 16px;font-size:13px;">🏆 Results</button>
-    </div>
-    <div id="annList" style="max-height:400px;overflow-y:auto;"></div>
-</div>
-            <button class="btn btn-danger" id="logoutBtn" style="padding:8px 16px;font-size:13px;">Logout</button>
-        </div>
+           
 
         <!-- Stats -->
         <div class="stats-grid">
@@ -279,6 +224,62 @@
                 </div>
                 <div id="questionsList" style="max-height:400px;overflow-y:auto;"></div>
             </div>
+        </div>
+ <!-- Announcements Manager -->
+<div class="card">
+    <div class="card-title">📢 News & Announcements Manager</div>
+    <p style="font-size:14px;color:#666;margin-bottom:16px;">Add news, jobs, notices and results to the home page</p>
+
+    <!-- Add New -->
+    <div style="background:#f8f9ff;border-radius:12px;padding:16px;margin-bottom:16px;">
+        <div style="font-size:15px;font-weight:700;color:#1a73e8;margin-bottom:12px;">➕ Add New Announcement</div>
+
+        <div style="margin-bottom:12px;">
+            <label class="filter-label">Type</label>
+            <select class="input-field" id="annType" style="padding:10px;">
+                <option value="news">📰 News</option>
+                <option value="job">💼 Job Vacancy</option>
+                <option value="notice">📢 Notice</option>
+                <option value="result">🏆 Result</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label class="filter-label">Title *</label>
+            <input type="text" class="input-field" id="annTitle" placeholder="Enter title..." style="padding:10px;" />
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label class="filter-label">Description *</label>
+            <textarea class="input-field" id="annDesc" rows="3" placeholder="Enter description..." style="padding:10px;resize:vertical;"></textarea>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div>
+                <label class="filter-label">Source (optional)</label>
+                <input type="text" class="input-field" id="annSource" placeholder="e.g. NCVT, GSDMA" style="padding:10px;" />
+            </div>
+            <div>
+                <label class="filter-label">Link (optional)</label>
+                <input type="url" class="input-field" id="annLink" placeholder="https://..." style="padding:10px;" />
+            </div>
+        </div>
+
+        <button class="btn btn-success" id="addAnnBtn" style="width:100%;">➕ Add Announcement</button>
+    </div>
+
+    <!-- Existing Announcements -->
+    <div style="font-size:15px;font-weight:700;color:#1a73e8;margin-bottom:12px;">📋 Existing Announcements</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="loadAnnouncements('all')" style="padding:8px 16px;font-size:13px;">All</button>
+        <button class="btn btn-primary" onclick="loadAnnouncements('news')" style="padding:8px 16px;font-size:13px;">📰 News</button>
+        <button class="btn btn-primary" onclick="loadAnnouncements('job')" style="padding:8px 16px;font-size:13px;">💼 Jobs</button>
+        <button class="btn btn-primary" onclick="loadAnnouncements('notice')" style="padding:8px 16px;font-size:13px;">📢 Notices</button>
+        <button class="btn btn-primary" onclick="loadAnnouncements('result')" style="padding:8px 16px;font-size:13px;">🏆 Results</button>
+    </div>
+    <div id="annList" style="max-height:400px;overflow-y:auto;"></div>
+</div>
+            <button class="btn btn-danger" id="logoutBtn" style="padding:8px 16px;font-size:13px;">Logout</button>
         </div>
     </div>
 </main>
