@@ -893,6 +893,76 @@ window.adminDeleteTest = async function(testId) {
         document.getElementById('loadTestsBtn').click();
     } catch(e) { showToast('❌ Error: ' + e.message); }
 };
+// ── Trade Manager ──
+document.getElementById('addTradeBtn').addEventListener('click', async function() {
+    const id = document.getElementById('tradeId').value.trim().toLowerCase().replace(/\s/g,'');
+    const name = document.getElementById('tradeName').value.trim();
+    const icon = document.getElementById('tradeIcon').value.trim();
+    const category = document.getElementById('tradeCategory').value;
+
+    if (!id) { showToast('⚠️ Enter trade ID!'); return; }
+    if (!name) { showToast('⚠️ Enter trade name!'); return; }
+    if (!icon) { showToast('⚠️ Enter an emoji icon!'); return; }
+
+    this.disabled = true;
+    this.textContent = '⏳ Adding...';
+    try {
+        await setDoc(doc(db, 'trades', id), {
+            id, name, icon, category,
+            active: true,
+            createdAt: new Date().toISOString()
+        });
+        showToast('✅ Trade added: ' + name);
+        document.getElementById('tradeId').value = '';
+        document.getElementById('tradeName').value = '';
+        document.getElementById('tradeIcon').value = '';
+        document.getElementById('loadTradesBtn').click();
+    } catch(e) {
+        showToast('❌ Error: ' + e.message);
+    }
+    this.disabled = false;
+    this.textContent = '➕ Add Trade';
+});
+
+document.getElementById('loadTradesBtn').addEventListener('click', async function() {
+    const list = document.getElementById('tradesManagerList');
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">⏳ Loading...</div>';
+    try {
+        const snap = await getDocs(collection(db, 'trades'));
+        if (snap.empty) {
+            list.innerHTML = '<div style="text-align:center;padding:16px;color:#888;">No custom trades yet. Default trades are hardcoded.</div>';
+            return;
+        }
+        let html = '';
+        snap.forEach(d => {
+            const t = d.data();
+            html += `<div style="background:white;border:1px solid #e0e8ff;border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;">
+                <span style="font-size:28px;">${t.icon||'🔧'}</span>
+                <div style="flex:1;">
+                    <div style="font-size:14px;font-weight:700;">${t.name}</div>
+                    <div style="font-size:12px;color:#888;">ID: ${t.id} | ${t.category||'iti'}</div>
+                </div>
+                <button onclick="deleteTrade('${d.id}')"
+                    style="background:#ffebee;color:#f44336;border:none;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;">
+                    🗑️ Delete
+                </button>
+            </div>`;
+        });
+        list.innerHTML = html;
+    } catch(e) {
+        list.innerHTML = '<div style="text-align:center;padding:16px;color:#888;">❌ Error loading trades</div>';
+        console.error(e);
+    }
+});
+
+window.deleteTrade = async function(id) {
+    if (!confirm('Delete this trade?')) return;
+    try {
+        await deleteDoc(doc(db, 'trades', id));
+        showToast('✅ Trade deleted!');
+        document.getElementById('loadTradesBtn').click();
+    } catch(e) { showToast('❌ Error: ' + e.message); }
+};
 </script>
 </body>
 </html>
