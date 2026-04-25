@@ -183,6 +183,43 @@
     <button class="btn btn-primary" id="loadUsersBtn" style="width:100%;margin-bottom:16px;">👥 Load Users List</button>
     <div id="usersList" style="max-height:400px;overflow-y:auto;display:none;"></div>
 </div>
+<!-- Trade Manager -->
+<div class="card">
+    <div class="card-title">🔧 Trade Manager</div>
+    <p style="font-size:14px;color:#666;margin-bottom:16px;">Add or remove trades from the app</p>
+
+    <!-- Add New Trade -->
+    <div style="background:#f8f9ff;border-radius:12px;padding:16px;margin-bottom:16px;">
+        <div style="font-size:15px;font-weight:700;color:#1a73e8;margin-bottom:12px;">➕ Add New Trade</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div>
+                <label class="filter-label">Trade ID (no spaces) *</label>
+                <input type="text" class="input-field" id="tradeId" placeholder="e.g. electrician2" style="padding:10px;" />
+            </div>
+            <div>
+                <label class="filter-label">Trade Name *</label>
+                <input type="text" class="input-field" id="tradeName" placeholder="e.g. Electrician 2nd Year" style="padding:10px;" />
+            </div>
+            <div>
+                <label class="filter-label">Icon (emoji) *</label>
+                <input type="text" class="input-field" id="tradeIcon" placeholder="e.g. ⚡" style="padding:10px;" />
+            </div>
+            <div>
+                <label class="filter-label">Category</label>
+                <select class="input-field" id="tradeCategory" style="padding:10px;">
+                    <option value="iti">ITI Trade</option>
+                    <option value="common">Common</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn btn-success" id="addTradeBtn" style="width:100%;">➕ Add Trade</button>
+    </div>
+
+    <!-- Existing Trades -->
+    <div style="font-size:15px;font-weight:700;color:#1a73e8;margin-bottom:12px;">📋 Existing Trades</div>
+    <button class="btn btn-primary" id="loadTradesBtn" style="width:100%;margin-bottom:12px;">🔄 Load Trades</button>
+    <div id="tradesManagerList"></div>
+</div>
         <!-- Tests Manager -->
 <div class="card">
     <div class="card-title">📝 All Created Tests</div>
