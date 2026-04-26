@@ -449,7 +449,8 @@ async function loadTrades() {
     try {
         const countDoc = await getDoc(doc(db, 'appData', 'tradeCounts'));
         const tradeCounts = countDoc.exists() ? (countDoc.data().counts || {}) : {};
-        const trades = [
+
+        const defaultTrades = [
             {id:'electrician', icon:'⚡', name:'Electrician'},
             {id:'wireman', icon:'🔌', name:'Wireman'},
             {id:'fitter', icon:'🔧', name:'Fitter'},
@@ -465,8 +466,16 @@ async function loadTrades() {
             {id:'dressmaking', icon:'👗', name:'Dress Making / Fashion Design'},
             {id:'sewing', icon:'🧵', name:'Sewing Technology'},
         ];
+
+        // Load custom trades from Firestore
+        const customSnap = await getDocs(collection(db, 'trades'));
+        customSnap.forEach(d => {
+            const t = d.data();
+            if (t.active !== false) defaultTrades.push(t);
+        });
+
         let html = '';
-        trades.forEach(t => {
+        defaultTrades.forEach(t => {
             const count = tradeCounts[t.id] || 0;
             html += `<div class="trade-card" onclick="selectTrade('${t.id}','${t.name}')">
                 <div class="trade-icon">${t.icon}</div>
@@ -475,9 +484,12 @@ async function loadTrades() {
             </div>`;
         });
         grid.innerHTML = html;
-    } catch(e) { grid.innerHTML = '<div class="loading">❌ Error loading trades</div>'; }
-}
 
+    } catch(e) {
+        grid.innerHTML = '<div class="loading">❌ Error loading trades</div>';
+        console.error(e);
+    }
+}
 // ── Navigation Steps ──
 window.selectTrade = function(id, name) {
     selectedTrade = id; selectedTradeName = name;
