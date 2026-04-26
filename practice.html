@@ -286,4 +286,575 @@
         <button class="create-btn" id="createTestBtn">🚀 Create Test & Get Link</button>
 
         <div class="share-box" id="shareBox">
-            <div style="font-size:32px;margin-bottom:8px;
+            <div style="font-size:32px;margin-bottom:8px;">🎉</div>
+            <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Test Created!</div>
+            <div style="font-size:13px;color:#666;margin-bottom:12px;">Share this link with your students</div>
+            <div class="share-link" id="shareLink"></div>
+            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+                <button class="copy-btn" id="copyLinkBtn">📋 Copy Link</button>
+                <button class="whatsapp-btn" id="whatsappBtn">💬 Share on WhatsApp</button>
+            </div>
+            <div style="margin-top:16px;">
+                <a id="viewLeaderboardBtn" href="#" style="color:#1a73e8;font-size:13px;font-weight:600;">📊 View Rank Board →</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Fixed Bottom Ad -->
+<div class="fixed-ad">
+    <ins class="adsbygoogle" style="display:block;height:50px;" data-ad-client="ca-pub-7565701101523786" data-ad-slot="auto" data-ad-format="horizontal"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
+<nav class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='index.html'"><span class="nav-icon">🏠</span><span>Home</span></div>
+    <div class="nav-item active"><span class="nav-icon">📝</span><span>Practice</span></div>
+    <div class="nav-item" onclick="window.location.href='profile.html'"><span class="nav-icon">👤</span><span>Profile</span></div>
+</nav>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, addDoc, doc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC6tkiVx09eNQJozHAUPBGRqonTB6M6ShE",
+    authDomain: "itistudies-4b277.firebaseapp.com",
+    projectId: "itistudies-4b277",
+    storageBucket: "itistudies-4b277.firebasestorage.app",
+    messagingSenderId: "549937347076",
+    appId: "1:549937347076:web:72231b8f1bde6c2dd15351",
+    measurementId: "G-HKW4C7Q81Z"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+enableIndexedDbPersistence(db).catch(err => console.log('Persistence:', err.code));
+
+let currentUser = null;
+let selectedTrade = '', selectedTradeName = '', selectedYear = '';
+let selectedSubject = '', selectedChapter = '';
+let allQuestions = [], questions = [];
+let currentIndex = 0, score = 0, skipped = 0, wrong = 0, answered = false;
+let currentLang = localStorage.getItem('selectedLang') || 'en';
+let translationCache = {};
+
+onAuthStateChanged(auth, user => {
+    currentUser = user;
+    const warn = document.getElementById('loginWarning');
+    if (warn) warn.style.display = user ? 'none' : 'block';
+});
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+}
+
+// ── Translation ──
+async function translateText(text) {
+    if (!text || currentLang === 'en') return text;
+    const key = text + '_' + currentLang;
+    if (translationCache[key]) return translationCache[key];
+    try {
+        const res = await fetch('https://api.mymemory.translated.net/get?q=' +
+            encodeURIComponent(text) + '&langpair=en|' + (currentLang === 'gu' ? 'gu' : 'hi'));
+        const data = await res.json();
+        translationCache[key] = data.responseData.translatedText || text;
+        return translationCache[key];
+    } catch(e) { return text; }
+}
+
+window.switchLang = function(lang, btn) {
+    currentLang = lang;
+    localStorage.setItem('selectedLang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (document.getElementById('step-quiz').style.display !== 'none') showQuestion();
+};
+
+// Restore language
+const savedLang = localStorage.getItem('selectedLang') || 'en';
+if (savedLang !== 'en') {
+    const btn = document.getElementById('btn' + savedLang.charAt(0).toUpperCase() + savedLang.slice(1));
+    if (btn) switchLang(savedLang, btn);
+}
+
+// ── Tab Switcher ──
+window.showMainTab = function(tab, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    btn.classList.add('active');
+    if (tab === 'create') {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('testExpiry').value = tomorrow.toISOString().slice(0,16);
+        populateTradeDropdown();
+    }
+};
+
+// Check for #create hash
+if (window.location.hash === '#create') {
+    showMainTab('create', document.getElementById('tabCreate'));
+}
+
+// ── Default Trades ──
+const defaultTrades = [
+    {id:'electrician', icon:'⚡', name:'Electrician'},
+    {id:'wireman', icon:'🔌', name:'Wireman'},
+    {id:'fitter', icon:'🔧', name:'Fitter'},
+    {id:'machinist', icon:'🏭', name:'Machinist'},
+    {id:'turner', icon:'⚙️', name:'Turner'},
+    {id:'welder', icon:'🔥', name:'Welder'},
+    {id:'diesel', icon:'🚛', name:'Diesel Mechanic'},
+    {id:'mmv', icon:'🚗', name:'Mechanic Motor Vehicle'},
+    {id:'copa', icon:'💻', name:'COPA'},
+    {id:'civil', icon:'📐', name:'Draughtsman Civil'},
+    {id:'rac', icon:'❄️', name:'RAC (AC & Refrigeration)'},
+    {id:'aocp', icon:'✈️', name:'AOCP'},
+    {id:'dressmaking', icon:'👗', name:'Dress Making / Fashion Design'},
+    {id:'sewing', icon:'🧵', name:'Sewing Technology'},
+];
+
+// ── Load Trades ──
+async function loadTrades() {
+    const grid = document.getElementById('tradeGrid');
+    try {
+        const countDoc = await getDoc(doc(db, 'appData', 'tradeCounts'));
+        const tradeCounts = countDoc.exists() ? (countDoc.data().counts || {}) : {};
+
+        // Load custom trades from Firestore
+        const customSnap = await getDocs(collection(db, 'trades'));
+        const allTrades = [...defaultTrades];
+        customSnap.forEach(d => {
+            const t = d.data();
+            if (t.active !== false) allTrades.push(t);
+        });
+
+        let html = '';
+        allTrades.forEach(t => {
+            const count = tradeCounts[t.id] || 0;
+            html += `<div class="trade-card" onclick="selectTrade('${t.id}','${t.name}')">
+                <div class="trade-icon">${t.icon}</div>
+                <div class="trade-name">${t.name}</div>
+                <div class="trade-count">${count > 0 ? count + '+ Questions' : 'Coming Soon'}</div>
+            </div>`;
+        });
+        grid.innerHTML = html;
+    } catch(e) {
+        grid.innerHTML = '<div class="loading">❌ Error loading trades</div>';
+        console.error(e);
+    }
+}
+
+// ── Populate Trade Dropdown for Create Test ──
+async function populateTradeDropdown() {
+    const select = document.getElementById('testTrade');
+    try {
+        const allTrades = [...defaultTrades];
+        const customSnap = await getDocs(collection(db, 'trades'));
+        customSnap.forEach(d => {
+            const t = d.data();
+            if (t.active !== false) allTrades.push(t);
+        });
+        let html = '<option value="">-- Select Trade --</option>';
+        allTrades.forEach(t => {
+            html += `<option value="${t.id}">${t.name}</option>`;
+        });
+        select.innerHTML = html;
+    } catch(e) { console.error(e); }
+}
+
+// ── Navigation ──
+window.selectTrade = function(id, name) {
+    selectedTrade = id; selectedTradeName = name;
+    document.getElementById('step-trade').style.display = 'none';
+    document.getElementById('step-year').style.display = 'block';
+    document.getElementById('breadcrumb').style.display = 'flex';
+    document.getElementById('headerTitle').textContent = name;
+};
+
+window.selectYear = async function(year) {
+    selectedYear = year;
+    document.getElementById('step-year').style.display = 'none';
+    document.getElementById('step-subject').style.display = 'block';
+    document.getElementById('bcYear').style.display = 'inline';
+    document.getElementById('bcYearText').textContent = year + (year=='1'?'st':'nd') + ' Year';
+    await loadSubjects();
+};
+
+async function loadSubjects() {
+    const list = document.getElementById('subjectList');
+    list.innerHTML = '<div class="loading">⏳ Loading subjects...</div>';
+    try {
+        const [snap1, snap2] = await Promise.all([
+            getDocs(query(collection(db,'questions'), where('trade','==',selectedTrade), where('year','==',selectedYear))),
+            getDocs(query(collection(db,'questions'), where('trade','==','common'), where('year','==',selectedYear)))
+        ]);
+        const subjects = {};
+        [...snap1.docs, ...snap2.docs].forEach(d => {
+            const s = d.data().subject;
+            if (s) subjects[s] = (subjects[s]||0) + 1;
+        });
+        const icons = ['📚','🔬','🔧','💡','📐','🖥️','⚡','🏭','📊','🔩','✏️','🔑'];
+        if (!Object.keys(subjects).length) {
+            list.innerHTML = '<div class="loading">📭 No subjects found yet</div>'; return;
+        }
+        let html = '';
+        Object.entries(subjects).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([s,c],i) => {
+            html += `<div class="list-card" onclick="selectSubject('${s.replace(/'/g,"\\'")}')">
+                <div class="list-icon">${icons[i%icons.length]}</div>
+                <div class="list-info"><div class="list-name">${s}</div><div class="list-count">${c} questions</div></div>
+                <div class="list-arrow">›</div>
+            </div>`;
+        });
+        list.innerHTML = html;
+    } catch(e) { list.innerHTML = '<div class="loading">❌ Error loading</div>'; }
+}
+
+window.selectSubject = async function(subject) {
+    selectedSubject = subject;
+    document.getElementById('step-subject').style.display = 'none';
+    document.getElementById('step-chapter').style.display = 'block';
+    document.getElementById('bcSubject').style.display = 'inline';
+    document.getElementById('bcSubjectText').textContent = subject;
+    await loadChapters();
+};
+
+async function loadChapters() {
+    const list = document.getElementById('chapterList');
+    list.innerHTML = '<div class="loading">⏳ Loading chapters...</div>';
+    try {
+        const [snap1, snap2] = await Promise.all([
+            getDocs(query(collection(db,'questions'), where('trade','==',selectedTrade), where('year','==',selectedYear), where('subject','==',selectedSubject))),
+            getDocs(query(collection(db,'questions'), where('trade','==','common'), where('year','==',selectedYear), where('subject','==',selectedSubject)))
+        ]);
+        const chapters = {};
+        [...snap1.docs, ...snap2.docs].forEach(d => {
+            const c = d.data().chapter;
+            if (c) chapters[c] = (chapters[c]||0) + 1;
+        });
+        const total = [...snap1.docs, ...snap2.docs].length;
+        if (!Object.keys(chapters).length) {
+            list.innerHTML = '<div class="loading">📭 No chapters found yet</div>'; return;
+        }
+        let html = `<button class="practice-all-btn" onclick="startPractice('ALL')">🚀 Practice All Chapters (${total} Questions)</button>`;
+        let num = 1;
+        Object.entries(chapters).sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true})).forEach(([c,cnt]) => {
+            html += `<div class="list-card" onclick="startPractice('${c.replace(/'/g,"\\'")}')">
+                <div class="list-icon" style="background:#e8f0fe;border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#1a73e8;">${num}</div>
+                <div class="list-info"><div class="list-name">${c}</div><div class="list-count">${cnt} questions</div></div>
+                <div class="list-arrow">›</div>
+            </div>`;
+            num++;
+        });
+        list.innerHTML = html;
+    } catch(e) { list.innerHTML = '<div class="loading">❌ Error loading</div>'; }
+}
+
+window.startPractice = async function(chapter) {
+    selectedChapter = chapter;
+    document.getElementById('bcChapter').style.display = 'inline';
+    document.getElementById('bcChapterText').textContent = chapter === 'ALL' ? 'All Chapters' : chapter;
+    document.getElementById('step-chapter').style.display = 'none';
+    document.getElementById('step-quiz').style.display = 'block';
+    document.getElementById('scoreCard').style.display = 'none';
+    document.getElementById('questionCard').style.display = 'block';
+    await loadPracticeQuestions(chapter);
+};
+
+async function loadPracticeQuestions(chapter) {
+    document.getElementById('qText').textContent = '⏳ Loading questions...';
+    try {
+        let snap1, snap2;
+        if (chapter === 'ALL') {
+            [snap1, snap2] = await Promise.all([
+                getDocs(query(collection(db,'questions'), where('trade','==',selectedTrade), where('year','==',selectedYear), where('subject','==',selectedSubject))),
+                getDocs(query(collection(db,'questions'), where('trade','==','common'), where('year','==',selectedYear), where('subject','==',selectedSubject)))
+            ]);
+        } else {
+            [snap1, snap2] = await Promise.all([
+                getDocs(query(collection(db,'questions'), where('trade','==',selectedTrade), where('year','==',selectedYear), where('subject','==',selectedSubject), where('chapter','==',chapter))),
+                getDocs(query(collection(db,'questions'), where('trade','==','common'), where('year','==',selectedYear), where('subject','==',selectedSubject), where('chapter','==',chapter)))
+            ]);
+        }
+        allQuestions = [];
+        [...snap1.docs, ...snap2.docs].forEach(d => allQuestions.push({id:d.id,...d.data()}));
+        questions = [...allQuestions].sort(() => Math.random() - 0.5);
+        currentIndex = 0; score = 0; skipped = 0; wrong = 0;
+        if (!questions.length) {
+            document.getElementById('qText').textContent = '❌ No questions found for this chapter yet.';
+            return;
+        }
+        showQuestion();
+    } catch(e) { document.getElementById('qText').textContent = '❌ Error loading questions.'; }
+}
+
+async function showQuestion() {
+    if (currentIndex >= questions.length) { showResults(); return; }
+    answered = false;
+    const q = questions[currentIndex];
+    document.getElementById('progressFill').style.width = (currentIndex/questions.length*100) + '%';
+    document.getElementById('qNumber').textContent = 'Question ' + (currentIndex+1) + ' of ' + questions.length;
+    document.getElementById('qScore').textContent = 'Score: ' + score;
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('explanation').style.display = 'none';
+    if (q.image && q.image.trim()) {
+        document.getElementById('qImage').src = q.image;
+        document.getElementById('qImage').style.display = 'block';
+    } else { document.getElementById('qImage').style.display = 'none'; }
+    if (currentLang !== 'en') {
+        document.getElementById('qText').textContent = '⏳ Translating...';
+        document.getElementById('optionsList').innerHTML = '<div style="text-align:center;padding:20px;color:#888;">⏳</div>';
+        const [transQ, ...transOpts] = await Promise.all([
+            translateText(q.question),
+            translateText(q.options[0]),
+            translateText(q.options[1]),
+            translateText(q.options[2]),
+            translateText(q.options[3])
+        ]);
+        document.getElementById('qText').textContent = transQ;
+        renderOptions(transOpts, q.correct);
+    } else {
+        document.getElementById('qText').textContent = q.question;
+        renderOptions(q.options, q.correct);
+    }
+}
+
+function renderOptions(opts, correct) {
+    const labels = ['A','B','C','D'];
+    let html = '';
+    opts.forEach((opt,i) => {
+        html += `<div class="option" data-index="${i}">
+            <span class="option-label">${labels[i]}</span>
+            <span>${opt}</span>
+        </div>`;
+    });
+    document.getElementById('optionsList').innerHTML = html;
+    document.querySelectorAll('.option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            selectAnswer(parseInt(this.dataset.index));
+        });
+    });
+}
+
+function selectAnswer(selected) {
+    if (answered) return;
+    answered = true;
+    const q = questions[currentIndex];
+    document.querySelectorAll('.option').forEach(o => o.classList.add('disabled'));
+    document.getElementById('opt' + q.correct) && document.querySelectorAll('.option')[q.correct].classList.add('correct');
+    if (selected === q.correct) { score++; }
+    else { wrong++; document.querySelectorAll('.option')[selected].classList.add('wrong'); }
+    document.getElementById('qScore').textContent = 'Score: ' + score;
+    const expText = q.explanation || 'No explanation available.';
+    if (currentLang !== 'en') {
+        translateText(expText).then(t => {
+            document.getElementById('explanation').textContent = '💡 ' + t;
+            document.getElementById('explanation').style.display = 'block';
+        });
+    } else {
+        document.getElementById('explanation').textContent = '💡 ' + expText;
+        document.getElementById('explanation').style.display = 'block';
+    }
+    document.getElementById('nextBtn').style.display = 'block';
+}
+
+document.getElementById('skipBtn').addEventListener('click', () => {
+    if (!answered) skipped++;
+    currentIndex++;
+    if (currentIndex >= questions.length) showResults(); else showQuestion();
+});
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+    currentIndex++;
+    if (currentIndex >= questions.length) showResults(); else showQuestion();
+});
+
+function showResults() {
+    document.getElementById('questionCard').style.display = 'none';
+    document.getElementById('scoreCard').style.display = 'block';
+    const percent = Math.round((score/questions.length)*100);
+    document.getElementById('scorePercent').textContent = percent + '%';
+    document.getElementById('scCorrect').textContent = score;
+    document.getElementById('scWrong').textContent = wrong;
+    document.getElementById('scSkipped').textContent = skipped;
+    let emoji = '😔', label = 'Keep Practicing!';
+    if (percent >= 80) { emoji = '🏆'; label = 'Excellent Work!'; }
+    else if (percent >= 60) { emoji = '😊'; label = 'Good Job!'; }
+    else if (percent >= 40) { emoji = '📚'; label = 'Keep Studying!'; }
+    document.getElementById('scoreEmoji').textContent = emoji;
+    document.getElementById('scoreLabel').textContent = label;
+    const results = JSON.parse(localStorage.getItem('quizResults')||'[]');
+    results.unshift({trade:selectedTrade, tradeName:selectedTradeName, subject:selectedSubject, chapter:selectedChapter, score:percent, total:questions.length, correct:score, wrong, skipped, mode:'practice', date:new Date().toISOString()});
+    localStorage.setItem('quizResults', JSON.stringify(results.slice(0,50)));
+}
+
+document.getElementById('retryBtn').addEventListener('click', () => {
+    document.getElementById('questionCard').style.display = 'block';
+    document.getElementById('scoreCard').style.display = 'none';
+    questions = [...allQuestions].sort(() => Math.random() - 0.5);
+    currentIndex = 0; score = 0; skipped = 0; wrong = 0;
+    showQuestion();
+});
+
+document.getElementById('backToChaptersBtn').addEventListener('click', () => {
+    document.getElementById('scoreCard').style.display = 'none';
+    document.getElementById('questionCard').style.display = 'block';
+    document.getElementById('step-quiz').style.display = 'none';
+    document.getElementById('step-chapter').style.display = 'block';
+});
+
+window.goToStep = function(step) {
+    ['trade','year','subject','chapter','quiz'].forEach(s => document.getElementById('step-'+s).style.display = 'none');
+    document.getElementById('step-'+step).style.display = 'block';
+    if (step === 'trade') {
+        document.getElementById('breadcrumb').style.display = 'none';
+        document.getElementById('headerTitle').textContent = 'Practice & Tests';
+        selectedTrade = ''; selectedYear = ''; selectedSubject = '';
+    }
+    if (step === 'year') { document.getElementById('bcSubject').style.display='none'; document.getElementById('bcChapter').style.display='none'; }
+    if (step === 'subject') { document.getElementById('bcChapter').style.display='none'; }
+};
+
+// ── Create Test ──
+window.loadTestSubjects = async function() {
+    const trade = document.getElementById('testTrade').value;
+    const year = document.getElementById('testYear').value;
+    if (!trade || !year) return;
+    document.getElementById('subjectsCheckGroup').style.display = 'block';
+    document.getElementById('chaptersCheckGroup').style.display = 'none';
+    const list = document.getElementById('subjectsChecklist');
+    list.innerHTML = '<div class="loading">⏳ Loading...</div>';
+    try {
+        const [snap1, snap2] = await Promise.all([
+            getDocs(query(collection(db,'questions'), where('trade','==',trade), where('year','==',year))),
+            getDocs(query(collection(db,'questions'), where('trade','==','common'), where('year','==',year)))
+        ]);
+        const subjects = {};
+        [...snap1.docs, ...snap2.docs].forEach(d => {
+            const s = d.data().subject;
+            if (s) subjects[s] = (subjects[s]||0)+1;
+        });
+        let html = '';
+        Object.entries(subjects).sort().forEach(([s,c]) => {
+            html += `<label class="checkbox-item">
+                <input type="checkbox" class="subject-check" value="${s}" onchange="loadTestChapters()">
+                <label>${s}</label>
+                <span class="count">${c}q</span>
+            </label>`;
+        });
+        list.innerHTML = html || '<div class="loading">No subjects found</div>';
+    } catch(e) { list.innerHTML = '<div class="loading">❌ Error</div>'; }
+};
+
+window.loadTestYearSubjects = function() {
+    const year = document.getElementById('testYear').value;
+    if (year) loadTestSubjects();
+};
+
+window.loadTestChapters = async function() {
+    const trade = document.getElementById('testTrade').value;
+    const year = document.getElementById('testYear').value;
+    const selected = [...document.querySelectorAll('.subject-check:checked')].map(c => c.value);
+    if (!selected.length) { document.getElementById('chaptersCheckGroup').style.display = 'none'; return; }
+    document.getElementById('chaptersCheckGroup').style.display = 'block';
+    const list = document.getElementById('chaptersChecklist');
+    list.innerHTML = '<div class="loading">⏳ Loading chapters...</div>';
+    try {
+        const chapters = {};
+        for (const subj of selected) {
+            const [s1, s2] = await Promise.all([
+                getDocs(query(collection(db,'questions'), where('trade','==',trade), where('year','==',year), where('subject','==',subj))),
+                getDocs(query(collection(db,'questions'), where('trade','==','common'), where('year','==',year), where('subject','==',subj)))
+            ]);
+            [...s1.docs, ...s2.docs].forEach(d => {
+                const c = d.data().chapter;
+                if (c) chapters[c] = (chapters[c]||0)+1;
+            });
+        }
+        let html = '';
+        Object.entries(chapters).sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true})).forEach(([c,cnt]) => {
+            html += `<label class="checkbox-item">
+                <input type="checkbox" class="chapter-check" value="${c}" checked>
+                <label>${c}</label>
+                <span class="count">${cnt}q</span>
+            </label>`;
+        });
+        list.innerHTML = html || '<div class="loading">No chapters found</div>';
+    } catch(e) { list.innerHTML = '<div class="loading">❌ Error</div>'; }
+};
+
+window.selectAllSubjects = function() {
+    document.querySelectorAll('.subject-check').forEach(c => { c.checked = true; });
+    loadTestChapters();
+};
+
+window.selectAllChapters = function() {
+    document.querySelectorAll('.chapter-check').forEach(c => c.checked = true);
+};
+
+document.getElementById('createTestBtn').addEventListener('click', async function() {
+    if (!currentUser) { showToast('⚠️ Please login first!'); return; }
+    const title = document.getElementById('testTitle').value.trim();
+    const trade = document.getElementById('testTrade').value;
+    const year = document.getElementById('testYear').value;
+    const qCount = parseInt(document.getElementById('testQCount').value);
+    const duration = parseInt(document.getElementById('testDuration').value);
+    const marksPerQ = parseInt(document.getElementById('testMarksPerQ').value) || 1;
+    const expiry = document.getElementById('testExpiry').value;
+    const instructions = document.getElementById('testInstructions').value.trim();
+    const subjects = [...document.querySelectorAll('.subject-check:checked')].map(c => c.value);
+    const chapters = [...document.querySelectorAll('.chapter-check:checked')].map(c => c.value);
+    if (!title) { showToast('⚠️ Enter test title!'); return; }
+    if (!trade) { showToast('⚠️ Select a trade!'); return; }
+    if (!year) { showToast('⚠️ Select a year!'); return; }
+    if (!subjects.length) { showToast('⚠️ Select at least one subject!'); return; }
+    if (!qCount || qCount < 5) { showToast('⚠️ Minimum 5 questions!'); return; }
+    if (!duration || duration < 5) { showToast('⚠️ Minimum 5 minutes!'); return; }
+    if (!expiry) { showToast('⚠️ Set expiry date!'); return; }
+    showToast('⏳ Creating test...');
+    this.disabled = true;
+    this.textContent = '⏳ Creating...';
+    try {
+        const testRef = await addDoc(collection(db, 'tests'), {
+            title, trade, year, subjects,
+            chapters: chapters.length ? chapters : [],
+            questionCount: qCount, duration, marksPerQ,
+            totalMarks: qCount * marksPerQ,
+            expiry: new Date(expiry).toISOString(),
+            instructions,
+            createdBy: currentUser.uid,
+            createdByEmail: currentUser.email,
+            createdByName: currentUser.displayName || 'User',
+            createdAt: new Date().toISOString(),
+            isActive: true
+        });
+        const testLink = window.location.origin + '/take-test.html?id=' + testRef.id;
+        document.getElementById('shareLink').textContent = testLink;
+        document.getElementById('shareBox').style.display = 'block';
+        document.getElementById('viewLeaderboardBtn').href = 'leaderboard.html?id=' + testRef.id;
+        document.getElementById('copyLinkBtn').onclick = () => {
+            navigator.clipboard.writeText(testLink).then(() => showToast('✅ Link copied!'));
+        };
+        document.getElementById('whatsappBtn').onclick = () => {
+            window.open('https://wa.me/?text=' + encodeURIComponent('📝 *' + title + '*\n\nAppear for test:\n' + testLink + '\n\n⏱️ Duration: ' + duration + ' mins\n📅 Valid till: ' + new Date(expiry).toLocaleString('en-IN')), '_blank');
+        };
+        showToast('🎉 Test created!');
+        this.textContent = '✅ Test Created!';
+    } catch(e) {
+        showToast('❌ Error: ' + e.message);
+        this.disabled = false;
+        this.textContent = '🚀 Create Test & Get Link';
+    }
+});
+
+loadTrades();
+</script>
+</body>
+</html>
