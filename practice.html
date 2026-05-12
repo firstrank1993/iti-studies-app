@@ -647,10 +647,17 @@ function selectAnswer(selected) {
     if (answered) return;
     answered = true;
     const q = questions[currentIndex];
-    document.querySelectorAll('.option').forEach(o => o.classList.add('disabled'));
-    document.getElementById('opt' + q.correct) && document.querySelectorAll('.option')[q.correct].classList.add('correct');
-    if (selected === q.correct) { score++; }
-    else { wrong++; document.querySelectorAll('.option')[selected].classList.add('wrong'); }
+    const allOptions = document.querySelectorAll('.option');
+    allOptions.forEach(o => o.classList.add('disabled'));
+    // Show correct answer in green
+    allOptions[q.correct].classList.add('correct');
+    // Show wrong answer in red if student selected wrong
+    if (selected === q.correct) {
+        score++;
+    } else {
+        wrong++;
+        allOptions[selected].classList.add('wrong');
+    }
     document.getElementById('qScore').textContent = 'Score: ' + score;
     const expText = q.explanation || 'No explanation available.';
     if (currentLang !== 'en') {
@@ -664,7 +671,6 @@ function selectAnswer(selected) {
     }
     document.getElementById('nextBtn').style.display = 'block';
 }
-
 document.getElementById('skipBtn').addEventListener('click', () => {
     if (!answered) skipped++;
     currentIndex++;
