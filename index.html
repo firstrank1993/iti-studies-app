@@ -435,6 +435,36 @@ if (savedLang !== 'en') {
 }
 
 // Init
+    // ── Visitor Counter ──
+async function updateVisitorCount() {
+    try {
+        const visitorRef = doc(db, 'appData', 'visitorCount');
+        const visitorDoc = await getDoc(visitorRef);
+
+        if (visitorDoc.exists()) {
+            // Increment existing count
+            await updateDoc(visitorRef, {
+                total: increment(1),
+                lastVisit: new Date().toISOString()
+            });
+            const newCount = (visitorDoc.data().total || 0) + 1;
+            document.getElementById('visitorCount').textContent =
+                newCount > 1000 ?
+                (newCount/1000).toFixed(1) + 'K+' :
+                newCount + '+';
+        } else {
+            // Create first visitor document
+            await setDoc(visitorRef, {
+                total: 1,
+                lastVisit: new Date().toISOString()
+            });
+            document.getElementById('visitorCount').textContent = '1+';
+        }
+    } catch(e) {
+        document.getElementById('visitorCount').textContent = '1000+';
+        console.error(e);
+    }
+}
 loadStats();
 loadContent('news', 'newsList');
 </script>
